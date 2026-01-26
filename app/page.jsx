@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CalendarView from '@/components/CalendarView';
 import TableView from '@/components/TableView';
 import ViewSwitcher from '@/components/ViewSwitcher';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentView, setCurrentView] = useState('table');
+  const [currentView, setCurrentView] = useState('calendar');
 
   useEffect(() => {
     async function fetchContests() {
@@ -138,14 +139,18 @@ export default function Home() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          {currentView === 'table' && <TableView contests={contests} />}
           {currentView === 'calendar' && <CalendarView contests={contests} />}
+          {currentView === 'table' && <TableView contests={contests} />}
         </motion.div>
       </AnimatePresence>
+
+      <Footer />
 
       <style jsx>{`
         .app-container {
           min-height: 100vh;
+          display: flex;
+          flex-direction: column;
           background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
         }
 

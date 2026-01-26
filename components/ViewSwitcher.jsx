@@ -2,8 +2,8 @@
 
 export default function ViewSwitcher({ currentView, onViewChange }) {
   const views = [
-    { id: 'table', label: 'Table', icon: '☰' },
-    { id: 'calendar', label: 'Calendar', icon: '📅' }
+    { id: 'calendar', label: 'Calendar', icon: '📅' },
+    { id: 'table', label: 'Table', icon: '☰' }
   ];
 
   return (

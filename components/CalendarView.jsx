@@ -15,6 +15,7 @@ import {
   subWeeks
 } from 'date-fns';
 import WeekView from './WeekView';
+import ListView from './ListView';
 
 export default function CalendarView({ contests }) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -113,7 +114,7 @@ export default function CalendarView({ contests }) {
             }} 
             style={styles.navButton}
           >
-            ←
+            ‹
           </button>
           <h2 style={styles.monthTitle}>
             {viewMode === 'week' 
@@ -131,7 +132,7 @@ export default function CalendarView({ contests }) {
             }} 
             style={styles.navButton}
           >
-            →
+            ›
           </button>
         </div>
         <div style={styles.viewToggle}>
@@ -160,9 +161,7 @@ export default function CalendarView({ contests }) {
       {viewMode === 'week' ? (
         <WeekView contests={contests} currentDate={currentDate} />
       ) : viewMode === 'list' ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-          List view coming soon...
-        </div>
+        <ListView contests={contests} currentDate={currentDate} />
       ) : (
         <>
           <div style={styles.weekdays}>

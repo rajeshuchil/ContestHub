@@ -64,9 +64,9 @@ export default function TableView({ contests }) {
   };
 
   const getStatusColor = (status) => {
-    if (status === 'live') return '#4caf50';
-    if (status === 'upcoming') return '#2196f3';
-    return '#999';
+    if (status === 'live') return { bg: '#10b981', text: '#fff' };
+    if (status === 'upcoming') return { bg: '#3b82f6', text: '#fff' };
+    return { bg: '#9ca3af', text: '#fff' };
   };
 
   const SortIcon = ({ column }) => {
@@ -111,9 +111,10 @@ export default function TableView({ contests }) {
                   <td style={styles.td}>
                     <span style={{
                       ...styles.statusBadge,
-                      backgroundColor: getStatusColor(status)
+                      backgroundColor: getStatusColor(status).bg,
+                      color: getStatusColor(status).text
                     }}>
-                      {status === 'live' ? '● LIVE' : status === 'upcoming' ? '◷ Upcoming' : '✓ Ended'}
+                      {status === 'live' ? '● LIVE' : status === 'upcoming' ? '○ Upcoming' : '✓ Ended'}
                     </span>
                   </td>
                   <td style={styles.td}>
@@ -137,7 +138,9 @@ export default function TableView({ contests }) {
                       </div>
                     </div>
                   </td>
-                  <td style={styles.td}>{formatDuration(contest.duration)}</td>
+                  <td style={styles.td}>
+                    <div style={styles.durationCell}>{formatDuration(contest.duration)}</div>
+                  </td>
                   <td style={styles.td}>
                     <a
                       href={contest.url}
@@ -196,38 +199,47 @@ const styles = {
   },
   statusBadge: {
     display: 'inline-block',
-    padding: '4px 12px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#fff',
-    whiteSpace: 'nowrap'
+    padding: '6px 14px',
+    borderRadius: '16px',
+    fontSize: '13px',
+    fontWeight: '700',
+    whiteSpace: 'nowrap',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
   },
   platformBadge: {
     display: 'inline-block',
-    padding: '4px 12px',
+    padding: '6px 14px',
     borderRadius: '6px',
-    fontSize: '12px',
-    fontWeight: '500',
+    fontSize: '13px',
+    fontWeight: '600',
     color: '#fff',
     whiteSpace: 'nowrap'
   },
   contestName: {
     fontWeight: '500',
-    color: '#1a1a1a'
+    color: '#1a1a1a',
+    fontSize: '14px'
   },
   timeCell: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '2px'
+    gap: '4px'
   },
   timeMain: {
-    fontWeight: '500',
-    color: '#1a1a1a'
+    fontWeight: '600',
+    color: '#1a1a1a',
+    fontSize: '14px'
   },
   timeRelative: {
     fontSize: '12px',
-    color: '#666'
+    color: '#6b7280',
+    fontWeight: '500'
+  },
+  durationCell: {
+    fontWeight: '600',
+    color: '#1a1a1a',
+    fontSize: '14px'
   },
   link: {
     color: '#1976d2',

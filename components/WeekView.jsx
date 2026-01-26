@@ -6,8 +6,6 @@ import {
   eachDayOfInterval, 
   format, 
   isSameDay,
-  addHours,
-  differenceInMinutes,
   parseISO
 } from 'date-fns';
 
@@ -437,3 +435,4 @@ const styles = {
     pointerEvents: 'none'
   }
 };
+
