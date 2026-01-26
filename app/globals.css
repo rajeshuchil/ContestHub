@@ -144,3 +144,22 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Contest highlight animation */
+.highlight-contest-base {
+  transition: all 0.2s ease;
+}
+
+.highlight-contest {
+  animation: highlightPulse 0.6s ease-in-out;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.6);
+  }
+}

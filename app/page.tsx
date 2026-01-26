@@ -6,11 +6,13 @@ import CalendarView from "@/components/CalendarView";
 import TableView from "@/components/TableView";
 import ViewSwitcher from "@/components/ViewSwitcher";
 import CalendarControls from "@/components/CalendarControls";
+import ParticipationPanel from "@/components/ParticipationPanel";
 import Footer from "@/components/Footer";
 import PixelSnow from "@/components/PixelSnow";
 import BlurText from "@/components/BlurText";
 import { PRIMARY_PLATFORMS } from "@/lib/platformColors";
 import { AlertTriangle } from "lucide-react";
+import { getParticipatingContests, removeParticipation } from "@/lib/participation";
 import type { Contest } from "@/types";
 
 
@@ -29,6 +31,29 @@ export default function Home() {
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
 
+  const [participatingIds, setParticipatingIds] = useState<string[]>([]);
+
+  // Load participating contests
+  useEffect(() => {
+    setParticipatingIds(getParticipatingContests());
+  }, []);
+
+  const participatingContests = contests.filter((c) =>
+    participatingIds.includes(c.id || c.url)
+  );
+
+  const handleRemoveParticipation = (contestId: string) => {
+    removeParticipation(contestId);
+    // Refresh list immediately
+    setParticipatingIds(getParticipatingContests());
+  };
+
+  const handleAddParticipation = (contestId: string) => {
+    const { addParticipation, getParticipatingContests } = require("@/lib/participation");
+    addParticipation(contestId);
+    // Refresh list immediately
+    setParticipatingIds(getParticipatingContests());
+  };
 
   const handleAnimationComplete = () => {
     // Wait 4 seconds after animation completes, then hide welcome screen
@@ -248,38 +273,75 @@ export default function Home() {
         </div>
       </header>
 
-      {currentView === "calendar" && (
-        <CalendarControls
-          activePlatforms={activePlatforms}
-          onPlatformToggle={handlePlatformToggle}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          darkMode={darkMode}
-        />
-      )}
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentView}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -5 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+      <div className="w-full flex justify-center px-6" style={{ paddingTop: "24px", paddingBottom: "24px" }}>
+        <div
+          className="flex gap-6 transition-all duration-300"
+          style={{ 
+            maxWidth: "1400px",
+            width: "100%",
+            justifyContent: "center"
+          }}
         >
-          {currentView === "calendar" && (
-            <CalendarView
-              contests={filteredContests}
-              activePlatforms={activePlatforms}
-              viewMode={calendarViewMode}
-              onViewChange={setCalendarViewMode}
-              darkMode={darkMode}
-            />
+          {/* Left Panel - Upcoming Contests */}
+          {participatingContests.length > 0 && currentView === "calendar" && (
+            <div className="hidden lg:block flex-shrink-0" style={{ width: "400px" }}>
+              <ParticipationPanel
+                contests={participatingContests}
+                onContestClick={(contest) => {
+                  // Scroll to contest in calendar
+                  const contestElement = document.querySelector(
+                    `[data-contest-id="${contest.id || contest.url}"]`
+                  );
+                  if (contestElement) {
+                    contestElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                    // Highlight briefly
+                    contestElement.classList.add("highlight-contest");
+                    setTimeout(() => {
+                      contestElement.classList.remove("highlight-contest");
+                    }, 2000);
+                  }
+                }}
+                onRemoveParticipation={handleRemoveParticipation}
+                darkMode={darkMode}
+              />
+            </div>
           )}
-          {currentView === "table" && (
-            <TableView contests={filteredContests} darkMode={darkMode} />
-          )}
-        </motion.div>
-      </AnimatePresence>
+
+          {/* Right Panel - Calendar View */}
+          <div className="flex-1 min-w-0 flex justify-center" style={{ 
+            maxWidth: participatingContests.length > 0 && currentView === "calendar" 
+              ? "calc(100% - 424px)" 
+              : "100%"
+          }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="w-full"
+              >
+                {currentView === "calendar" && (
+                  <CalendarView
+                    contests={filteredContests}
+                    activePlatforms={activePlatforms}
+                    viewMode={calendarViewMode}
+                    onViewChange={setCalendarViewMode}
+                    darkMode={darkMode}
+                    participatingIds={participatingIds}
+                    onParticipate={handleAddParticipation}
+                    onRemoveParticipation={handleRemoveParticipation}
+                  />
+                )}
+                {currentView === "table" && (
+                  <TableView contests={filteredContests} darkMode={darkMode} />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
 
       <Footer darkMode={darkMode} />
 
@@ -319,7 +381,7 @@ export default function Home() {
         .header-content {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 24px;
+          padding: 16px 24px;
           display: flex;
           justify-content: space-between;
           align-items: center;

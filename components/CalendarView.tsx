@@ -24,7 +24,8 @@ import {
 } from "date-fns";
 import WeekView from "./WeekView";
 import ListView from "./ListView";
-import { getPlatformColor } from "@/lib/platformColors";
+import ContestTooltip from "./ContestTooltip";
+import { getPlatformColor, getPlatformLogo } from "@/lib/platformColors";
 import { CalendarViewProps, Contest, ContestStatus } from "@/types";
 
 type ViewMode = "month" | "week" | "list";
@@ -35,6 +36,9 @@ interface CalendarViewExtendedProps extends Omit<
 > {
   viewMode?: ViewMode;
   onViewChange?: (mode: ViewMode) => void;
+  participatingIds?: string[];
+  onParticipate?: (contestId: string) => void;
+  onRemoveParticipation?: (contestId: string) => void;
 }
 
 export default function CalendarView({
@@ -43,10 +47,34 @@ export default function CalendarView({
   viewMode = "month",
   onViewChange,
   darkMode = false,
+  participatingIds = [],
+  onParticipate,
+  onRemoveParticipation,
 }: CalendarViewExtendedProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
 
-  // Get current month/year for comparison
+  const handleParticipate = (contestId: string) => {
+    if (onParticipate) {
+      onParticipate(contestId);
+      // Close tooltip after participating
+      setSelectedContest(null);
+      setTooltipAnchor(null);
+    }
+  };
+
+  const handleContestClick = (contest: Contest, event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelectedContest(contest);
+    setTooltipAnchor(event.currentTarget);
+  };
+
+  const handleCloseTooltip = () => {
+    setSelectedContest(null);
+    setTooltipAnchor(null);
+  };
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
@@ -110,76 +138,6 @@ export default function CalendarView({
     return statusMap[status] || statusMap.upcoming;
   };
 
-  // Get platform logo URL - uses CLIST's logo system for accurate platform logos
-  const getPlatformLogo = (platform: string) => {
-    if (!platform) return null;
-
-    const platformLower = platform.toLowerCase().trim();
-
-    // Map platform names to CLIST domain format
-    const logoMap: Record<string, string> = {
-      // Major platforms
-      codeforces: "codeforces.com",
-      leetcode: "leetcode.com",
-      codechef: "codechef.com",
-      atcoder: "atcoder.jp",
-      hackerrank: "hackerrank.com",
-      hackerearth: "hackerearth.com",
-      topcoder: "topcoder.com",
-      google: "codingcompetitions.withgoogle.com",
-      "kick start": "codingcompetitions.withgoogle.com",
-      "code jam": "codingcompetitions.withgoogle.com",
-      kilonova: "kilonova.ro",
-
-      // Chinese platforms
-      nowcoder: "nowcoder.com",
-      牛客: "nowcoder.com",
-      luogu: "luogu.com.cn",
-      洛谷: "luogu.com.cn",
-
-      // Other platforms
-      icpc: "icpc.global",
-      uoj: "uoj.ac",
-      technocup: "technocup.mail.ru",
-      "universal cup": "ucup.ac",
-      robo: "robocontest.uz",
-      robocontest: "robocontest.uz",
-      "beginner contest": "atcoder.jp",
-      "weekly contest": "leetcode.com",
-    };
-
-    // Try exact match first
-    if (logoMap[platformLower]) {
-      return `https://clist.by/images/resources/${logoMap[platformLower]}.ico`;
-    }
-
-    // Try partial match
-    for (const [key, domain] of Object.entries(logoMap)) {
-      if (platformLower.includes(key) || key.includes(platformLower)) {
-        return `https://clist.by/images/resources/${domain}.ico`;
-      }
-    }
-
-    // Try to extract domain from platform name if it contains a domain
-    const domainMatch = platform.match(
-      /([a-z0-9-]+\.(com|org|net|io|jp|ro|cn|by|ac|ru|uz|global))/i,
-    );
-    if (domainMatch) {
-      return `https://clist.by/images/resources/${domainMatch[1].toLowerCase()}.ico`;
-    }
-
-    // Fallback: try to construct URL from platform name
-    const sanitized = platformLower
-      .replace(/\s+/g, "")
-      .replace(/[^a-z0-9.-]/g, "");
-    if (sanitized && sanitized.length > 2) {
-      return `https://clist.by/images/resources/${sanitized}.ico`;
-    }
-
-    // Final fallback: use Google favicon service
-    return `https://www.google.com/s2/favicons?domain=${platformLower.replace(/\s+/g, "")}.com&sz=32`;
-  };
-
   // Get dynamic styles based on dark mode
   const getStyles = () => {
     if (darkMode) {
@@ -188,7 +146,7 @@ export default function CalendarView({
           ...styles.container,
           backgroundColor: "#1e2430",
           boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          marginTop: "12px",
+          marginTop: "0",
         },
         monthTitle: { ...styles.monthTitle, color: "#f3f4f6" },
         navButton: {
@@ -390,21 +348,32 @@ export default function CalendarView({
                       const statusIndicator = getStatusIndicator(
                         contest.status,
                       );
+                      const contestId = contest.id || contest.url;
+                      const isUserParticipating = participatingIds.includes(contestId);
 
                       return (
-                        <a
+                        <div
                           key={cIdx}
-                          href={contest.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-transform duration-200 hover:scale-[1.02] hover:shadow-sm"
+                          data-contest-id={contestId}
+                          onClick={(e) => handleContestClick(contest, e)}
+                          className="transition-all duration-200 hover:scale-[1.02] hover:shadow-sm cursor-pointer highlight-contest-base"
                           style={{
                             ...styles.contestPill,
                             backgroundColor: platformColors.bg,
                             color: platformColors.text,
                             borderLeft: `4px solid ${statusIndicator.color}`,
+                            // Highlight participating contests
+                            ...(isUserParticipating ? {
+                              boxShadow: darkMode 
+                                ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
+                                : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
+                              borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
+                              backgroundColor: darkMode
+                                ? `${platformColors.bg}dd`
+                                : `${platformColors.bg}ff`,
+                            } : {}),
                           }}
-                          title={`${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}`}
+                          title={`${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`}
                         >
                           <span
                             style={{
@@ -443,7 +412,14 @@ export default function CalendarView({
                             {String(minutes).padStart(2, "0")}
                           </span>
                           <span style={styles.contestName}>{contest.name}</span>
-                        </a>
+                          {isUserParticipating && (
+                            <span style={{ 
+                              marginLeft: "4px",
+                              fontSize: "10px",
+                              opacity: 0.9
+                            }}>✓</span>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -453,6 +429,24 @@ export default function CalendarView({
           </div>
         </>
       )}
+
+      {/* Contest Tooltip */}
+      {selectedContest && tooltipAnchor && (
+        <ContestTooltip
+          contest={selectedContest}
+          onClose={handleCloseTooltip}
+          onParticipate={handleParticipate}
+          onRemoveParticipation={(contestId) => {
+            if (onRemoveParticipation) {
+              onRemoveParticipation(contestId);
+            }
+            handleCloseTooltip();
+          }}
+          isParticipating={participatingIds.includes(selectedContest.id || selectedContest.url)}
+          darkMode={darkMode}
+          anchorElement={tooltipAnchor}
+        />
+      )}
     </div>
   );
 }
@@ -460,11 +454,11 @@ export default function CalendarView({
 const styles = {
   container: {
     width: "100%",
+    maxWidth: "100%",
     backgroundColor: "#fff",
-    borderRadius: "4px",
-    padding: "16px",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-    maxWidth: "1400px",
+    borderRadius: "8px",
+    padding: "20px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
     marginTop: "0",
     marginRight: "auto",
     marginBottom: "0",
