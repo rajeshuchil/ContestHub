@@ -7,12 +7,16 @@ import TableView from "@/components/TableView";
 import ViewSwitcher from "@/components/ViewSwitcher";
 import CalendarControls from "@/components/CalendarControls";
 import Footer from "@/components/Footer";
+import PixelSnow from "@/components/PixelSnow";
+import BlurText from "@/components/BlurText";
 import { PRIMARY_PLATFORMS } from "@/lib/platformColors";
 import type { Contest } from "@/types";
+
 
 export default function Home() {
   const [contests, setContests] = useState<Contest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showWelcome, setShowWelcome] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<"calendar" | "table">(
     "calendar",
@@ -23,6 +27,14 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+
+
+  const handleAnimationComplete = () => {
+    // Wait 4 seconds after animation completes, then hide welcome screen
+    setTimeout(() => {
+      setShowWelcome(false);
+    }, 4000);
+  };
 
   const handlePlatformToggle = (platformId: string): void => {
     setActivePlatforms((prev) => {
@@ -60,37 +72,88 @@ export default function Home() {
     return matchesSearch;
   });
 
-  if (loading) {
+  if (loading || showWelcome) {
     return (
-      <div className="loading-container">
-        <div className="loader" />
-        <p className="loading-text">Loading contests...</p>
+      <div className="loading-container" data-theme={darkMode ? "dark" : "light"}>
+        <PixelSnow
+          color={darkMode ? "#e5e7eb" : "#3b82f6"}
+          flakeSize={0.01}
+          minFlakeSize={1.25}
+          pixelResolution={200}
+          speed={1.25}
+          density={0.3}
+          direction={125}
+          brightness={1}
+          depthFade={8}
+          farPlane={20}
+          gamma={0.4545}
+          variant="snowflake"
+        />
+        <div className="loading-content">
+          <BlurText
+            text="Welcome to ContestHub"
+            delay={150}
+            animateBy="words"
+            direction="top"
+            className="loading-title"
+          />
+          <BlurText
+            text="Discover coding contests from around the world"
+            delay={100}
+            animateBy="words"
+            direction="bottom"
+            className="loading-subtitle"
+            onAnimationComplete={handleAnimationComplete}
+          />
+        </div>
         <style jsx>{`
           .loading-container {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: #f9fafb;
+            background: #F7F3E8;
+            overflow: hidden;
           }
-          .loader {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #e5e7eb;
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+          .loading-container[data-theme="dark"] {
+            background: #0f1115;
           }
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
+          .loading-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 0 24px;
+          }
+          .loading-content :global(.loading-title) {
+            font-size: 64px;
+            font-weight: 900;
+            color: #000000;
+            margin: 0 0 32px 0;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+          }
+          .loading-container[data-theme="dark"] .loading-content :global(.loading-title) {
+            color: #ffffff;
+          }
+          .loading-content :global(.loading-subtitle) {
+            font-size: 24px;
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+            line-height: 1.4;
+          }
+          .loading-container[data-theme="dark"] .loading-content :global(.loading-subtitle) {
+            color: #d1d5db;
+          }
+          @media (max-width: 768px) {
+            .loading-content :global(.loading-title) {
+              font-size: 40px;
             }
-          }
-          .loading-text {
-            margin-top: 16px;
-            font-size: 16px;
-            color: #6b7280;
+            .loading-content :global(.loading-subtitle) {
+              font-size: 18px;
+            }
           }
         `}</style>
       </div>
@@ -163,11 +226,15 @@ export default function Home() {
           >
             <img
               src={
-                darkMode ? "/contesthub-logo-dark.svg" : "/contesthub-logo.svg"
+                darkMode ? "/contesthub-icon-dark.svg" : "/contesthub-icon.svg"
               }
               alt="ContestHub"
-              className="logo-image"
+              className="logo-icon"
             />
+            <h1 className="app-title">
+              <span className="contest-text">Contest</span>
+              <span className="hub-text">Hub</span>
+            </h1>
           </div>
           <ViewSwitcher
             currentView={currentView}
@@ -228,7 +295,6 @@ export default function Home() {
           background: #0f1115;
           color: #e5e7eb;
         }
-
         .app-header {
           background: #f7f3e8;
           border-bottom: 1px solid #e5e7eb;
@@ -256,10 +322,18 @@ export default function Home() {
           align-items: center;
         }
 
+
         .logo-section {
           display: flex;
           align-items: center;
+          gap: 12px;
           margin-left: -100px;
+        }
+
+        .logo-icon {
+          height: 40px;
+          width: 40px;
+          object-fit: contain;
         }
 
         .logo-image {
@@ -278,19 +352,24 @@ export default function Home() {
           gap: 8px;
         }
 
+        .app-container[data-theme="dark"] .contest-text {
+          color: #e5e7eb;
+        }
+
+        .app-container[data-theme="dark"] .hub-text {
+          color: #e5e7eb;
+        }
+
         .trophy-icon {
           font-size: 32px;
         }
 
         .contest-text {
-          color: #ffffff;
+          color: #111827;
         }
 
         .hub-text {
-          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #111827;
         }
 
         .app-subtitle {

@@ -38,6 +38,27 @@ export default function CalendarView({
 }: CalendarViewExtendedProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Get current month/year for comparison
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  // Check if viewing current month
+  const viewingMonth = currentDate.getMonth();
+  const viewingYear = currentDate.getFullYear();
+  const isCurrentMonth =
+    viewingYear === currentYear && viewingMonth === currentMonth;
+
+  // Check if navigation would go before current month
+  const isBeforeCurrentMonth = (date: Date) => {
+    const checkYear = date.getFullYear();
+    const checkMonth = date.getMonth();
+    return (
+      checkYear < currentYear ||
+      (checkYear === currentYear && checkMonth < currentMonth)
+    );
+  };
+
   // Filter contests by active platforms
   const filteredContests = useMemo(() => {
     if (activePlatforms.length === 0) return contests;
@@ -228,13 +249,23 @@ export default function CalendarView({
         <div style={styles.headerLeft}>
           <button
             onClick={() => {
+              let newDate: Date;
               if (viewMode === "week") {
-                setCurrentDate(subWeeks(currentDate, 1));
+                newDate = subWeeks(currentDate, 1);
               } else {
-                setCurrentDate(subMonths(currentDate, 1));
+                newDate = subMonths(currentDate, 1);
+              }
+              // Block navigation to past months
+              if (!isBeforeCurrentMonth(newDate)) {
+                setCurrentDate(newDate);
               }
             }}
-            style={dynamicStyles.navButton}
+            style={{
+              ...dynamicStyles.navButton,
+              opacity: isCurrentMonth ? 0.4 : 1,
+              cursor: isCurrentMonth ? "not-allowed" : "pointer",
+            }}
+            disabled={isCurrentMonth}
           >
             ‹
           </button>
