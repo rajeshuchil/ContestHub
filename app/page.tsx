@@ -7,14 +7,17 @@ import TableView from "@/components/TableView";
 import ViewSwitcher from "@/components/ViewSwitcher";
 import CalendarControls from "@/components/CalendarControls";
 import ParticipationPanel from "@/components/ParticipationPanel";
+import ContestStats from "@/components/ContestStats";
 import Footer from "@/components/Footer";
 import PixelSnow from "@/components/PixelSnow";
 import BlurText from "@/components/BlurText";
 import { PRIMARY_PLATFORMS } from "@/lib/platformColors";
 import { AlertTriangle } from "lucide-react";
-import { getParticipatingContests, removeParticipation } from "@/lib/participation";
+import {
+  getParticipatingContests,
+  removeParticipation,
+} from "@/lib/participation";
 import type { Contest } from "@/types";
-
 
 export default function Home() {
   const [contests, setContests] = useState<Contest[]>([]);
@@ -39,7 +42,7 @@ export default function Home() {
   }, []);
 
   const participatingContests = contests.filter((c) =>
-    participatingIds.includes(c.id || c.url)
+    participatingIds.includes(c.id || c.url),
   );
 
   const handleRemoveParticipation = (contestId: string) => {
@@ -49,7 +52,10 @@ export default function Home() {
   };
 
   const handleAddParticipation = (contestId: string) => {
-    const { addParticipation, getParticipatingContests } = require("@/lib/participation");
+    const {
+      addParticipation,
+      getParticipatingContests,
+    } = require("@/lib/participation");
     addParticipation(contestId);
     // Refresh list immediately
     setParticipatingIds(getParticipatingContests());
@@ -100,7 +106,10 @@ export default function Home() {
 
   if (loading || showWelcome) {
     return (
-      <div className="loading-container" data-theme={darkMode ? "dark" : "light"}>
+      <div
+        className="loading-container"
+        data-theme={darkMode ? "dark" : "light"}
+      >
         <PixelSnow
           color={darkMode ? "#e5e7eb" : "#3b82f6"}
           flakeSize={0.01}
@@ -140,7 +149,7 @@ export default function Home() {
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: #F7F3E8;
+            background: #f7f3e8;
             overflow: hidden;
           }
           .loading-container[data-theme="dark"] {
@@ -160,7 +169,9 @@ export default function Home() {
             line-height: 1.1;
             letter-spacing: -0.02em;
           }
-          .loading-container[data-theme="dark"] .loading-content :global(.loading-title) {
+          .loading-container[data-theme="dark"]
+            .loading-content
+            :global(.loading-title) {
             color: #ffffff;
           }
           .loading-content :global(.loading-subtitle) {
@@ -170,7 +181,9 @@ export default function Home() {
             margin: 0;
             line-height: 1.4;
           }
-          .loading-container[data-theme="dark"] .loading-content :global(.loading-subtitle) {
+          .loading-container[data-theme="dark"]
+            .loading-content
+            :global(.loading-subtitle) {
             color: #d1d5db;
           }
           @media (max-width: 768px) {
@@ -273,27 +286,36 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="w-full flex justify-center px-6" style={{ paddingTop: "24px", paddingBottom: "24px" }}>
+      <div
+        className="w-full flex justify-center px-6"
+        style={{ paddingTop: "24px", paddingBottom: "24px" }}
+      >
         <div
           className="flex gap-6 transition-all duration-300"
-          style={{ 
+          style={{
             maxWidth: "1400px",
             width: "100%",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
         >
           {/* Left Panel - Upcoming Contests */}
           {participatingContests.length > 0 && currentView === "calendar" && (
-            <div className="hidden lg:block flex-shrink-0" style={{ width: "400px" }}>
+            <div
+              className="hidden lg:block flex-shrink-0"
+              style={{ width: "400px" }}
+            >
               <ParticipationPanel
                 contests={participatingContests}
                 onContestClick={(contest) => {
                   // Scroll to contest in calendar
                   const contestElement = document.querySelector(
-                    `[data-contest-id="${contest.id || contest.url}"]`
+                    `[data-contest-id="${contest.id || contest.url}"]`,
                   );
                   if (contestElement) {
-                    contestElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                    contestElement.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
                     // Highlight briefly
                     contestElement.classList.add("highlight-contest");
                     setTimeout(() => {
@@ -308,11 +330,15 @@ export default function Home() {
           )}
 
           {/* Right Panel - Calendar View */}
-          <div className="flex-1 min-w-0 flex justify-center" style={{ 
-            maxWidth: participatingContests.length > 0 && currentView === "calendar" 
-              ? "calc(100% - 424px)" 
-              : "100%"
-          }}>
+          <div
+            className="flex-1 min-w-0 flex justify-center"
+            style={{
+              maxWidth:
+                participatingContests.length > 0 && currentView === "calendar"
+                  ? "calc(100% - 424px)"
+                  : "100%",
+            }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentView}
@@ -342,6 +368,15 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Full-Width Stats Section */}
+      {currentView === "calendar" && (
+        <ContestStats
+          contests={filteredContests}
+          participatingIds={participatingIds}
+          darkMode={darkMode}
+        />
+      )}
 
       <Footer darkMode={darkMode} />
 
@@ -386,7 +421,6 @@ export default function Home() {
           justify-content: space-between;
           align-items: center;
         }
-
 
         .logo-section {
           display: flex;

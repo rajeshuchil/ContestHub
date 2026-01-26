@@ -64,7 +64,10 @@ export default function CalendarView({
     }
   };
 
-  const handleContestClick = (contest: Contest, event: React.MouseEvent<HTMLElement>) => {
+  const handleContestClick = (
+    contest: Contest,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     setSelectedContest(contest);
@@ -226,10 +229,11 @@ export default function CalendarView({
                 setCurrentDate(newDate);
               }
             }}
-            className={`transition-all duration-200 ${isCurrentMonth
-              ? "opacity-40 cursor-not-allowed"
-              : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
-              }`}
+            className={`transition-all duration-200 ${
+              isCurrentMonth
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+            }`}
             style={{
               ...dynamicStyles.navButton,
               // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
@@ -261,8 +265,16 @@ export default function CalendarView({
         {onViewChange && (
           <div style={dynamicStyles.viewToggle}>
             {[
-              { id: "month" as const, label: "Month", icon: <Calendar size={14} /> },
-              { id: "week" as const, label: "Week", icon: <CalendarDays size={14} /> },
+              {
+                id: "month" as const,
+                label: "Month",
+                icon: <Calendar size={14} />,
+              },
+              {
+                id: "week" as const,
+                label: "Week",
+                icon: <CalendarDays size={14} />,
+              },
               { id: "list" as const, label: "List", icon: <List size={14} /> },
             ].map((view) => (
               <button
@@ -277,7 +289,9 @@ export default function CalendarView({
                 }}
                 title={`Switch to ${view.label} view`}
               >
-                <span className="flex items-center justify-center">{view.icon}</span>
+                <span className="flex items-center justify-center">
+                  {view.icon}
+                </span>
                 <span>{view.label}</span>
               </button>
             ))}
@@ -349,7 +363,8 @@ export default function CalendarView({
                         contest.status,
                       );
                       const contestId = contest.id || contest.url;
-                      const isUserParticipating = participatingIds.includes(contestId);
+                      const isUserParticipating =
+                        participatingIds.includes(contestId);
 
                       return (
                         <div
@@ -363,15 +378,17 @@ export default function CalendarView({
                             color: platformColors.text,
                             borderLeft: `4px solid ${statusIndicator.color}`,
                             // Highlight participating contests
-                            ...(isUserParticipating ? {
-                              boxShadow: darkMode 
-                                ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
-                                : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
-                              borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
-                              backgroundColor: darkMode
-                                ? `${platformColors.bg}dd`
-                                : `${platformColors.bg}ff`,
-                            } : {}),
+                            ...(isUserParticipating
+                              ? {
+                                  boxShadow: darkMode
+                                    ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
+                                    : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
+                                  borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
+                                  backgroundColor: darkMode
+                                    ? `${platformColors.bg}dd`
+                                    : `${platformColors.bg}ff`,
+                                }
+                              : {}),
                           }}
                           title={`${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`}
                         >
@@ -413,11 +430,15 @@ export default function CalendarView({
                           </span>
                           <span style={styles.contestName}>{contest.name}</span>
                           {isUserParticipating && (
-                            <span style={{ 
-                              marginLeft: "4px",
-                              fontSize: "10px",
-                              opacity: 0.9
-                            }}>✓</span>
+                            <span
+                              style={{
+                                marginLeft: "4px",
+                                fontSize: "10px",
+                                opacity: 0.9,
+                              }}
+                            >
+                              ✓
+                            </span>
                           )}
                         </div>
                       );
@@ -442,7 +463,9 @@ export default function CalendarView({
             }
             handleCloseTooltip();
           }}
-          isParticipating={participatingIds.includes(selectedContest.id || selectedContest.url)}
+          isParticipating={participatingIds.includes(
+            selectedContest.id || selectedContest.url,
+          )}
           darkMode={darkMode}
           anchorElement={tooltipAnchor}
         />
