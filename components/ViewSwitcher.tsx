@@ -10,7 +10,11 @@ export default function ViewSwitcher({
   onToggleDarkMode,
 }: ViewSwitcherProps) {
   const views = [
-    { id: "calendar" as const, label: "Calendar", icon: <Calendar size={18} /> },
+    {
+      id: "calendar" as const,
+      label: "Calendar",
+      icon: <Calendar size={18} />,
+    },
     { id: "table" as const, label: "Table", icon: <Table size={18} /> },
   ];
 
@@ -61,7 +65,7 @@ export default function ViewSwitcher({
     },
     activeButton: {
       backgroundColor: darkMode ? "#1e2430" : "#fff",
-      color: darkMode ? "#60a5fa" : "#1976d2",
+      color: darkMode ? "#60a5fa" : "#000000",
       boxShadow: darkMode
         ? "0 2px 4px rgba(0,0,0,0.3)"
         : "0 2px 4px rgba(0,0,0,0.1)",

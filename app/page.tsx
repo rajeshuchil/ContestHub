@@ -8,6 +8,7 @@ import ViewSwitcher from "@/components/ViewSwitcher";
 import CalendarControls from "@/components/CalendarControls";
 import ParticipationPanel from "@/components/ParticipationPanel";
 import ContestStats from "@/components/ContestStats";
+import FilterBar from "@/components/FilterBar";
 import Footer from "@/components/Footer";
 import PixelSnow from "@/components/PixelSnow";
 import BlurText from "@/components/BlurText";
@@ -101,8 +102,18 @@ export default function Home() {
     const matchesSearch =
       contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       contest.platform.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+
+    const matchesPlatform =
+      activePlatforms.length === 0 ||
+      activePlatforms.includes(contest.platform);
+
+    return matchesSearch && matchesPlatform;
   });
+
+  // Get unique platforms from contests
+  const availablePlatforms = Array.from(
+    new Set(contests.map((c) => c.platform)),
+  ).sort();
 
   if (loading || showWelcome) {
     return (
@@ -286,9 +297,25 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Filter Bar */}
+      <FilterBar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedPlatforms={activePlatforms}
+        onPlatformToggle={handlePlatformToggle}
+        availablePlatforms={availablePlatforms}
+        darkMode={darkMode}
+      />
+
+      {/* Main Content Container */}
       <div
-        className="w-full flex justify-center px-6"
-        style={{ paddingTop: "24px", paddingBottom: "24px" }}
+        className="w-full flex justify-center"
+        style={{
+          paddingTop: "0px",
+          paddingBottom: "32px",
+          paddingLeft: "24px",
+          paddingRight: "24px",
+        }}
       >
         <div
           className="flex gap-6 transition-all duration-300"
@@ -396,9 +423,9 @@ export default function Home() {
           color: #e5e7eb;
         }
         .app-header {
-          background: #f7f3e8;
+          background: #ffffff;
           border-bottom: 1px solid #e5e7eb;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
           position: sticky;
           top: 0;
           z-index: 10;
@@ -414,7 +441,7 @@ export default function Home() {
         }
 
         .header-content {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 16px 24px;
           display: flex;
