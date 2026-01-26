@@ -183,8 +183,9 @@ export default function CalendarView({
         weekdays: {
           ...styles.weekdays,
           backgroundColor: "#252b3a",
-          border: "1px solid #3a4150",
-          borderBottom: "none",
+          borderTop: "1px solid #3a4150",
+          borderLeft: "1px solid #3a4150",
+          borderRight: "1px solid #3a4150",
         },
         weekday: {
           ...styles.weekday,
@@ -416,7 +417,10 @@ const styles = {
     padding: "16px",
     boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
     maxWidth: "1400px",
-    margin: "0 auto",
+    marginTop: "0",
+    marginRight: "auto",
+    marginBottom: "0",
+    marginLeft: "auto",
   },
   header: {
     display: "flex",
@@ -486,8 +490,9 @@ const styles = {
     gap: "0",
     marginBottom: "0",
     backgroundColor: "#f5f5f5",
-    border: "1px solid #d0d0d0",
-    borderBottom: "none",
+    borderTop: "1px solid #d0d0d0",
+    borderLeft: "1px solid #d0d0d0",
+    borderRight: "1px solid #d0d0d0",
   },
   weekday: {
     textAlign: "center" as const,

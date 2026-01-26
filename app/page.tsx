@@ -20,6 +20,7 @@ export default function Home() {
   const [calendarViewMode, setCalendarViewMode] = useState<
     "month" | "week" | "list"
   >("month");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
 
@@ -51,6 +52,13 @@ export default function Home() {
 
     fetchContests();
   }, []);
+
+  const filteredContests = contests.filter((contest) => {
+    const matchesSearch =
+      contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contest.platform.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
 
   if (loading) {
     return (
@@ -148,7 +156,11 @@ export default function Home() {
     <main className="app-container" data-theme={darkMode ? "dark" : "light"}>
       <header className="app-header">
         <div className="header-content">
-          <div className="logo-section">
+          <div
+            className="logo-section"
+            onClick={() => setCurrentView("calendar")}
+            style={{ cursor: "pointer" }}
+          >
             <img
               src={
                 darkMode ? "/contesthub-logo-dark.svg" : "/contesthub-logo.svg"
@@ -170,6 +182,8 @@ export default function Home() {
         <CalendarControls
           activePlatforms={activePlatforms}
           onPlatformToggle={handlePlatformToggle}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           darkMode={darkMode}
         />
       )}
@@ -184,7 +198,7 @@ export default function Home() {
         >
           {currentView === "calendar" && (
             <CalendarView
-              contests={contests}
+              contests={filteredContests}
               activePlatforms={activePlatforms}
               viewMode={calendarViewMode}
               onViewChange={setCalendarViewMode}
@@ -192,7 +206,7 @@ export default function Home() {
             />
           )}
           {currentView === "table" && (
-            <TableView contests={contests} darkMode={darkMode} />
+            <TableView contests={filteredContests} darkMode={darkMode} />
           )}
         </motion.div>
       </AnimatePresence>
@@ -204,7 +218,7 @@ export default function Home() {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
-          background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+          background: #f7f3e8;
           transition:
             background 0.3s ease,
             color 0.3s ease;
@@ -216,7 +230,7 @@ export default function Home() {
         }
 
         .app-header {
-          background: white;
+          background: #f7f3e8;
           border-bottom: 1px solid #e5e7eb;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
           position: sticky;

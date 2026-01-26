@@ -7,10 +7,10 @@ import { PlatformName } from './platform';
 export interface ViewProps {
   /** Array of contests to display */
   contests: Contest[];
-  
+
   /** Current date for calendar navigation */
   currentDate: Date;
-  
+
   /** Dark mode enabled */
   darkMode?: boolean;
 }
@@ -21,10 +21,10 @@ export interface ViewProps {
 export interface CalendarViewProps extends ViewProps {
   /** Callback when navigating to previous month */
   onPrevMonth: () => void;
-  
+
   /** Callback when navigating to next month */
   onNextMonth: () => void;
-  
+
   /** Currently active/filtered platforms */
   activePlatforms: PlatformName[];
 }
@@ -35,7 +35,7 @@ export interface CalendarViewProps extends ViewProps {
 export interface TableViewProps {
   /** Array of contests to display */
   contests: Contest[];
-  
+
   /** Dark mode enabled */
   darkMode?: boolean;
 }
@@ -46,13 +46,13 @@ export interface TableViewProps {
 export interface ViewSwitcherProps {
   /** Current active view */
   currentView: 'calendar' | 'table';
-  
+
   /** Callback when view changes */
   onViewChange: (view: 'calendar' | 'table') => void;
-  
+
   /** Dark mode enabled */
   darkMode: boolean;
-  
+
   /** Callback to toggle dark mode */
   onToggleDarkMode: () => void;
 }
@@ -71,10 +71,16 @@ export interface FooterProps {
 export interface CalendarControlsProps {
   /** Currently active platforms */
   activePlatforms: PlatformName[];
-  
+
   /** Callback when platform is toggled */
   onPlatformToggle: (platform: PlatformName) => void;
-  
+
+  /** Search query for filtering contests */
+  searchQuery: string;
+
+  /** Callback when search query changes */
+  onSearchChange: (query: string) => void;
+
   /** Dark mode enabled */
   darkMode?: boolean;
 }
@@ -85,10 +91,10 @@ export interface CalendarControlsProps {
 export interface PlatformFilterProps {
   /** Currently active platforms */
   activePlatforms: PlatformName[];
-  
+
   /** Callback when platform is toggled */
   onToggle: (platform: PlatformName) => void;
-  
+
   /** Dark mode enabled */
   darkMode?: boolean;
 }
@@ -107,10 +113,10 @@ export interface ColorLegendProps {
 export interface StatusIndicator {
   /** Color for the status */
   color: string;
-  
+
   /** Label/symbol for the status */
   label: string;
-  
+
   /** Optional title for tooltip */
   title?: string;
 }
@@ -121,7 +127,7 @@ export interface StatusIndicator {
 export interface StatusColors {
   /** Dot color */
   dot: string;
-  
+
   /** Text color */
   text: string;
 }
@@ -132,7 +138,7 @@ export interface StatusColors {
 export interface SortConfig {
   /** Key to sort by */
   key: string;
-  
+
   /** Sort direction */
   direction: 'asc' | 'desc';
 }
