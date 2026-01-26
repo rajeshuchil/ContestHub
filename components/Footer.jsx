@@ -1,40 +1,61 @@
 'use client';
 
-export default function Footer() {
+export default function Footer({ darkMode = false }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer style={styles.footer}>
+    <footer style={{
+      ...styles.footer,
+      ...(darkMode ? styles.footerDark : {})
+    }}>
       <div style={styles.container}>
         <div style={styles.leftSection}>
-          <span style={styles.copyright}>© {currentYear} </span>
+          <span style={{
+            ...styles.copyright,
+            ...(darkMode ? { color: '#9ca3af' } : {})
+          }}>© {currentYear} </span>
           <a 
             href="https://github.com/rajeshuchil/ContestHub" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={styles.brandLink}
+            style={{
+              ...styles.brandLink,
+              ...(darkMode ? { color: '#e6e6e6' } : {})
+            }}
           >
             ContestHub
           </a>
-          <span style={styles.by}> By </span>
+          <span style={{
+            ...styles.by,
+            ...(darkMode ? { color: '#9ca3af' } : {})
+          }}> By </span>
           <a 
             href="https://github.com/rajeshuchil" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={styles.authorLink}
+            style={{
+              ...styles.authorLink,
+              ...(darkMode ? { color: '#60a5fa' } : {})
+            }}
           >
             Rajesh
           </a>
         </div>
 
-        <div style={styles.subtitle}>
+        <div style={{
+          ...styles.subtitle,
+          ...(darkMode ? { color: '#9ca3af' } : {})
+        }}>
           Your <strong>coding contests</strong> tracker across all platforms
         </div>
 
         <div style={styles.rightSection}>
           <a 
             href="mailto:contact@contesthub.com" 
-            style={styles.contactLink}
+            style={{
+              ...styles.contactLink,
+              ...(darkMode ? { color: '#9ca3af' } : {})
+            }}
           >
             Contact Me
           </a>
@@ -42,7 +63,10 @@ export default function Footer() {
             href="https://github.com/rajeshuchil/ContestHub" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={styles.iconLink}
+            style={{
+              ...styles.iconLink,
+              ...(darkMode ? { color: '#9ca3af' } : {})
+            }}
             aria-label="GitHub"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -53,7 +77,10 @@ export default function Footer() {
             href="https://twitter.com/rajeshuchil" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={styles.iconLink}
+            style={{
+              ...styles.iconLink,
+              ...(darkMode ? { color: '#9ca3af' } : {})
+            }}
             aria-label="Twitter"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -72,7 +99,13 @@ const styles = {
     color: '#6b7280',
     padding: '24px 0',
     marginTop: 'auto',
-    borderTop: '1px solid #e5e7eb'
+    borderTop: '1px solid #e5e7eb',
+    transition: 'background-color 0.3s ease, border-color 0.3s ease'
+  },
+  footerDark: {
+    backgroundColor: '#161a22',
+    borderTop: '1px solid #2a2f3a',
+    color: '#9ca3af'
   },
   container: {
     maxWidth: '1400px',

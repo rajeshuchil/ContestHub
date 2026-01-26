@@ -1,0 +1,20 @@
+<svg width="340" height="60" viewBox="0 0 340 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Trophy Icon -->
+  <g transform="translate(5, 5)">
+    <!-- Base/Stand -->
+    <rect x="15" y="42" width="20" height="8" rx="2" fill="#3B82F6"/>
+    <!-- Cup Base -->
+    <path d="M 12 35 L 38 35 L 35 42 L 15 42 Z" fill="#1E40AF"/>
+    <!-- Main Cup -->
+    <ellipse cx="25" cy="20" rx="18" ry="20" fill="#3B82F6"/>
+    <ellipse cx="25" cy="18" rx="14" ry="16" fill="#60A5FA"/>
+    <!-- Highlight -->
+    <ellipse cx="22" cy="15" rx="6" ry="8" fill="white" opacity="0.3"/>
+    <!-- Arrow/Flag -->
+    <path d="M 28 8 L 38 8 L 42 3 L 32 3 Z" fill="#F59E0B"/>
+  </g>
+  <!-- CONTESTHUB text -->
+  <text x="65" y="42" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="900" letter-spacing="-0.5">
+    <tspan fill="#3B82F6">CONTEST</tspan><tspan fill="#3B82F6">HUB</tspan>
+  </text>
+</svg>

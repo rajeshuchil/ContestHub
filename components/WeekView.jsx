@@ -9,7 +9,9 @@ import {
   parseISO
 } from 'date-fns';
 
-export default function WeekView({ contests, currentDate }) {
+export default function WeekView({ contests, currentDate, darkMode = false }) {
+  const styles = getStyles(darkMode);
+  
   // Get week days (Monday to Sunday)
   const weekDays = useMemo(() => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -54,20 +56,9 @@ export default function WeekView({ contests, currentDate }) {
 
   // Platform color mapping
   const getPlatformColor = (platform) => {
-    const colorMap = {
-      'Codeforces': { bg: '#fee2e2', text: '#991b1b', border: '#ef4444' },
-      'LeetCode': { bg: '#fed7aa', text: '#9a3412', border: '#f97316' },
-      'CodeChef': { bg: '#fef3c7', text: '#92400e', border: '#f59e0b' },
-      'AtCoder': { bg: '#d1fae5', text: '#065f46', border: '#10b981' },
-      'HackerRank': { bg: '#ccfbf1', text: '#115e59', border: '#14b8a6' },
-      'HackerEarth': { bg: '#ddd6fe', text: '#5b21b6', border: '#8b5cf6' },
-      'TopCoder': { bg: '#bfdbfe', text: '#1e40af', border: '#3b82f6' },
-      'Google': { bg: '#bfdbfe', text: '#1e3a8a', border: '#3b82f6' },
-      'Kick Start': { bg: '#bfdbfe', text: '#1e3a8a', border: '#3b82f6' },
-      'Code Jam': { bg: '#bfdbfe', text: '#1e3a8a', border: '#3b82f6' },
-      'Kilonova': { bg: '#fce7f3', text: '#9f1239', border: '#ec4899' },
-    };
-    return colorMap[platform] || { bg: '#f3f4f6', text: '#374151', border: '#9ca3af' };
+    // Import from shared colors - use the imported function from CalendarView's approach
+    const { getPlatformColor: getColor } = require('@/lib/platformColors');
+    return getColor(platform, darkMode);
   };
 
   // Status indicator
@@ -257,21 +248,22 @@ export default function WeekView({ contests, currentDate }) {
   );
 }
 
-const styles = {
+const getStyles = (darkMode) => ({
   container: {
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: darkMode ? '#1e2430' : '#fff',
     borderRadius: '4px',
     overflow: 'auto',
     maxHeight: 'calc(100vh - 200px)',
-    border: '1px solid #e0e0e0'
+    border: darkMode ? '1px solid #3a4150' : '1px solid #e0e0e0',
+    marginTop: '12px'
   },
   allDaySection: {
-    borderBottom: '2px solid #e0e0e0',
+    borderBottom: darkMode ? '2px solid #3a4150' : '2px solid #e0e0e0',
     display: 'flex',
     position: 'sticky',
     top: 0,
-    backgroundColor: '#fff',
+    backgroundColor: darkMode ? '#1e2430' : '#fff',
     zIndex: 100
   },
   allDayLabel: {
@@ -279,9 +271,9 @@ const styles = {
     padding: '8px',
     fontSize: '11px',
     fontWeight: '600',
-    color: '#666',
-    borderRight: '1px solid #e0e0e0',
-    backgroundColor: '#f9f9f9',
+    color: darkMode ? '#9ca3af' : '#666',
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e0e0e0',
+    backgroundColor: darkMode ? '#252b3a' : '#f9f9f9',
     textAlign: 'right',
     flexShrink: 0
   },
@@ -293,7 +285,7 @@ const styles = {
   },
   allDayCell: {
     padding: '4px',
-    borderRight: '1px solid #e8e8e8',
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e8e8e8',
     minHeight: '40px',
     display: 'flex',
     flexDirection: 'column',
@@ -318,37 +310,37 @@ const styles = {
     display: 'flex',
     position: 'sticky',
     top: 0,
-    backgroundColor: '#fff',
+    backgroundColor: darkMode ? '#1e2430' : '#fff',
     zIndex: 90,
-    borderBottom: '2px solid #d0d0d0'
+    borderBottom: darkMode ? '2px solid #3a4150' : '2px solid #d0d0d0'
   },
   timeColumn: {
     width: '60px',
     flexShrink: 0,
-    borderRight: '1px solid #e0e0e0',
-    backgroundColor: '#f9f9f9'
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e0e0e0',
+    backgroundColor: darkMode ? '#252b3a' : '#f9f9f9'
   },
   dayHeader: {
     flex: 1,
     textAlign: 'center',
     padding: '8px 4px',
-    borderRight: '1px solid #e8e8e8',
-    backgroundColor: '#f9f9f9'
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e8e8e8',
+    backgroundColor: darkMode ? '#252b3a' : '#f9f9f9'
   },
   todayHeader: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: darkMode ? '#2d3548' : '#e3f2fd',
     fontWeight: '700'
   },
   dayName: {
     fontSize: '11px',
     fontWeight: '600',
-    color: '#555',
+    color: darkMode ? '#9ca3af' : '#555',
     textTransform: 'uppercase'
   },
   dayDate: {
     fontSize: '13px',
     fontWeight: '700',
-    color: '#333',
+    color: darkMode ? '#d1d5db' : '#333',
     marginTop: '2px'
   },
   gridContainer: {
@@ -357,31 +349,31 @@ const styles = {
   timeRow: {
     display: 'flex',
     minHeight: '60px',
-    borderBottom: '1px solid #e8e8e8'
+    borderBottom: darkMode ? '1px solid #3a4150' : '1px solid #e8e8e8'
   },
   timeLabel: {
     width: '60px',
     flexShrink: 0,
     padding: '4px 8px',
     fontSize: '11px',
-    color: '#666',
+    color: darkMode ? '#9ca3af' : '#666',
     textAlign: 'right',
-    borderRight: '1px solid #e0e0e0',
-    backgroundColor: '#f9f9f9',
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e0e0e0',
+    backgroundColor: darkMode ? '#252b3a' : '#f9f9f9',
     fontWeight: '500'
   },
   timeCell: {
     flex: 1,
-    borderRight: '1px solid #e8e8e8',
+    borderRight: darkMode ? '1px solid #3a4150' : '1px solid #e8e8e8',
     position: 'relative',
     minHeight: '60px',
-    backgroundColor: '#fff'
+    backgroundColor: darkMode ? '#1e2430' : '#fff'
   },
   todayCell: {
-    backgroundColor: '#fafcff'
+    backgroundColor: darkMode ? '#252b3a' : '#fafcff'
   },
   currentHourCell: {
-    backgroundColor: '#f0f7ff'
+    backgroundColor: darkMode ? '#2a3142' : '#f0f7ff'
   },
   event: {
     position: 'absolute',
@@ -434,5 +426,5 @@ const styles = {
     zIndex: 50,
     pointerEvents: 'none'
   }
-};
+});
 

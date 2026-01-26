@@ -5,13 +5,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CalendarView from '@/components/CalendarView';
 import TableView from '@/components/TableView';
 import ViewSwitcher from '@/components/ViewSwitcher';
+import CalendarControls from '@/components/CalendarControls';
 import Footer from '@/components/Footer';
+import { PRIMARY_PLATFORMS } from '@/lib/platformColors';
 
 export default function Home() {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentView, setCurrentView] = useState('calendar');
+  const [calendarViewMode, setCalendarViewMode] = useState('month');
+  const [activePlatforms, setActivePlatforms] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const handlePlatformToggle = (platformId) => {
+    setActivePlatforms(prev => {
+      if (prev.includes(platformId)) {
+        return prev.filter(id => id !== platformId);
+      } else {
+        return [...prev, platformId];
+      }
+    });
+  };
 
   useEffect(() => {
     async function fetchContests() {
@@ -120,16 +135,32 @@ export default function Home() {
   }
 
   return (
-    <main className="app-container">
+    <main className="app-container" data-theme={darkMode ? 'dark' : 'light'}>
       <header className="app-header">
         <div className="header-content">
           <div className="logo-section">
-            <h1 className="app-title">🏆 ContestHub</h1>
-            <p className="app-subtitle">Track coding contests across all platforms</p>
+            <img 
+              src={darkMode ? "/contesthub-logo-dark.svg" : "/contesthub-logo.svg"} 
+              alt="ContestHub" 
+              className="logo-image" 
+            />
           </div>
-          <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
+          <ViewSwitcher 
+            currentView={currentView} 
+            onViewChange={setCurrentView}
+            darkMode={darkMode}
+            onToggleDarkMode={() => setDarkMode(!darkMode)}
+          />
         </div>
       </header>
+
+      {currentView === 'calendar' && (
+        <CalendarControls 
+          activePlatforms={activePlatforms}
+          onPlatformToggle={handlePlatformToggle}
+          darkMode={darkMode}
+        />
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -139,12 +170,20 @@ export default function Home() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          {currentView === 'calendar' && <CalendarView contests={contests} />}
-          {currentView === 'table' && <TableView contests={contests} />}
+          {currentView === 'calendar' && (
+            <CalendarView 
+              contests={contests} 
+              activePlatforms={activePlatforms}
+              viewMode={calendarViewMode}
+              onViewChange={setCalendarViewMode}
+              darkMode={darkMode}
+            />
+          )}
+          {currentView === 'table' && <TableView contests={contests} darkMode={darkMode} />}
         </motion.div>
       </AnimatePresence>
 
-      <Footer />
+      <Footer darkMode={darkMode} />
 
       <style jsx>{`
         .app-container {
@@ -152,6 +191,12 @@ export default function Home() {
           display: flex;
           flex-direction: column;
           background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+          transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .app-container[data-theme='dark'] {
+          background: #0f1115;
+          color: #e5e7eb;
         }
 
         .app-header {
@@ -161,6 +206,13 @@ export default function Home() {
           position: sticky;
           top: 0;
           z-index: 10;
+          transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .app-container[data-theme='dark'] .app-header {
+          background: #161a22;
+          border-bottom: 1px solid #2a2f3a;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .header-content {
@@ -174,8 +226,14 @@ export default function Home() {
 
         .logo-section {
           display: flex;
-          flex-direction: column;
-          gap: 4px;
+          align-items: center;
+          margin-left: -100px;
+        }
+
+        .logo-image {
+          height: 45px;
+          width: auto;
+          object-fit: contain;
         }
 
         .app-title {
@@ -183,6 +241,20 @@ export default function Home() {
           font-weight: 800;
           color: #111827;
           margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .trophy-icon {
+          font-size: 32px;
+        }
+
+        .contest-text {
+          color: #ffffff;
+        }
+
+        .hub-text {
           background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -200,8 +272,16 @@ export default function Home() {
             padding: 16px;
           }
 
+          .logo-image {
+            height: 36px;
+          }
+
           .app-title {
             font-size: 24px;
+          }
+
+          .trophy-icon {
+            font-size: 28px;
           }
 
           .app-subtitle {
