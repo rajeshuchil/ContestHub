@@ -8,12 +8,26 @@
 
 const CLIST_API_BASE = 'https://clist.by/api/v4';
 
+interface ClistFetchOptions {
+  limit?: string;
+  extraParams?: Record<string, string>;
+}
+
+interface ClistAPIResponse {
+  objects: any[];
+  meta?: {
+    limit: number;
+    next: string | null;
+    offset: number;
+    previous: string | null;
+    total_count: number;
+  };
+}
+
 /**
  * Fetch contests from CLIST API
- * @param {Object} options - Query options
- * @returns {Promise<Array>} Array of raw contest objects from CLIST
  */
-export async function fetchClistContests(options = {}) {
+export async function fetchClistContests(options: ClistFetchOptions = {}): Promise<any[]> {
   const username = process.env.CLIST_USERNAME;
   const apiKey = process.env.CLIST_API_KEY;
 
@@ -49,7 +63,7 @@ export async function fetchClistContests(options = {}) {
       throw new Error(`CLIST API returned ${response.status}: ${errorText}`);
     }
 
-    const data = await response.json();
+    const data: ClistAPIResponse = await response.json();
 
     if (!data.objects || !Array.isArray(data.objects)) {
       throw new Error('Invalid response format from CLIST API');
@@ -59,17 +73,15 @@ export async function fetchClistContests(options = {}) {
 
     return data.objects;
   } catch (error) {
-    console.error('[CLIST] ✗ Error fetching from CLIST:', error.message);
+    console.error('[CLIST] ✗ Error fetching from CLIST:', (error as Error).message);
     throw error;
   }
 }
 
 /**
  * Fetch contests from specific platforms via CLIST
- * @param {Array<string>} platforms - Platform resource IDs (e.g., ['codeforces.com', 'leetcode.com'])
- * @returns {Promise<Array>} Filtered contests
  */
-export async function fetchClistByPlatforms(platforms) {
+export async function fetchClistByPlatforms(platforms: string[]): Promise<any[]> {
   if (!platforms || platforms.length === 0) {
     return fetchClistContests();
   }

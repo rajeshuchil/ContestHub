@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
  * GET /api/docs
  * Returns OpenAPI 3.0 documentation for the Contest Tracker API
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const docs = {
     openapi: '3.0.0',
     info: {

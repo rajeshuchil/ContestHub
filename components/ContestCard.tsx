@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { Contest } from "@/types";
+
+interface ContestCardProps {
+  contest: Contest;
+}
 
 /**
  * Smart Contest Card Component
  * Displays contest info in a modern, scannable card format
  */
-export default function ContestCard({ contest }) {
+export default function ContestCard({ contest }: ContestCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   // Calculate time-related display info
@@ -27,11 +32,14 @@ export default function ContestCard({ contest }) {
       <div className="card-content">
         {/* Header: Platform + Status Badge */}
         <div className="card-header">
-          <div className="platform-badge" style={{ backgroundColor: platformStyle.color }}>
+          <div
+            className="platform-badge"
+            style={{ backgroundColor: platformStyle.color }}
+          >
             <span className="platform-icon">{platformStyle.icon}</span>
             <span className="platform-name">{contest.platform}</span>
           </div>
-          
+
           <div className={`status-badge ${statusStyle.badgeClass}`}>
             <span className="status-dot">{statusStyle.dot}</span>
             <span className="status-text">{contest.status}</span>
@@ -45,14 +53,22 @@ export default function ContestCard({ contest }) {
         <div className="time-info">
           <div className="time-primary">
             <svg className="icon" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clipRule="evenodd"
+              />
             </svg>
             <span className="time-text">{timeInfo.primary}</span>
           </div>
-          
+
           <div className="time-secondary">
             <svg className="icon" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clipRule="evenodd"
+              />
             </svg>
             <span>Duration: {formatDuration(contest.duration)}</span>
           </div>
@@ -65,9 +81,11 @@ export default function ContestCard({ contest }) {
           rel="noopener noreferrer"
           className={`action-button ${statusStyle.buttonClass}`}
         >
-          {contest.status === 'ongoing' ? '🚀 Join Now' : 
-           contest.status === 'upcoming' ? '📅 View Details' : 
-           '📊 View Results'}
+          {contest.status === "ongoing"
+            ? "🚀 Join Now"
+            : contest.status === "upcoming"
+              ? "📅 View Details"
+              : "📊 View Results"}
         </a>
       </div>
 
@@ -296,25 +314,25 @@ export default function ContestCard({ contest }) {
 /**
  * Calculate time information to display
  */
-function getTimeInfo(contest) {
+function getTimeInfo(contest: Contest) {
   const now = new Date();
   const startTime = new Date(contest.startTime);
   const endTime = new Date(startTime.getTime() + contest.duration * 1000);
 
-  if (contest.status === 'ongoing') {
+  if (contest.status === "ongoing") {
     return {
       primary: `Ends ${formatRelativeTime(endTime, now)}`,
-      secondary: `Started ${formatRelativeTime(startTime, now)}`
+      secondary: `Started ${formatRelativeTime(startTime, now)}`,
     };
-  } else if (contest.status === 'upcoming') {
+  } else if (contest.status === "upcoming") {
     return {
       primary: `Starts ${formatRelativeTime(startTime, now)}`,
-      secondary: formatAbsoluteTime(startTime)
+      secondary: formatAbsoluteTime(startTime),
     };
   } else {
     return {
       primary: `Ended ${formatRelativeTime(endTime, now)}`,
-      secondary: formatAbsoluteTime(endTime)
+      secondary: formatAbsoluteTime(endTime),
     };
   }
 }
@@ -322,8 +340,8 @@ function getTimeInfo(contest) {
 /**
  * Format relative time (e.g., "in 2 hours", "3 days ago")
  */
-function formatRelativeTime(date, now) {
-  const diff = date - now;
+function formatRelativeTime(date: Date, now: Date): string {
+  const diff = date.getTime() - now.getTime();
   const absDiff = Math.abs(diff);
   const isPast = diff < 0;
 
@@ -331,30 +349,30 @@ function formatRelativeTime(date, now) {
   const hours = Math.floor(absDiff / (1000 * 60 * 60));
   const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
 
-  if (minutes < 1) return isPast ? 'just now' : 'in a moment';
+  if (minutes < 1) return isPast ? "just now" : "in a moment";
   if (minutes < 60) return isPast ? `${minutes}m ago` : `in ${minutes}m`;
   if (hours < 24) return isPast ? `${hours}h ago` : `in ${hours}h`;
   if (days < 7) return isPast ? `${days}d ago` : `in ${days}d`;
-  
+
   return formatAbsoluteTime(date);
 }
 
 /**
  * Format absolute time (e.g., "Jan 26, 3:30 PM")
  */
-function formatAbsoluteTime(date) {
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
+function formatAbsoluteTime(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
 /**
  * Format duration (seconds to readable format)
  */
-function formatDuration(seconds) {
+function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
@@ -366,29 +384,38 @@ function formatDuration(seconds) {
 /**
  * Get status-specific styling
  */
-function getStatusStyle(status) {
-  const styles = {
+function getStatusStyle(status: string) {
+  const styles: Record<
+    string,
+    {
+      cardClass: string;
+      barClass: string;
+      badgeClass: string;
+      buttonClass: string;
+      dot: string;
+    }
+  > = {
     ongoing: {
-      cardClass: 'ongoing',
-      barClass: 'ongoing',
-      badgeClass: 'ongoing',
-      buttonClass: 'ongoing',
-      dot: '🟢'
+      cardClass: "ongoing",
+      barClass: "ongoing",
+      badgeClass: "ongoing",
+      buttonClass: "ongoing",
+      dot: "🟢",
     },
     upcoming: {
-      cardClass: 'upcoming',
-      barClass: 'upcoming',
-      badgeClass: 'upcoming',
-      buttonClass: 'upcoming',
-      dot: '🔵'
+      cardClass: "upcoming",
+      barClass: "upcoming",
+      badgeClass: "upcoming",
+      buttonClass: "upcoming",
+      dot: "🔵",
     },
     ended: {
-      cardClass: 'ended',
-      barClass: 'ended',
-      badgeClass: 'ended',
-      buttonClass: 'ended',
-      dot: '⚫'
-    }
+      cardClass: "ended",
+      barClass: "ended",
+      badgeClass: "ended",
+      buttonClass: "ended",
+      dot: "⚫",
+    },
   };
 
   return styles[status] || styles.upcoming;
@@ -397,15 +424,15 @@ function getStatusStyle(status) {
 /**
  * Get platform-specific styling
  */
-function getPlatformStyle(platform) {
-  const styles = {
-    'Codeforces': { color: '#1976d2', icon: '🏆' },
-    'LeetCode': { color: '#ffa116', icon: '💻' },
-    'CodeChef': { color: '#5b4638', icon: '👨‍🍳' },
-    'AtCoder': { color: '#000000', icon: '🎯' },
-    'HackerRank': { color: '#00ea64', icon: '💚' },
-    'HackerEarth': { color: '#2c3454', icon: '🌍' },
+function getPlatformStyle(platform: string) {
+  const styles: Record<string, { color: string; icon: string }> = {
+    Codeforces: { color: "#1976d2", icon: "🏆" },
+    LeetCode: { color: "#ffa116", icon: "💻" },
+    CodeChef: { color: "#5b4638", icon: "👨‍🍳" },
+    AtCoder: { color: "#000000", icon: "🎯" },
+    HackerRank: { color: "#00ea64", icon: "💚" },
+    HackerEarth: { color: "#2c3454", icon: "🌍" },
   };
 
-  return styles[platform] || { color: '#6b7280', icon: '📝' };
+  return styles[platform] || { color: "#6b7280", icon: "📝" };
 }

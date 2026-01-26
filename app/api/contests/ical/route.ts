@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getContests } from '@/lib/contests';
 import { 
   filterByPlatform, 
   filterByStatus 
 } from '@/lib/normalize';
+import type { Contest } from '@/types';
 
 /**
  * GET /api/contests/ical
@@ -14,7 +15,7 @@ import {
  * - status: Filter by status ('upcoming' | 'ongoing')
  * - limit: Max number of contests (default: 50, max: 200)
  */
-export async function GET(request) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get('platform');
@@ -60,7 +61,10 @@ export async function GET(request) {
   } catch (error) {
     console.error('iCal generation error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate calendar', message: error.message },
+      { 
+        error: 'Failed to generate calendar', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
@@ -71,7 +75,7 @@ export async function GET(request) {
  * @param {Array} contests - Array of normalized contests
  * @returns {string} iCalendar formatted string
  */
-function generateICalendar(contests) {
+function generateICalendar(contests: Contest[]): string {
   const now = new Date();
   const timestamp = formatICalDate(now);
 
@@ -103,7 +107,7 @@ function generateICalendar(contests) {
  * @param {string} timestamp - Current timestamp in iCal format
  * @returns {Array} Array of iCal lines
  */
-function generateVEvent(contest, timestamp) {
+function generateVEvent(contest: Contest, timestamp: string): string[] {
   const startTime = new Date(contest.startTime);
   const endTime = new Date(startTime.getTime() + contest.duration * 60 * 1000);
   
@@ -147,7 +151,7 @@ function generateVEvent(contest, timestamp) {
  * @param {Date} date - Date object
  * @returns {string} Formatted date string
  */
-function formatICalDate(date) {
+function formatICalDate(date: Date): string {
   return date.toISOString()
     .replace(/[-:]/g, '')
     .replace(/\.\d{3}/, '');
@@ -158,7 +162,7 @@ function formatICalDate(date) {
  * @param {string} text - Text to escape
  * @returns {string} Escaped text
  */
-function escapeICalText(text) {
+function escapeICalText(text: string): string {
   return text
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')

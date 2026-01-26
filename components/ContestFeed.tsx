@@ -1,20 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import ContestCard from './ContestCard';
+import { useState, useMemo } from "react";
+import ContestCard from "./ContestCard";
+import { Contest, ContestStatus } from "@/types";
+
+interface ContestFeedProps {
+  contests: Contest[];
+}
 
 /**
  * Contest Feed Component
  * Groups contests by time and displays them in a timeline format
  */
-export default function ContestFeed({ contests }) {
-  const [selectedPlatforms, setSelectedPlatforms] = useState(new Set());
-  const [selectedStatuses, setSelectedStatuses] = useState(new Set(['ongoing', 'upcoming']));
+export default function ContestFeed({ contests }: ContestFeedProps) {
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(
+    new Set(),
+  );
+  const [selectedStatuses, setSelectedStatuses] = useState<Set<ContestStatus>>(
+    new Set(["ongoing", "upcoming"]),
+  );
 
   // Filter contests
   const filteredContests = useMemo(() => {
-    return contests.filter(contest => {
-      const platformMatch = selectedPlatforms.size === 0 || selectedPlatforms.has(contest.platform);
+    return contests.filter((contest) => {
+      const platformMatch =
+        selectedPlatforms.size === 0 || selectedPlatforms.has(contest.platform);
       const statusMatch = selectedStatuses.has(contest.status);
       return platformMatch && statusMatch;
     });
@@ -27,12 +37,12 @@ export default function ContestFeed({ contests }) {
 
   // Get unique platforms for filter
   const platforms = useMemo(() => {
-    return [...new Set(contests.map(c => c.platform))].sort();
+    return [...new Set(contests.map((c) => c.platform))].sort();
   }, [contests]);
 
   // Toggle platform filter
-  const togglePlatform = (platform) => {
-    setSelectedPlatforms(prev => {
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms((prev) => {
       const next = new Set(prev);
       if (next.has(platform)) {
         next.delete(platform);
@@ -44,8 +54,8 @@ export default function ContestFeed({ contests }) {
   };
 
   // Toggle status filter
-  const toggleStatus = (status) => {
-    setSelectedStatuses(prev => {
+  const toggleStatus = (status: ContestStatus): void => {
+    setSelectedStatuses((prev) => {
       const next = new Set(prev);
       if (next.has(status)) {
         next.delete(status);
@@ -59,11 +69,16 @@ export default function ContestFeed({ contests }) {
   // Clear all filters
   const clearFilters = () => {
     setSelectedPlatforms(new Set());
-    setSelectedStatuses(new Set(['ongoing', 'upcoming']));
+    setSelectedStatuses(new Set(["ongoing", "upcoming"]));
   };
 
-  const hasActiveFilters = selectedPlatforms.size > 0 || 
-    !(selectedStatuses.has('ongoing') && selectedStatuses.has('upcoming') && selectedStatuses.size === 2);
+  const hasActiveFilters =
+    selectedPlatforms.size > 0 ||
+    !(
+      selectedStatuses.has("ongoing") &&
+      selectedStatuses.has("upcoming") &&
+      selectedStatuses.size === 2
+    );
 
   return (
     <div className="contest-feed">
@@ -82,16 +97,22 @@ export default function ContestFeed({ contests }) {
         <div className="filter-group">
           <h3 className="filter-label">Status</h3>
           <div className="filter-chips">
-            {['ongoing', 'upcoming', 'ended'].map(status => (
-              <button
-                key={status}
-                onClick={() => toggleStatus(status)}
-                className={`filter-chip ${selectedStatuses.has(status) ? 'active' : ''} ${status}`}
-              >
-                {status === 'ongoing' ? '🟢' : status === 'upcoming' ? '🔵' : '⚫'}
-                <span className="chip-text">{status}</span>
-              </button>
-            ))}
+            {(["ongoing", "upcoming", "ended"] as ContestStatus[]).map(
+              (status) => (
+                <button
+                  key={status}
+                  onClick={() => toggleStatus(status)}
+                  className={`filter-chip ${selectedStatuses.has(status) ? "active" : ""} ${status}`}
+                >
+                  {status === "ongoing"
+                    ? "🟢"
+                    : status === "upcoming"
+                      ? "🔵"
+                      : "⚫"}
+                  <span className="chip-text">{status}</span>
+                </button>
+              ),
+            )}
           </div>
         </div>
 
@@ -99,11 +120,11 @@ export default function ContestFeed({ contests }) {
         <div className="filter-group">
           <h3 className="filter-label">Platforms</h3>
           <div className="filter-chips">
-            {platforms.map(platform => (
+            {platforms.map((platform) => (
               <button
                 key={platform}
                 onClick={() => togglePlatform(platform)}
-                className={`filter-chip ${selectedPlatforms.has(platform) ? 'active' : ''}`}
+                className={`filter-chip ${selectedPlatforms.has(platform) ? "active" : ""}`}
               >
                 <span className="chip-text">{platform}</span>
               </button>
@@ -119,11 +140,15 @@ export default function ContestFeed({ contests }) {
           <span className="stat-label">Total Contests</span>
         </div>
         <div className="stat">
-          <span className="stat-value">{groupedContests.ongoing?.length || 0}</span>
+          <span className="stat-value">
+            {groupedContests.ongoing?.length || 0}
+          </span>
           <span className="stat-label">Live Now</span>
         </div>
         <div className="stat">
-          <span className="stat-value">{groupedContests.today?.length || 0}</span>
+          <span className="stat-value">
+            {groupedContests.today?.length || 0}
+          </span>
           <span className="stat-label">Today</span>
         </div>
       </div>
@@ -139,10 +164,12 @@ export default function ContestFeed({ contests }) {
                 <span className="pulse-dot">🔴</span>
                 Live Now
               </h2>
-              <span className="section-count">{groupedContests.ongoing.length}</span>
+              <span className="section-count">
+                {groupedContests.ongoing.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.ongoing.map(contest => (
+              {groupedContests.ongoing.map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -155,10 +182,12 @@ export default function ContestFeed({ contests }) {
             <div className="section-header">
               <div className="section-indicator" />
               <h2 className="section-title">Today</h2>
-              <span className="section-count">{groupedContests.today.length}</span>
+              <span className="section-count">
+                {groupedContests.today.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.today.map(contest => (
+              {groupedContests.today.map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -171,10 +200,12 @@ export default function ContestFeed({ contests }) {
             <div className="section-header">
               <div className="section-indicator" />
               <h2 className="section-title">Tomorrow</h2>
-              <span className="section-count">{groupedContests.tomorrow.length}</span>
+              <span className="section-count">
+                {groupedContests.tomorrow.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.tomorrow.map(contest => (
+              {groupedContests.tomorrow.map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -187,10 +218,12 @@ export default function ContestFeed({ contests }) {
             <div className="section-header">
               <div className="section-indicator" />
               <h2 className="section-title">This Week</h2>
-              <span className="section-count">{groupedContests.thisWeek.length}</span>
+              <span className="section-count">
+                {groupedContests.thisWeek.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.thisWeek.map(contest => (
+              {groupedContests.thisWeek.map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -203,10 +236,12 @@ export default function ContestFeed({ contests }) {
             <div className="section-header">
               <div className="section-indicator" />
               <h2 className="section-title">Later</h2>
-              <span className="section-count">{groupedContests.later.length}</span>
+              <span className="section-count">
+                {groupedContests.later.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.later.map(contest => (
+              {groupedContests.later.map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -219,10 +254,12 @@ export default function ContestFeed({ contests }) {
             <div className="section-header">
               <div className="section-indicator" />
               <h2 className="section-title">Past Contests</h2>
-              <span className="section-count">{groupedContests.ended.length}</span>
+              <span className="section-count">
+                {groupedContests.ended.length}
+              </span>
             </div>
             <div className="cards-grid">
-              {groupedContests.ended.slice(0, 10).map(contest => (
+              {groupedContests.ended.slice(0, 10).map((contest) => (
                 <ContestCard key={contest.id} contest={contest} />
               ))}
             </div>
@@ -431,8 +468,13 @@ export default function ContestFeed({ contests }) {
         }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         .section-count {
@@ -556,15 +598,15 @@ function groupContestsByTime(contests) {
     tomorrow: [],
     thisWeek: [],
     later: [],
-    ended: []
+    ended: [],
   };
 
-  contests.forEach(contest => {
+  contests.forEach((contest) => {
     const startTime = new Date(contest.startTime);
 
-    if (contest.status === 'ongoing') {
+    if (contest.status === "ongoing") {
       groups.ongoing.push(contest);
-    } else if (contest.status === 'ended') {
+    } else if (contest.status === "ended") {
       groups.ended.push(contest);
     } else if (startTime < tomorrow) {
       groups.today.push(contest);
@@ -578,7 +620,7 @@ function groupContestsByTime(contests) {
   });
 
   // Sort each group by start time
-  Object.keys(groups).forEach(key => {
+  Object.keys(groups).forEach((key) => {
     groups[key].sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
   });
 
