@@ -274,7 +274,16 @@ export default function Home() {
           <div
             className="logo-section"
             onClick={() => setCurrentView("calendar")}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: "pointer",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.02)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+            }}
           >
             <img
               src={

@@ -99,7 +99,7 @@ export default function ViewSwitcher({
       </div>
       <button
         onClick={onToggleDarkMode}
-        className="transition-all duration-200 ease-out hover:scale-110 active:scale-90 hover:bg-black/5 dark:hover:bg-white/10 rounded-full"
+        className="transition-all duration-300 ease-out hover:scale-110 active:scale-90 rotate-icon"
         style={styles.themeButton}
         title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
       >

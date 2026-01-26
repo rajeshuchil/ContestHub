@@ -93,6 +93,7 @@ export default function ContestStats({
         >
           {/* Total Contests */}
           <div
+            className="card-lift fade-in stagger-item"
             style={{
               padding: "20px",
               backgroundColor: darkMode ? "#1f2937" : "#ffffff",
@@ -116,6 +117,7 @@ export default function ContestStats({
               Total
             </div>
             <div
+              className="stat-number"
               style={{
                 fontSize: "32px",
                 fontWeight: "700",
@@ -128,6 +130,7 @@ export default function ContestStats({
 
           {/* Ongoing */}
           <div
+            className="card-lift fade-in stagger-item"
             style={{
               padding: "20px",
               backgroundColor: darkMode ? "#1f2937" : "#ffffff",
@@ -151,6 +154,7 @@ export default function ContestStats({
               Live Now
             </div>
             <div
+              className="stat-number pulse-once"
               style={{
                 fontSize: "32px",
                 fontWeight: "700",
@@ -163,6 +167,7 @@ export default function ContestStats({
 
           {/* Upcoming */}
           <div
+            className="card-lift fade-in stagger-item"
             style={{
               padding: "20px",
               backgroundColor: darkMode ? "#1f2937" : "#ffffff",
@@ -186,6 +191,7 @@ export default function ContestStats({
               Upcoming
             </div>
             <div
+              className="stat-number"
               style={{
                 fontSize: "32px",
                 fontWeight: "700",
@@ -198,6 +204,7 @@ export default function ContestStats({
 
           {/* Ended */}
           <div
+            className="card-lift fade-in stagger-item"
             style={{
               padding: "20px",
               backgroundColor: darkMode ? "#1f2937" : "#ffffff",
@@ -221,6 +228,7 @@ export default function ContestStats({
               Ended
             </div>
             <div
+              className="stat-number"
               style={{
                 fontSize: "32px",
                 fontWeight: "700",
@@ -234,6 +242,7 @@ export default function ContestStats({
           {/* Participating (if user has any) */}
           {stats.participatingTotal > 0 && (
             <div
+              className="card-lift fade-in stagger-item"
               style={{
                 padding: "20px",
                 backgroundColor: darkMode ? "#1e3a8a" : "#eff6ff",
@@ -257,6 +266,7 @@ export default function ContestStats({
                 Participating
               </div>
               <div
+                className="stat-number"
                 style={{
                   fontSize: "32px",
                   fontWeight: "700",
@@ -282,6 +292,7 @@ export default function ContestStats({
         {Object.keys(stats.platformCounts).length > 0 && (
           <div style={{ marginTop: "24px" }}>
             <h4
+              className="fade-in"
               style={{
                 fontSize: "14px",
                 fontWeight: "600",
@@ -301,11 +312,12 @@ export default function ContestStats({
             >
               {Object.entries(stats.platformCounts)
                 .sort((a, b) => b[1] - a[1])
-                .map(([platform, count]) => {
+                .map(([platform, count], index) => {
                   const platformColors = getPlatformColor(platform, darkMode);
                   return (
                     <div
                       key={platform}
+                      className="fade-in stagger-item"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -316,6 +328,19 @@ export default function ContestStats({
                         borderRadius: "24px",
                         fontSize: "13px",
                         fontWeight: "600",
+                        animationDelay: `${100 + index * 50}ms`,
+                        cursor: "default",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow = darkMode
+                          ? "0 4px 8px rgba(0, 0, 0, 0.4)"
+                          : "0 4px 8px rgba(0, 0, 0, 0.15)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "none";
                       }}
                     >
                       <span>{platform}</span>

@@ -248,6 +248,7 @@ export default function FilterBar({
                 onPlatformToggle(platform),
               );
             }}
+            className="fade-in"
             style={{
               padding: "10px 16px",
               fontSize: "13px",
@@ -256,14 +257,16 @@ export default function FilterBar({
               backgroundColor: "transparent",
               border: "none",
               cursor: "pointer",
-              transition: "color 0.2s ease",
+              transition: "all 0.2s ease",
               whiteSpace: "nowrap",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = darkMode ? "#f3f4f6" : "#111827";
+              e.currentTarget.style.transform = "scale(1.05)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = darkMode ? "#9ca3af" : "#6b7280";
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             Clear Filters

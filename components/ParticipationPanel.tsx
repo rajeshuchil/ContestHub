@@ -18,9 +18,9 @@ export default function ParticipationPanel({
   onRemoveParticipation,
   darkMode = false,
 }: ParticipationPanelProps) {
-  if (contests.length === 0) return null;
-
   const [hovered, setHovered] = useState<number | null>(null);
+
+  if (contests.length === 0) return null;
 
   const upcomingContests = contests
     .filter((c) => new Date(c.startTime) > new Date())
@@ -58,7 +58,7 @@ export default function ParticipationPanel({
           className="text-sm"
           style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
         >
-          Don't miss scheduled events
+          Don&apos;t miss scheduled events
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default function ParticipationPanel({
         </div>
       ) : (
         <div className="space-y-5">
-          {dateKeys.map((dateKey, dateIndex) => {
+          {dateKeys.map((dateKey) => {
             const contestsForDate = contestsByDate[dateKey];
             return (
               <div key={dateKey}>
@@ -94,7 +94,6 @@ export default function ParticipationPanel({
                       startTime.getTime() + contest.duration * 1000,
                     );
                     const timeRange = `${format(startTime, "h:mm a")} - ${format(endTime, "h:mm a")}`;
-                    const platformColor = getPlatformColor(contest.platform);
                     const globalIndex = upcomingContests.findIndex(
                       (c) => c.id === contest.id || c.url === contest.url,
                     );
@@ -106,7 +105,7 @@ export default function ParticipationPanel({
                           onMouseEnter={() => setHovered(globalIndex)}
                           onMouseLeave={() => setHovered(null)}
                           onClick={() => onContestClick(contest)}
-                          className="rounded-xl px-5 py-5 transition-all duration-300 cursor-pointer relative group"
+                          className="card-lift fade-in stagger-item rounded-xl px-6 py-6 transition-all duration-300 cursor-pointer relative group"
                           style={{
                             backgroundColor: darkMode ? "#1f2937" : "#ffffff",
                             border: darkMode
@@ -115,6 +114,7 @@ export default function ParticipationPanel({
                             boxShadow: darkMode
                               ? "0 1px 3px rgba(0, 0, 0, 0.3)"
                               : "0 1px 3px rgba(0, 0, 0, 0.1)",
+                            animationDelay: `${globalIndex * 50}ms`,
                             transform:
                               hovered !== null && hovered !== globalIndex
                                 ? "scale(0.98)"
@@ -131,29 +131,42 @@ export default function ParticipationPanel({
                               e.stopPropagation();
                               onRemoveParticipation(contest.id || contest.url);
                             }}
-                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                            style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                            style={{
+                              color: darkMode ? "#9ca3af" : "#6b7280",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "scale(1.1)";
+                              e.currentTarget.style.color = "#ef4444";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "scale(1)";
+                              e.currentTarget.style.color = darkMode
+                                ? "#9ca3af"
+                                : "#6b7280";
+                            }}
                             title="Remove"
                           >
                             <X size={16} />
                           </button>
 
                           {/* Time Only - Secondary */}
-                          <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-2 mb-4">
                             <span
-                              className="leading-none flex-shrink-0"
+                              className="leading-none shrink-0"
                               style={{
-                                fontSize: "8px",
+                                fontSize: "10px",
                                 lineHeight: "1",
-                                color: platformColor,
+                                color: getPlatformColor(contest.platform).bg,
                               }}
                             >
                               ●
                             </span>
                             <span
-                              className="text-sm font-medium"
+                              className="text-sm font-semibold"
                               style={{
-                                color: darkMode ? "#9ca3af" : "#6b7280",
+                                color: darkMode ? "#d1d5db" : "#374151",
                               }}
                             >
                               {timeRange}
@@ -162,18 +175,30 @@ export default function ParticipationPanel({
 
                           {/* Contest Name - Primary */}
                           <h4
-                            className="font-bold text-base leading-snug mb-2 pr-6"
-                            style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+                            className="font-bold text-lg leading-snug mb-3 pr-6"
+                            style={{ color: darkMode ? "#f3f4f6" : "#000000" }}
                           >
                             {contest.name}
                           </h4>
 
                           {/* Platform Badge */}
                           <div
-                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200"
                             style={{
-                              backgroundColor: platformColor,
-                              color: "#ffffff",
+                              backgroundColor: getPlatformColor(
+                                contest.platform,
+                              ).bg,
+                              color: "#1f2937",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform =
+                                "translateY(-1px)";
+                              e.currentTarget.style.boxShadow =
+                                "0 2px 6px rgba(0, 0, 0, 0.2)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "translateY(0)";
+                              e.currentTarget.style.boxShadow = "none";
                             }}
                           >
                             {contest.platform}
