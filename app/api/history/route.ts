@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { contestHistory } from '@/lib/history';
 
 /**
@@ -11,7 +11,7 @@ import { contestHistory } from '@/lib/history';
  * - startDate: Start date for analytics (ISO 8601)
  * - endDate: End date for analytics (ISO 8601)
  */
-export async function GET(request) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'list';
@@ -69,7 +69,10 @@ export async function GET(request) {
   } catch (error) {
     console.error('History API error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch history', message: error.message },
+      { 
+        error: 'Failed to fetch history', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }

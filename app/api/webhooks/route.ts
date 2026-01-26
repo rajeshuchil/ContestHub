@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { webhookManager } from '@/lib/webhooks';
 
 /**
  * GET /api/webhooks
  * List all registered webhooks
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const webhooks = webhookManager.list();
     
@@ -16,7 +16,10 @@ export async function GET() {
   } catch (error) {
     console.error('Webhook list error:', error);
     return NextResponse.json(
-      { error: 'Failed to list webhooks', message: error.message },
+      { 
+        error: 'Failed to list webhooks', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
@@ -35,7 +38,7 @@ export async function GET() {
  *   "secret": "your-secret-key" // optional
  * }
  */
-export async function POST(request) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
 
@@ -60,7 +63,7 @@ export async function POST(request) {
     // Validate events
     const validEvents = ['contest.new'];
     const events = body.events || ['contest.new'];
-    if (events.some(e => !validEvents.includes(e))) {
+    if (events.some((e: string) => !validEvents.includes(e))) {
       return NextResponse.json(
         { 
           error: 'Validation Error', 
@@ -74,7 +77,7 @@ export async function POST(request) {
     // Validate platforms (if provided)
     const validPlatforms = ['kontests', 'codeforces', 'leetcode', 'codechef', 'atcoder'];
     const platforms = body.platforms || [];
-    if (platforms.some(p => !validPlatforms.includes(p.toLowerCase()))) {
+    if (platforms.some((p: string) => !validPlatforms.includes(p.toLowerCase()))) {
       return NextResponse.json(
         { 
           error: 'Validation Error', 
@@ -88,7 +91,7 @@ export async function POST(request) {
     // Validate status (if provided)
     const validStatuses = ['upcoming', 'ongoing', 'ended'];
     const status = body.status || [];
-    if (status.some(s => !validStatuses.includes(s))) {
+    if (status.some((s: string) => !validStatuses.includes(s))) {
       return NextResponse.json(
         { 
           error: 'Validation Error', 
@@ -103,7 +106,7 @@ export async function POST(request) {
     const webhook = webhookManager.register({
       url: body.url,
       events,
-      platforms: platforms.map(p => p.toLowerCase()),
+      platforms: platforms.map((p: string) => p.toLowerCase()),
       status,
       secret: body.secret
     });
@@ -113,7 +116,10 @@ export async function POST(request) {
   } catch (error) {
     console.error('Webhook registration error:', error);
     return NextResponse.json(
-      { error: 'Failed to register webhook', message: error.message },
+      { 
+        error: 'Failed to register webhook', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
@@ -123,7 +129,7 @@ export async function POST(request) {
  * DELETE /api/webhooks?id=webhook_id
  * Delete a webhook
  */
-export async function DELETE(request) {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -149,7 +155,10 @@ export async function DELETE(request) {
   } catch (error) {
     console.error('Webhook deletion error:', error);
     return NextResponse.json(
-      { error: 'Failed to delete webhook', message: error.message },
+      { 
+        error: 'Failed to delete webhook', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
@@ -166,7 +175,7 @@ export async function DELETE(request) {
  *   "status": [...]
  * }
  */
-export async function PATCH(request) {
+export async function PATCH(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -193,7 +202,10 @@ export async function PATCH(request) {
   } catch (error) {
     console.error('Webhook update error:', error);
     return NextResponse.json(
-      { error: 'Failed to update webhook', message: error.message },
+      { 
+        error: 'Failed to update webhook', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }

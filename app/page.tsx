@@ -1,27 +1,32 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import CalendarView from '@/components/CalendarView';
-import TableView from '@/components/TableView';
-import ViewSwitcher from '@/components/ViewSwitcher';
-import CalendarControls from '@/components/CalendarControls';
-import Footer from '@/components/Footer';
-import { PRIMARY_PLATFORMS } from '@/lib/platformColors';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import CalendarView from "@/components/CalendarView";
+import TableView from "@/components/TableView";
+import ViewSwitcher from "@/components/ViewSwitcher";
+import CalendarControls from "@/components/CalendarControls";
+import Footer from "@/components/Footer";
+import { PRIMARY_PLATFORMS } from "@/lib/platformColors";
+import type { Contest } from "@/types";
 
 export default function Home() {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentView, setCurrentView] = useState('calendar');
-  const [calendarViewMode, setCalendarViewMode] = useState('month');
-  const [activePlatforms, setActivePlatforms] = useState([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [contests, setContests] = useState<Contest[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<"calendar" | "table">(
+    "calendar",
+  );
+  const [calendarViewMode, setCalendarViewMode] = useState<
+    "month" | "week" | "list"
+  >("month");
+  const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
 
-  const handlePlatformToggle = (platformId) => {
-    setActivePlatforms(prev => {
+  const handlePlatformToggle = (platformId: string): void => {
+    setActivePlatforms((prev) => {
       if (prev.includes(platformId)) {
-        return prev.filter(id => id !== platformId);
+        return prev.filter((id) => id !== platformId);
       } else {
         return [...prev, platformId];
       }
@@ -31,14 +36,14 @@ export default function Home() {
   useEffect(() => {
     async function fetchContests() {
       try {
-        const response = await fetch('/api/contests?limit=100');
+        const response = await fetch("/api/contests?limit=100");
         if (!response.ok) {
-          throw new Error('Failed to fetch contests');
+          throw new Error("Failed to fetch contests");
         }
         const data = await response.json();
         setContests(data.data || []);
       } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -70,7 +75,9 @@ export default function Home() {
             animation: spin 1s linear infinite;
           }
           @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+              transform: rotate(360deg);
+            }
           }
           .loading-text {
             margin-top: 16px;
@@ -88,7 +95,10 @@ export default function Home() {
         <div className="error-icon">⚠️</div>
         <h2 className="error-title">Failed to load contests</h2>
         <p className="error-message">{error}</p>
-        <button onClick={() => window.location.reload()} className="retry-button">
+        <button
+          onClick={() => window.location.reload()}
+          className="retry-button"
+        >
           Try Again
         </button>
         <style jsx>{`
@@ -135,18 +145,20 @@ export default function Home() {
   }
 
   return (
-    <main className="app-container" data-theme={darkMode ? 'dark' : 'light'}>
+    <main className="app-container" data-theme={darkMode ? "dark" : "light"}>
       <header className="app-header">
         <div className="header-content">
           <div className="logo-section">
-            <img 
-              src={darkMode ? "/contesthub-logo-dark.svg" : "/contesthub-logo.svg"} 
-              alt="ContestHub" 
-              className="logo-image" 
+            <img
+              src={
+                darkMode ? "/contesthub-logo-dark.svg" : "/contesthub-logo.svg"
+              }
+              alt="ContestHub"
+              className="logo-image"
             />
           </div>
-          <ViewSwitcher 
-            currentView={currentView} 
+          <ViewSwitcher
+            currentView={currentView}
             onViewChange={setCurrentView}
             darkMode={darkMode}
             onToggleDarkMode={() => setDarkMode(!darkMode)}
@@ -154,8 +166,8 @@ export default function Home() {
         </div>
       </header>
 
-      {currentView === 'calendar' && (
-        <CalendarControls 
+      {currentView === "calendar" && (
+        <CalendarControls
           activePlatforms={activePlatforms}
           onPlatformToggle={handlePlatformToggle}
           darkMode={darkMode}
@@ -170,16 +182,18 @@ export default function Home() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          {currentView === 'calendar' && (
-            <CalendarView 
-              contests={contests} 
+          {currentView === "calendar" && (
+            <CalendarView
+              contests={contests}
               activePlatforms={activePlatforms}
               viewMode={calendarViewMode}
               onViewChange={setCalendarViewMode}
               darkMode={darkMode}
             />
           )}
-          {currentView === 'table' && <TableView contests={contests} darkMode={darkMode} />}
+          {currentView === "table" && (
+            <TableView contests={contests} darkMode={darkMode} />
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -191,10 +205,12 @@ export default function Home() {
           display: flex;
           flex-direction: column;
           background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
-          transition: background 0.3s ease, color 0.3s ease;
+          transition:
+            background 0.3s ease,
+            color 0.3s ease;
         }
 
-        .app-container[data-theme='dark'] {
+        .app-container[data-theme="dark"] {
           background: #0f1115;
           color: #e5e7eb;
         }
@@ -206,10 +222,12 @@ export default function Home() {
           position: sticky;
           top: 0;
           z-index: 10;
-          transition: background 0.3s ease, border-color 0.3s ease;
+          transition:
+            background 0.3s ease,
+            border-color 0.3s ease;
         }
 
-        .app-container[data-theme='dark'] .app-header {
+        .app-container[data-theme="dark"] .app-header {
           background: #161a22;
           border-bottom: 1px solid #2a2f3a;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);

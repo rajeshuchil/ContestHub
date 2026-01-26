@@ -1,4 +1,5 @@
 import { unstable_cache } from 'next/cache';
+import { Contest } from '@/types';
 
 // Import CLIST as primary source
 import { fetchClistContests } from '@/lib/sources/clist';
@@ -20,12 +21,19 @@ import {
   deduplicateContests,
 } from '@/lib/normalize';
 
+interface PlatformFetcher {
+  name: string;
+  fetcher: () => Promise<any[]>;
+  source: string;
+  priority: number;
+}
+
 /**
  * Platform configuration
  * CLIST is now the primary source (priority 0)
  * Other platforms serve as fallbacks if CLIST fails
  */
-export const PLATFORM_FETCHERS = [
+export const PLATFORM_FETCHERS: PlatformFetcher[] = [
   { name: 'clist', fetcher: fetchClistContests, source: 'clist', priority: 0 },
   { name: 'codeforces', fetcher: fetchAllCodeforcesContests, source: 'codeforces', priority: 1 },
   { name: 'leetcode', fetcher: fetchLeetCodeContests, source: 'leetcode', priority: 1 },
@@ -43,7 +51,7 @@ export const PLATFORM_FETCHERS = [
  * CLIST is tried first, other platforms serve as fallbacks
  * Returns normalized and deduplicated contests
  */
-async function fetchAndNormalizeContests(requestedSources) {
+async function fetchAndNormalizeContests(requestedSources: string[]): Promise<Contest[]> {
   // Try CLIST first as primary source
   try {
     console.log('[Fetcher] Attempting CLIST as primary source...');
@@ -56,16 +64,16 @@ async function fetchAndNormalizeContests(requestedSources) {
         try {
           return normalizeContest(contest, 'clist');
         } catch (error) {
-          console.error(`[Fetcher] Normalization error for CLIST contest:`, error.message);
+          console.error(`[Fetcher] Normalization error for CLIST contest:`, (error as Error).message);
           return null;
         }
-      }).filter(Boolean);
+      }).filter(Boolean) as Contest[];
 
       console.log(`[Fetcher] Successfully normalized ${normalized.length} contests from CLIST`);
       return deduplicateContests(normalized);
     }
   } catch (error) {
-    console.warn('[Fetcher] CLIST failed, falling back to individual platform fetchers:', error.message);
+    console.warn('[Fetcher] CLIST failed, falling back to individual platform fetchers:', (error as Error).message);
   }
 
   // Fallback to individual platform fetchers

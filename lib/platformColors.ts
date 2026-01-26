@@ -1,9 +1,11 @@
+import { PlatformColors, PlatformColorMap } from '@/types';
+
 /**
  * Platform color definitions for calendar events and UI components
  * Centralized to ensure consistency across the application
  */
 
-export const PLATFORM_COLORS = {
+export const PLATFORM_COLORS: PlatformColorMap = {
   // Codeforces - Pink/Magenta
   'codeforces': { 
     bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8', accent: '#ec4899',
@@ -113,13 +115,19 @@ export const PLATFORM_COLORS = {
 
 /**
  * Get platform color by name with fallback
- * @param {string} platform - Platform name
- * @param {boolean} darkMode - Whether to use dark mode colors
- * @returns {object} Color object with bg, text, border, accent
+ * @param platform - Platform name
+ * @param darkMode - Whether to use dark mode colors
+ * @returns Color object with bg, text, border, accent
  */
-export function getPlatformColor(platform, darkMode = false) {
-  const defaultLight = { bg: '#f3f4f6', text: '#374151', border: '#d1d5db', accent: '#9ca3af' };
-  const defaultDark = { bg: '#3a3a4a', text: '#e6e6e6', border: '#4a4a5a', accent: '#8a8a9a' };
+export function getPlatformColor(platform: string | undefined, darkMode: boolean = false): PlatformColors {
+  const defaultLight: PlatformColors = { 
+    bg: '#f3f4f6', text: '#374151', border: '#d1d5db', accent: '#9ca3af',
+    bgDark: '#3a3a4a', textDark: '#e6e6e6', borderDark: '#4a4a5a', accentDark: '#8a8a9a'
+  };
+  const defaultDark: PlatformColors = { 
+    bg: '#3a3a4a', text: '#e6e6e6', border: '#4a4a5a', accent: '#8a8a9a',
+    bgDark: '#3a3a4a', textDark: '#e6e6e6', borderDark: '#4a4a5a', accentDark: '#8a8a9a'
+  };
   
   if (!platform) return darkMode ? defaultDark : defaultLight;
   
@@ -161,7 +169,7 @@ export function getPlatformColor(platform, darkMode = false) {
 /**
  * List of primary platforms for filtering
  */
-export const PRIMARY_PLATFORMS = [
+export const PRIMARY_PLATFORMS: Array<{ id: string; name: string }> = [
   { id: 'codeforces', name: 'Codeforces' },
   { id: 'leetcode', name: 'LeetCode' },
   { id: 'atcoder', name: 'AtCoder' },

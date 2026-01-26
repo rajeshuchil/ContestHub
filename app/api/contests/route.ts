@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getContests } from '@/lib/contests';
 import { 
   sortContests, 
@@ -8,6 +8,7 @@ import {
   filterByDateRange, 
   filterBySearch 
 } from '@/lib/normalize';
+import type { Contest } from '@/types';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 export const revalidate = 60; // fallback ISR
@@ -28,7 +29,7 @@ export const revalidate = 60; // fallback ISR
  * - page: Page number (1-based, default: 1)
  * - limit: items per page (default: 10, max: 100)
  */
-export async function GET(request) {
+export async function GET(request: NextRequest) {
   const requestStart = Date.now();
   const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   
@@ -286,9 +287,9 @@ export async function GET(request) {
     return NextResponse.json(
       { 
         error: 'Internal Server Error',
-        message: error.message || 'Failed to fetch contest data',
+        message: error instanceof Error ? error.message : 'Failed to fetch contest data',
         details: {
-          type: error.name || 'UnknownError',
+          type: error instanceof Error ? error.name : 'UnknownError',
           timestamp: new Date().toISOString()
         },
         requestId
@@ -308,10 +309,14 @@ export async function GET(request) {
  * @param {Array} contests - Array of normalized contests
  * @returns {Object} Statistics object
  */
-function calculateStats(contests) {
+function calculateStats(contests: Contest[]): {
+  total: number;
+  byPlatform: Record<string, number>;
+  byStatus: { upcoming: number; ongoing: number; ended: number };
+} {
   const stats = {
     total: contests.length,
-    byPlatform: {},
+    byPlatform: {} as Record<string, number>,
     byStatus: {
       upcoming: 0,
       ongoing: 0,
@@ -328,7 +333,7 @@ function calculateStats(contests) {
 
     // Count by status
     if (contest.status in stats.byStatus) {
-      stats.byStatus[contest.status]++;
+      stats.byStatus[contest.status as keyof typeof stats.byStatus]++;
     }
   });
 

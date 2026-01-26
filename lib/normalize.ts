@@ -1,14 +1,13 @@
+import { Contest, ContestStatus } from '@/types';
+
 /**
  * Normalize contest data from various platforms into a unified format
  */
 
 /**
  * Calculate contest status based on start time and duration
- * @param {string} startTime - ISO format start time
- * @param {number} duration - Duration in seconds
- * @returns {"upcoming" | "ongoing" | "ended"}
  */
-export function calculateStatus(startTime, duration) {
+export function calculateStatus(startTime: string | Date, duration: number): ContestStatus {
   const now = Date.now();
   const start = new Date(startTime).getTime();
   const end = start + duration * 1000;
@@ -23,16 +22,27 @@ export function calculateStatus(startTime, duration) {
 }
 
 /**
- * Normalize CLIST API data
- * @param {object} contest - Raw contest from CLIST API
- * @returns {object} Normalized contest object
+ * Raw CLIST contest data (partial definition)
  */
-export function normalizeClistContest(contest) {
+interface ClistRawContest {
+  id: number | string;
+  event: string;
+  start: number | string;
+  duration: number;
+  href: string;
+  resource?: { name: string };
+  host?: string;
+}
+
+/**
+ * Normalize CLIST API data
+ */
+export function normalizeClistContest(contest: ClistRawContest): Contest {
   // CLIST provides duration in seconds directly
   const duration = contest.duration || 0;
   
   // CLIST returns Unix timestamp when format_time=false, or ISO string when format_time=true
-  let startTime;
+  let startTime: string;
   if (typeof contest.start === 'number') {
     // Unix timestamp - convert to ISO string
     startTime = new Date(contest.start * 1000).toISOString();
@@ -53,28 +63,46 @@ export function normalizeClistContest(contest) {
 }
 
 /**
- * Normalize Kontests API data
- * @param {object} contest - Raw contest from Kontests API
- * @returns {object} Normalized contest object
+ * Raw Kontests contest data
  */
-export function normalizeKontestsContest(contest) {
+interface KontestsRawContest {
+  site: string;
+  name: string;
+  start_time: string;
+  duration: string | number;
+  url: string;
+}
+
+/**
+ * Normalize Kontests API data
+ */
+export function normalizeKontestsContest(contest: KontestsRawContest): Contest {
+  const duration = contest.duration ? parseInt(String(contest.duration)) : 0;
   return {
     id: `${contest.site}-${contest.name}-${contest.start_time}`.replace(/\s+/g, '-'),
     platform: contest.site,
     name: contest.name,
     startTime: contest.start_time,
-    duration: contest.duration ? parseInt(contest.duration) : 0,
+    duration,
     url: contest.url,
-    status: calculateStatus(contest.start_time, contest.duration ? parseInt(contest.duration) : 0)
+    status: calculateStatus(contest.start_time, duration)
   };
 }
 
 /**
- * Normalize Codeforces API data
- * @param {object} contest - Raw contest from Codeforces API
- * @returns {object} Normalized contest object
+ * Raw Codeforces contest data
  */
-export function normalizeCodeforcesContest(contest) {
+interface CodeforcesRawContest {
+  id: number;
+  name: string;
+  startTimeSeconds: number;
+  durationSeconds: number;
+}
+
+/**
+ * Normalize Codeforces API data
+ */
+export function normalizeCodeforcesContest(contest: CodeforcesRawContest): Contest {
   const startTime = new Date(contest.startTimeSeconds * 1000).toISOString();
   const duration = contest.durationSeconds;
   
@@ -90,11 +118,19 @@ export function normalizeCodeforcesContest(contest) {
 }
 
 /**
- * Normalize LeetCode GraphQL data
- * @param {object} contest - Raw contest from LeetCode API
- * @returns {object} Normalized contest object
+ * Raw LeetCode contest data
  */
-export function normalizeLeetCodeContest(contest) {
+interface LeetCodeRawContest {
+  titleSlug: string;
+  title: string;
+  startTime: number;
+  duration: number;
+}
+
+/**
+ * Normalize LeetCode GraphQL data
+ */
+export function normalizeLeetCodeContest(contest: LeetCodeRawContest): Contest {
   // LeetCode provides startTime in seconds, convert to milliseconds
   const startTime = new Date(contest.startTime * 1000).toISOString();
   const duration = contest.duration;

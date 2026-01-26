@@ -11,7 +11,7 @@ import { PLATFORM_FETCHERS } from '@/lib/contests';
  * - Cache status
  * - Response time
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const startTime = Date.now();
   
   try {
@@ -36,7 +36,7 @@ export async function GET() {
           return {
             platform: name,
             status: 'unhealthy',
-            error: error.message,
+            error: error instanceof Error ? error.message : 'Unknown error',
             responseTime: Date.now() - checkStart
           };
         }
@@ -47,7 +47,8 @@ export async function GET() {
       result.status === 'fulfilled' ? result.value : {
         platform: 'unknown',
         status: 'error',
-        error: 'Failed to check'
+        error: 'Failed to check',
+        responseTime: 0
       }
     );
 
@@ -70,7 +71,7 @@ export async function GET() {
           error: p.error
         };
         return acc;
-      }, {}),
+      }, {} as Record<string, any>),
       summary: {
         total: totalCount,
         healthy: healthyCount,
@@ -92,7 +93,7 @@ export async function GET() {
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
       error: 'Health check failed',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, {
       status: 503,
       headers: {
