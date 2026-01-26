@@ -10,6 +10,7 @@ interface ParticipationPanelProps {
   onContestClick: (contest: Contest) => void;
   onRemoveParticipation: (contestId: string) => void;
   darkMode?: boolean;
+  isMobileCollapsible?: boolean;
 }
 
 export default function ParticipationPanel({
@@ -17,6 +18,7 @@ export default function ParticipationPanel({
   onContestClick,
   onRemoveParticipation,
   darkMode = false,
+  isMobileCollapsible = false,
 }: ParticipationPanelProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -45,22 +47,27 @@ export default function ParticipationPanel({
   const dateKeys = Object.keys(contestsByDate);
 
   return (
-    <div className="space-y-4">
-      {/* Header outside the card */}
-      <div>
-        <h3
-          className="font-bold text-2xl mb-1"
-          style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
-        >
-          Your Contests
-        </h3>
-        <p
-          className="text-sm"
-          style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
-        >
-          Don&apos;t miss scheduled events
-        </p>
-      </div>
+    <div
+      className="space-y-4"
+      style={{ paddingBottom: isMobileCollapsible ? "0px" : "24px" }}
+    >
+      {/* Header outside the card - Hidden in mobile collapsible */}
+      {!isMobileCollapsible && (
+        <div>
+          <h3
+            className="font-bold text-2xl mb-1"
+            style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+          >
+            Your Contests
+          </h3>
+          <p
+            className="text-sm"
+            style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+          >
+            Don&apos;t miss scheduled events
+          </p>
+        </div>
+      )}
 
       {/* Participated Events Cards */}
       {upcomingContests.length === 0 ? (
@@ -73,21 +80,21 @@ export default function ParticipationPanel({
           </p>
         </div>
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-6">
           {dateKeys.map((dateKey) => {
             const contestsForDate = contestsByDate[dateKey];
             return (
               <div key={dateKey}>
                 {/* Date Header */}
                 <div
-                  className="text-sm font-semibold mb-3"
+                  className="text-sm font-semibold mb-4"
                   style={{ color: darkMode ? "#d1d5db" : "#374151" }}
                 >
                   {dateKey}
                 </div>
 
                 {/* Cards for this date */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {contestsForDate.map((contest, contestIndex) => {
                     const startTime = new Date(contest.startTime);
                     const endTime = new Date(
@@ -208,12 +215,12 @@ export default function ParticipationPanel({
                         {/* Divider line - show for all except last card in this date group */}
                         {contestIndex < contestsForDate.length - 1 && (
                           <hr
-                            className="my-3"
+                            className="my-5"
                             style={{
                               border: "none",
                               borderTop: darkMode
-                                ? "1px solid #374151"
-                                : "1px solid #e5e7eb",
+                                ? "1px dashed #374151"
+                                : "1px dashed #d1d5db",
                             }}
                           />
                         )}

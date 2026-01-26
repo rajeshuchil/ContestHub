@@ -22,12 +22,12 @@ export default function ViewSwitcher({
     wrapper: {
       display: "flex",
       alignItems: "center",
-      gap: "25px",
+      gap: "12px",
     },
     container: {
       display: "flex",
-      gap: "8px",
-      padding: "4px",
+      gap: "4px",
+      padding: "3px",
       backgroundColor: darkMode ? "#252b3a" : "#f5f5f5",
       borderRadius: "8px",
       border: darkMode ? "1px solid #3a4150" : "1px solid #e0e0e0",
@@ -35,33 +35,35 @@ export default function ViewSwitcher({
     button: {
       display: "flex",
       alignItems: "center",
-      gap: "6px",
-      padding: "8px 16px",
+      gap: "4px",
+      padding: "6px 10px",
       border: "none",
       borderRadius: "6px",
       backgroundColor: "transparent",
       cursor: "pointer",
-      fontSize: "14px",
+      fontSize: "13px",
       fontWeight: "500",
       color: darkMode ? "#9ca3af" : "#666",
       transition: "all 0.2s",
       outline: "none",
+      whiteSpace: "nowrap" as const,
     },
     themeButton: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      width: "40px",
-      height: "40px",
+      width: "36px",
+      height: "36px",
       padding: "0",
       border: darkMode ? "1px solid #3a4150" : "1px solid #e0e0e0",
       borderRadius: "8px",
       backgroundColor: darkMode ? "#252b3a" : "#f5f5f5",
       color: darkMode ? "#e6e6e6" : "#374151",
       cursor: "pointer",
-      fontSize: "20px",
+      fontSize: "18px",
       transition: "all 0.2s",
       outline: "none",
+      flexShrink: 0,
     },
     activeButton: {
       backgroundColor: darkMode ? "#1e2430" : "#fff",
@@ -93,7 +95,7 @@ export default function ViewSwitcher({
             <span className="flex items-center justify-center">
               {view.icon}
             </span>
-            <span>{view.label}</span>
+            <span className="hidden sm:inline">{view.label}</span>
           </button>
         ))}
       </div>

@@ -59,11 +59,12 @@ export default function ContestStats({
 
   return (
     <div
+      className="responsive-padding"
       style={{
         width: "100%",
         backgroundColor: darkMode ? "#111827" : "#f3f4f6",
-        padding: "40px 24px",
-        marginTop: "32px",
+        paddingTop: "32px",
+        paddingBottom: "40px",
       }}
     >
       <div
@@ -73,11 +74,12 @@ export default function ContestStats({
         }}
       >
         <h3
+          className="mobile-text-xl"
           style={{
             fontSize: "20px",
             fontWeight: "700",
             color: darkMode ? "#f3f4f6" : "#111827",
-            marginBottom: "24px",
+            marginBottom: "16px",
             marginTop: "0",
           }}
         >
@@ -87,8 +89,8 @@ export default function ContestStats({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "16px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+            gap: "12px",
           }}
         >
           {/* Total Contests */}
