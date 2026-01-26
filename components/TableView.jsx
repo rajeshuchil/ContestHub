@@ -35,16 +35,16 @@ export default function TableView({ contests }) {
   const getStatus = (startTime, duration) => {
     const now = new Date();
     const start = new Date(startTime);
-    const end = new Date(start.getTime() + duration * 60000);
-    
+    const end = new Date(start.getTime() + duration * 1000);
+
     if (now >= start && now <= end) return 'live';
     if (now < start) return 'upcoming';
     return 'ended';
   };
 
-  const formatDuration = (minutes) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+  const formatDuration = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     if (hours === 0) return `${mins}m`;
     if (mins === 0) return `${hours}h`;
     return `${hours}h ${mins}m`;
@@ -103,6 +103,9 @@ export default function TableView({ contests }) {
               const status = getStatus(contest.startTime, contest.duration);
               const startDate = new Date(contest.startTime);
               
+              // Validate date
+              const isValidDate = startDate instanceof Date && !isNaN(startDate);
+
               return (
                 <tr key={idx} style={styles.tr}>
                   <td style={styles.td}>
@@ -126,17 +129,19 @@ export default function TableView({ contests }) {
                   </td>
                   <td style={styles.td}>
                     <div style={styles.timeCell}>
-                      <div style={styles.timeMain}>{format(startDate, 'MMM dd, HH:mm')}</div>
+                      <div style={styles.timeMain}>
+                        {isValidDate ? format(startDate, 'MMM dd, HH:mm') : contest.startTime || 'TBD'}
+                      </div>
                       <div style={styles.timeRelative}>
-                        {status === 'upcoming' ? formatDistanceToNow(startDate, { addSuffix: true }) : ''}
+                        {status === 'upcoming' && isValidDate ? formatDistanceToNow(startDate, { addSuffix: true }) : ''}
                       </div>
                     </div>
                   </td>
                   <td style={styles.td}>{formatDuration(contest.duration)}</td>
                   <td style={styles.td}>
-                    <a 
-                      href={contest.url} 
-                      target="_blank" 
+                    <a
+                      href={contest.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       style={styles.link}
                     >

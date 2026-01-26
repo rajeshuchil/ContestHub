@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ContestFeed from '@/components/ContestFeed';
 import CalendarView from '@/components/CalendarView';
 import TableView from '@/components/TableView';
 import ViewSwitcher from '@/components/ViewSwitcher';
@@ -11,7 +10,7 @@ export default function Home() {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentView, setCurrentView] = useState('cards');
+  const [currentView, setCurrentView] = useState('table');
 
   useEffect(() => {
     async function fetchContests() {
@@ -139,9 +138,8 @@ export default function Home() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          {currentView === 'cards' && <ContestFeed contests={contests} />}
-          {currentView === 'calendar' && <CalendarView contests={contests} />}
           {currentView === 'table' && <TableView contests={contests} />}
+          {currentView === 'calendar' && <CalendarView contests={contests} />}
         </motion.div>
       </AnimatePresence>
 
