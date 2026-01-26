@@ -1,5 +1,6 @@
 "use client";
 import { BsSun, BsMoon } from "react-icons/bs";
+import { Calendar, Table } from "lucide-react";
 import { ViewSwitcherProps } from "@/types";
 
 export default function ViewSwitcher({
@@ -9,8 +10,12 @@ export default function ViewSwitcher({
   onToggleDarkMode,
 }: ViewSwitcherProps) {
   const views = [
-    { id: "calendar" as const, label: "Calendar", icon: "📅" },
-    { id: "table" as const, label: "Table", icon: "☰" },
+    {
+      id: "calendar" as const,
+      label: "Calendar",
+      icon: <Calendar size={18} />,
+    },
+    { id: "table" as const, label: "Table", icon: <Table size={18} /> },
   ];
 
   const getStyles = (darkMode: boolean) => ({
@@ -60,7 +65,7 @@ export default function ViewSwitcher({
     },
     activeButton: {
       backgroundColor: darkMode ? "#1e2430" : "#fff",
-      color: darkMode ? "#60a5fa" : "#1976d2",
+      color: darkMode ? "#60a5fa" : "#000000",
       boxShadow: darkMode
         ? "0 2px 4px rgba(0,0,0,0.3)"
         : "0 2px 4px rgba(0,0,0,0.1)",
@@ -79,18 +84,22 @@ export default function ViewSwitcher({
           <button
             key={view.id}
             onClick={() => onViewChange(view.id)}
+            className="transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:bg-black/5 dark:hover:bg-white/10"
             style={{
               ...styles.button,
               ...(currentView === view.id ? styles.activeButton : {}),
             }}
           >
-            <span style={styles.icon}>{view.icon}</span>
+            <span className="flex items-center justify-center">
+              {view.icon}
+            </span>
             <span>{view.label}</span>
           </button>
         ))}
       </div>
       <button
         onClick={onToggleDarkMode}
+        className="transition-all duration-300 ease-out hover:scale-110 active:scale-90 rotate-icon"
         style={styles.themeButton}
         title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
       >

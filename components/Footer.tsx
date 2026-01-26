@@ -25,6 +25,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             href="https://github.com/rajeshuchil/ContestHub"
             target="_blank"
             rel="noopener noreferrer"
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
             style={{
               ...styles.brandLink,
               ...(darkMode ? { color: "#e6e6e6" } : {}),
@@ -45,6 +46,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             href="https://github.com/rajeshuchil"
             target="_blank"
             rel="noopener noreferrer"
+            className="hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200"
             style={{
               ...styles.authorLink,
               ...(darkMode ? { color: "#60a5fa" } : {}),
@@ -66,6 +68,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
         <div style={styles.rightSection}>
           <a
             href="mailto:contact@contesthub.com"
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
             style={{
               ...styles.contactLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),
@@ -77,6 +80,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             href="https://github.com/rajeshuchil/ContestHub"
             target="_blank"
             rel="noopener noreferrer"
+            className="hover:text-black dark:hover:text-white transition-colors duration-200 transform hover:scale-110"
             style={{
               ...styles.iconLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),
@@ -91,6 +95,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             href="https://twitter.com/rajeshuchil"
             target="_blank"
             rel="noopener noreferrer"
+            className="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 transform hover:scale-110"
             style={{
               ...styles.iconLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),

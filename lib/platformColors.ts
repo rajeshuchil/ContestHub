@@ -7,107 +7,107 @@ import { PlatformColors, PlatformColorMap } from '@/types';
 
 export const PLATFORM_COLORS: PlatformColorMap = {
   // Codeforces - Pink/Magenta
-  'codeforces': { 
+  'codeforces': {
     bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8', accent: '#ec4899',
     bgDark: '#4a2a3e', textDark: '#e6e6e6', borderDark: '#5a3a4e', accentDark: '#d94489'
   },
-  
+
   // LeetCode - Orange/Yellow
-  'leetcode': { 
+  'leetcode': {
     bg: '#fed7aa', text: '#9a3412', border: '#fdba74', accent: '#f97316',
     bgDark: '#4a3722', textDark: '#e6e6e6', borderDark: '#5a4732', accentDark: '#e06306'
   },
-  
+
   // CodeChef - Yellow/Gold
-  'codechef': { 
+  'codechef': {
     bg: '#fef3c7', text: '#92400e', border: '#fde68a', accent: '#f59e0b',
     bgDark: '#4a4022', textDark: '#e6e6e6', borderDark: '#5a5032', accentDark: '#dc8e0b'
   },
-  
+
   // AtCoder - Green
-  'atcoder': { 
+  'atcoder': {
     bg: '#d1fae5', text: '#065f46', border: '#6ee7b7', accent: '#10b981',
     bgDark: '#1f4a39', textDark: '#e6e6e6', borderDark: '#2f5a49', accentDark: '#0ea971'
   },
-  
+
   // HackerRank - Light Blue/Cyan
-  'hackerrank': { 
+  'hackerrank': {
     bg: '#ccfbf1', text: '#115e59', border: '#5eead4', accent: '#14b8a6',
     bgDark: '#1f4a47', textDark: '#e6e6e6', borderDark: '#2f5a57', accentDark: '#12a896'
   },
-  
+
   // HackerEarth - Purple
-  'hackerearth': { 
+  'hackerearth': {
     bg: '#ddd6fe', text: '#5b21b6', border: '#c4b5fd', accent: '#8b5cf6',
     bgDark: '#3a2a5a', textDark: '#e6e6e6', borderDark: '#4a3a6a', accentDark: '#7b4ce6'
   },
-  
+
   // TopCoder - Dark Blue
-  'topcoder': { 
+  'topcoder': {
     bg: '#bfdbfe', text: '#1e40af', border: '#93c5fd', accent: '#3b82f6',
     bgDark: '#2a3a5a', textDark: '#e6e6e6', borderDark: '#3a4a6a', accentDark: '#3b72e6'
   },
-  
+
   // Google - Blue
-  'google': { 
+  'google': {
     bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd', accent: '#3b82f6',
     bgDark: '#2a3555', textDark: '#e6e6e6', borderDark: '#3a4565', accentDark: '#3b72e6'
   },
-  'kick start': { 
+  'kick start': {
     bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd', accent: '#3b82f6',
     bgDark: '#2a3555', textDark: '#e6e6e6', borderDark: '#3a4565', accentDark: '#3b72e6'
   },
-  'code jam': { 
+  'code jam': {
     bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd', accent: '#3b82f6',
     bgDark: '#2a3555', textDark: '#e6e6e6', borderDark: '#3a4565', accentDark: '#3b72e6'
   },
-  
+
   // Kilonova - Pink
-  'kilonova': { 
+  'kilonova': {
     bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8', accent: '#ec4899',
     bgDark: '#4a2a3e', textDark: '#e6e6e6', borderDark: '#5a3a4e', accentDark: '#d94489'
   },
-  
+
   // Nowcoder (牛客) - Purple
-  'nowcoder': { 
+  'nowcoder': {
     bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc', accent: '#a855f7',
     bgDark: '#3a2555', textDark: '#e6e6e6', borderDark: '#4a3565', accentDark: '#9845e7'
   },
-  '牛客': { 
+  '牛客': {
     bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc', accent: '#a855f7',
     bgDark: '#3a2555', textDark: '#e6e6e6', borderDark: '#4a3565', accentDark: '#9845e7'
   },
-  
+
   // Luogu (洛谷) - Dark Blue/Indigo
-  'luogu': { 
+  'luogu': {
     bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc', accent: '#6366f1',
     bgDark: '#2a2a55', textDark: '#e6e6e6', borderDark: '#3a3a65', accentDark: '#5356e1'
   },
-  '洛谷': { 
+  '洛谷': {
     bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc', accent: '#6366f1',
     bgDark: '#2a2a55', textDark: '#e6e6e6', borderDark: '#3a3a65', accentDark: '#5356e1'
   },
-  
+
   // ICPC - Red
-  'icpc': { 
+  'icpc': {
     bg: '#fee2e2', text: '#991b1b', border: '#fca5a5', accent: '#ef4444',
     bgDark: '#4a2222', textDark: '#e6e6e6', borderDark: '#5a3232', accentDark: '#df3434'
   },
-  
+
   // UOJ - Red
-  'uoj': { 
+  'uoj': {
     bg: '#fee2e2', text: '#991b1b', border: '#fca5a5', accent: '#ef4444',
     bgDark: '#4a2222', textDark: '#e6e6e6', borderDark: '#5a3232', accentDark: '#df3434'
   },
-  
+
   // Technocup - Yellow/Gold
-  'technocup': { 
+  'technocup': {
     bg: '#fef3c7', text: '#92400e', border: '#fde68a', accent: '#f59e0b',
     bgDark: '#4a4022', textDark: '#e6e6e6', borderDark: '#5a5032', accentDark: '#dc8e0b'
   },
-  
+
   // Universal Cup - Red
-  'universal cup': { 
+  'universal cup': {
     bg: '#fee2e2', text: '#991b1b', border: '#fca5a5', accent: '#ef4444',
     bgDark: '#4a2222', textDark: '#e6e6e6', borderDark: '#5a3232', accentDark: '#df3434'
   },
@@ -119,20 +119,18 @@ export const PLATFORM_COLORS: PlatformColorMap = {
  * @param darkMode - Whether to use dark mode colors
  * @returns Color object with bg, text, border, accent
  */
-export function getPlatformColor(platform: string | undefined, darkMode: boolean = false): PlatformColors {
-  const defaultLight: PlatformColors = { 
-    bg: '#f3f4f6', text: '#374151', border: '#d1d5db', accent: '#9ca3af',
-    bgDark: '#3a3a4a', textDark: '#e6e6e6', borderDark: '#4a4a5a', accentDark: '#8a8a9a'
+export function getPlatformColor(platform: string | undefined, darkMode: boolean = false): Pick<PlatformColors, 'bg' | 'text' | 'border' | 'accent'> {
+  const defaultLight: Pick<PlatformColors, 'bg' | 'text' | 'border' | 'accent'> = {
+    bg: '#f3f4f6', text: '#374151', border: '#d1d5db', accent: '#9ca3af'
   };
-  const defaultDark: PlatformColors = { 
-    bg: '#3a3a4a', text: '#e6e6e6', border: '#4a4a5a', accent: '#8a8a9a',
-    bgDark: '#3a3a4a', textDark: '#e6e6e6', borderDark: '#4a4a5a', accentDark: '#8a8a9a'
+  const defaultDark: Pick<PlatformColors, 'bg' | 'text' | 'border' | 'accent'> = {
+    bg: '#3a3a4a', text: '#e6e6e6', border: '#4a4a5a', accent: '#8a8a9a'
   };
-  
+
   if (!platform) return darkMode ? defaultDark : defaultLight;
-  
+
   const platformLower = platform.toLowerCase();
-  
+
   // Try exact match first
   if (PLATFORM_COLORS[platformLower]) {
     const colors = PLATFORM_COLORS[platformLower];
@@ -146,7 +144,7 @@ export function getPlatformColor(platform: string | undefined, darkMode: boolean
     }
     return { bg: colors.bg, text: colors.text, border: colors.border, accent: colors.accent };
   }
-  
+
   // Try partial match
   for (const [key, colors] of Object.entries(PLATFORM_COLORS)) {
     if (platformLower.includes(key) || key.includes(platformLower)) {
@@ -161,7 +159,7 @@ export function getPlatformColor(platform: string | undefined, darkMode: boolean
       return { bg: colors.bg, text: colors.text, border: colors.border, accent: colors.accent };
     }
   }
-  
+
   // Default fallback
   return darkMode ? defaultDark : defaultLight;
 }
@@ -177,3 +175,77 @@ export const PRIMARY_PLATFORMS: Array<{ id: string; name: string }> = [
   { id: 'hackerrank', name: 'HackerRank' },
   { id: 'topcoder', name: 'TopCoder' },
 ];
+
+/**
+ * Get platform logo URL - uses CLIST's logo system
+ * @param platform - Platform name
+ * @returns Logo URL or null
+ */
+export function getPlatformLogo(platform: string): string | null {
+  if (!platform) return null;
+
+  const platformLower = platform.toLowerCase().trim();
+
+  // Map platform names to CLIST domain format
+  const logoMap: Record<string, string> = {
+    // Major platforms
+    codeforces: "codeforces.com",
+    leetcode: "leetcode.com",
+    codechef: "codechef.com",
+    atcoder: "atcoder.jp",
+    hackerrank: "hackerrank.com",
+    hackerearth: "hackerearth.com",
+    topcoder: "topcoder.com",
+    google: "codingcompetitions.withgoogle.com",
+    "kick start": "codingcompetitions.withgoogle.com",
+    "code jam": "codingcompetitions.withgoogle.com",
+    kilonova: "kilonova.ro",
+
+    // Chinese platforms
+    nowcoder: "nowcoder.com",
+    牛客: "nowcoder.com",
+    luogu: "luogu.com.cn",
+    洛谷: "luogu.com.cn",
+
+    // Other platforms
+    icpc: "icpc.global",
+    uoj: "uoj.ac",
+    technocup: "technocup.mail.ru",
+    "universal cup": "ucup.ac",
+    robo: "robocontest.uz",
+    robocontest: "robocontest.uz",
+    "beginner contest": "atcoder.jp",
+    "weekly contest": "leetcode.com",
+  };
+
+  // Try exact match first
+  if (logoMap[platformLower]) {
+    return `https://clist.by/images/resources/${logoMap[platformLower]}.ico`;
+  }
+
+  // Try partial match
+  for (const [key, domain] of Object.entries(logoMap)) {
+    if (platformLower.includes(key) || key.includes(platformLower)) {
+      return `https://clist.by/images/resources/${domain}.ico`;
+    }
+  }
+
+  // Try to extract domain from platform name if it contains a domain
+  const domainMatch = platform.match(
+    /([a-z0-9-]+\.(com|org|net|io|jp|ro|cn|by|ac|ru|uz|global))/i,
+  );
+  if (domainMatch) {
+    return `https://clist.by/images/resources/${domainMatch[1].toLowerCase()}.ico`;
+  }
+
+  // Fallback: try to construct URL from platform name
+  const sanitized = platformLower
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9.-]/g, "");
+  if (sanitized && sanitized.length > 2) {
+    return `https://clist.by/images/resources/${sanitized}.ico`;
+  }
+
+  // Final fallback: use Google favicon service
+  return `https://www.google.com/s2/favicons?domain=${platformLower.replace(/\s+/g, "")}.com&sz=32`;
+}
