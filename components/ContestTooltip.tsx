@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Contest } from "@/types";
-import { getPlatformColor, getPlatformLogo } from "@/lib/platformColors";
+import { getPlatformColor } from "@/lib/platformColors";
 
 interface ContestTooltipProps {
   contest: Contest;
@@ -24,9 +24,11 @@ export default function ContestTooltip({
   anchorElement,
 }: ContestTooltipProps) {
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const [position, setPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const platformColors = getPlatformColor(contest.platform, darkMode);
-  const platformLogo = getPlatformLogo(contest.platform);
 
   // Calculate position based on anchor element
   useEffect(() => {
@@ -147,43 +149,37 @@ export default function ContestTooltip({
       }}
     >
       {/* Header */}
-      <div className="p-4 border-b" style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}>
+      <div
+        className="p-4 border-b"
+        style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}
+      >
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3 flex-1">
-            {platformLogo && (
-              <img
-                src={platformLogo}
-                alt={contest.platform}
-                className="w-8 h-8 rounded object-contain flex-shrink-0 mt-1"
-              />
-            )}
-            <div className="flex-1 min-w-0">
-              <h3
-                className="font-semibold text-base leading-tight mb-2"
-                style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+          <div className="flex-1 min-w-0">
+            <h3
+              className="font-semibold text-base leading-tight mb-2"
+              style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+            >
+              {contest.name}
+            </h3>
+            <div className="flex items-center gap-2">
+              <span
+                className="text-xs font-medium px-2 py-1 rounded"
+                style={{
+                  backgroundColor: platformColors.bg,
+                  color: platformColors.text,
+                }}
               >
-                {contest.name}
-              </h3>
-              <div className="flex items-center gap-2">
-                <span
-                  className="text-xs font-medium px-2 py-1 rounded"
-                  style={{
-                    backgroundColor: platformColors.bg,
-                    color: platformColors.text,
-                  }}
-                >
-                  {contest.platform}
-                </span>
-                <span
-                  className="text-xs font-medium px-2 py-1 rounded"
-                  style={{
-                    backgroundColor: statusStyle.bg,
-                    color: statusStyle.text,
-                  }}
-                >
-                  {statusStyle.label}
-                </span>
-              </div>
+                {contest.platform}
+              </span>
+              <span
+                className="text-xs font-medium px-2 py-1 rounded"
+                style={{
+                  backgroundColor: statusStyle.bg,
+                  color: statusStyle.text,
+                }}
+              >
+                {statusStyle.label}
+              </span>
             </div>
           </div>
           <button
@@ -199,7 +195,10 @@ export default function ContestTooltip({
       {/* Content */}
       <div className="p-4 space-y-3">
         <div className="flex items-center gap-2 text-sm">
-          <span className="opacity-70" style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}>
+          <span
+            className="opacity-70"
+            style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+          >
             📅
           </span>
           <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
@@ -208,7 +207,10 @@ export default function ContestTooltip({
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <span className="opacity-70" style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}>
+          <span
+            className="opacity-70"
+            style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+          >
             🕐
           </span>
           <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
@@ -217,7 +219,10 @@ export default function ContestTooltip({
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <span className="opacity-70" style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}>
+          <span
+            className="opacity-70"
+            style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+          >
             ⏱️
           </span>
           <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
@@ -240,16 +245,23 @@ export default function ContestTooltip({
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t" style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}>
+      <div
+        className="p-4 border-t"
+        style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}
+      >
         <button
           onClick={handleParticipateClick}
           className="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all hover:opacity-90"
           style={{
             backgroundColor: isParticipating
-              ? darkMode ? "#dc262620" : "#fee2e2"
+              ? darkMode
+                ? "#dc262620"
+                : "#fee2e2"
               : platformColors.bg,
             color: isParticipating
-              ? darkMode ? "#fca5a5" : "#dc2626"
+              ? darkMode
+                ? "#fca5a5"
+                : "#dc2626"
               : platformColors.text,
             cursor: "pointer",
           }}
