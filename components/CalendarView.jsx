@@ -16,10 +16,21 @@ import {
 } from 'date-fns';
 import WeekView from './WeekView';
 import ListView from './ListView';
+import { getPlatformColor } from '@/lib/platformColors';
 
-export default function CalendarView({ contests }) {
+export default function CalendarView({ contests, activePlatforms = [], viewMode = 'month', onViewChange, darkMode = false }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState('month'); // month, week, list
+
+  // Filter contests by active platforms
+  const filteredContests = useMemo(() => {
+    if (activePlatforms.length === 0) return contests;
+    return contests.filter(contest => {
+      const platform = contest.host?.toLowerCase() || contest.platform?.toLowerCase() || '';
+      return activePlatforms.some(activePlatform => 
+        platform.includes(activePlatform.toLowerCase())
+      );
+    });
+  }, [contests, activePlatforms]);
 
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
@@ -32,87 +43,14 @@ export default function CalendarView({ contests }) {
 
   const contestsByDate = useMemo(() => {
     const map = {};
-    contests.forEach(contest => {
+    filteredContests.forEach(contest => {
       const contestDate = new Date(contest.startTime);
       const dateKey = format(contestDate, 'yyyy-MM-dd');
       if (!map[dateKey]) map[dateKey] = [];
       map[dateKey].push(contest);
     });
     return map;
-  }, [contests]);
-
-  // Platform-based color mapping - matches CLIST color scheme
-  const getPlatformColor = (platform) => {
-    if (!platform) return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
-    
-    const platformLower = platform.toLowerCase();
-    
-    const colorMap = {
-      // Codeforces - Pink/Magenta
-      'codeforces': { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8' },
-      
-      // LeetCode - Orange/Yellow
-      'leetcode': { bg: '#fed7aa', text: '#9a3412', border: '#fdba74' },
-      
-      // CodeChef - Yellow/Gold
-      'codechef': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-      
-      // AtCoder - Green
-      'atcoder': { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7' },
-      
-      // HackerRank - Light Blue/Cyan
-      'hackerrank': { bg: '#ccfbf1', text: '#115e59', border: '#5eead4' },
-      
-      // HackerEarth - Purple
-      'hackerearth': { bg: '#ddd6fe', text: '#5b21b6', border: '#c4b5fd' },
-      
-      // TopCoder - Dark Blue
-      'topcoder': { bg: '#bfdbfe', text: '#1e40af', border: '#93c5fd' },
-      
-      // Google - Blue
-      'google': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      'kick start': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      'code jam': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      
-      // Kilonova - Pink
-      'kilonova': { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8' },
-      
-      // Nowcoder (牛客) - Purple
-      'nowcoder': { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc' },
-      '牛客': { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc' },
-      
-      // Luogu (洛谷) - Dark Blue/Indigo
-      'luogu': { bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc' },
-      '洛谷': { bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc' },
-      
-      // ICPC - Red
-      'icpc': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-      
-      // UOJ - Red
-      'uoj': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-      
-      // Technocup - Yellow/Gold
-      'technocup': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-      
-      // Universal Cup - Red
-      'universal cup': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-    };
-    
-    // Try exact match first
-    if (colorMap[platformLower]) {
-      return colorMap[platformLower];
-    }
-    
-    // Try partial match
-    for (const [key, colors] of Object.entries(colorMap)) {
-      if (platformLower.includes(key) || key.includes(platformLower)) {
-        return colors;
-      }
-    }
-    
-    // Default gray
-    return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
-  };
+  }, [filteredContests]);
 
   // Status indicator styles
   const getStatusIndicator = (status) => {
@@ -191,8 +129,32 @@ export default function CalendarView({ contests }) {
     return `https://www.google.com/s2/favicons?domain=${platformLower.replace(/\s+/g, '')}.com&sz=32`;
   };
 
+  // Get dynamic styles based on dark mode
+  const getStyles = () => {
+    if (darkMode) {
+      return {
+        container: { ...styles.container, backgroundColor: '#1e2430', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', marginTop: '12px' },
+        monthTitle: { ...styles.monthTitle, color: '#f3f4f6' },
+        navButton: { ...styles.navButton, border: '1px solid #3a4150', backgroundColor: '#2a2f3d', color: '#d1d5db' },
+        viewToggle: { ...styles.viewToggle, backgroundColor: '#2a2f3d', border: '1px solid #3a4150' },
+        toggleBtn: { ...styles.toggleBtn, color: '#9ca3af' },
+        toggleBtnActive: { ...styles.toggleBtnActive, backgroundColor: '#3a4150', color: '#f3f4f6', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' },
+        weekdays: { ...styles.weekdays, backgroundColor: '#252b3a', border: '1px solid #3a4150', borderBottom: 'none' },
+        weekday: { ...styles.weekday, backgroundColor: '#252b3a', color: '#b4bac8', borderRight: '1px solid #3a4150' },
+        grid: { ...styles.grid, backgroundColor: '#1e2430', border: '1px solid #3a4150' },
+        day: { ...styles.day, backgroundColor: '#252b3a', borderRight: '1px solid #3a4150', borderBottom: '1px solid #3a4150' },
+        otherMonth: { ...styles.otherMonth, backgroundColor: '#1a1f2c', opacity: 0.5 },
+        today: { ...styles.today, backgroundColor: '#2d3547', boxShadow: 'inset 0 0 0 2px #60a5fa' },
+        dayNumber: { ...styles.dayNumber, color: '#d1d5db' },
+      };
+    }
+    return styles;
+  };
+
+  const dynamicStyles = getStyles();
+
   return (
-    <div style={styles.container}>
+    <div style={dynamicStyles.container}>
       <div style={styles.header}>
         <div style={styles.headerLeft}>
           <button 
@@ -203,11 +165,11 @@ export default function CalendarView({ contests }) {
                 setCurrentDate(subMonths(currentDate, 1));
               }
             }} 
-            style={styles.navButton}
+            style={dynamicStyles.navButton}
           >
             ‹
           </button>
-          <h2 style={styles.monthTitle}>
+          <h2 style={dynamicStyles.monthTitle}>
             {viewMode === 'week' 
               ? `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d')} – ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`
               : format(currentDate, 'MMMM yyyy')
@@ -221,47 +183,49 @@ export default function CalendarView({ contests }) {
                 setCurrentDate(addMonths(currentDate, 1));
               }
             }} 
-            style={styles.navButton}
+            style={dynamicStyles.navButton}
           >
             ›
           </button>
         </div>
-        <div style={styles.viewToggle}>
-          <button 
-            style={{...styles.toggleBtn, ...(viewMode === 'month' ? styles.toggleBtnActive : {})}}
-            onClick={() => setViewMode('month')}
-          >
-            month
-          </button>
-          <button 
-            style={{...styles.toggleBtn, ...(viewMode === 'week' ? styles.toggleBtnActive : {})}}
-            onClick={() => setViewMode('week')}
-          >
-            week
-          </button>
-          <button 
-            style={{...styles.toggleBtn, ...(viewMode === 'list' ? styles.toggleBtnActive : {})}}
-            onClick={() => setViewMode('list')}
-          >
-            list
-          </button>
-        </div>
+        {onViewChange && (
+          <div style={dynamicStyles.viewToggle}>
+            {[
+              { id: 'month', label: 'Month', icon: '📅' },
+              { id: 'week', label: 'Week', icon: '📆' },
+              { id: 'list', label: 'List', icon: '☰' }
+            ].map(view => (
+              <button
+                key={view.id}
+                onClick={() => onViewChange(view.id)}
+                 style={{
+                   ...dynamicStyles.toggleBtn,
+                   ...(viewMode === view.id ? dynamicStyles.toggleBtnActive : {})
+                 }}
+                title={`Switch to ${view.label} view`}
+              >
+                <span style={styles.viewIcon}>{view.icon}</span>
+                <span>{view.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Conditional rendering based on view mode */}
       {viewMode === 'week' ? (
-        <WeekView contests={contests} currentDate={currentDate} />
+        <WeekView contests={filteredContests} currentDate={currentDate} darkMode={darkMode} />
       ) : viewMode === 'list' ? (
-        <ListView contests={contests} currentDate={currentDate} />
+        <ListView contests={filteredContests} currentDate={currentDate} darkMode={darkMode} />
       ) : (
         <>
-          <div style={styles.weekdays}>
+          <div style={dynamicStyles.weekdays}>
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-              <div key={day} style={styles.weekday}>{day}</div>
+              <div key={day} style={dynamicStyles.weekday}>{day}</div>
             ))}
           </div>
 
-          <div style={styles.grid}>
+          <div style={dynamicStyles.grid}>
             {calendarDays.map((day, idx) => {
               const dateKey = format(day, 'yyyy-MM-dd');
               const dayContests = contestsByDate[dateKey] || [];
@@ -272,12 +236,12 @@ export default function CalendarView({ contests }) {
                 <div
                   key={idx}
                   style={{
-                    ...styles.day,
-                    ...(isCurrentMonth ? {} : styles.otherMonth),
-                    ...(isToday ? styles.today : {})
+                    ...dynamicStyles.day,
+                    ...(isCurrentMonth ? {} : dynamicStyles.otherMonth),
+                    ...(isToday ? dynamicStyles.today : {})
                   }}
                 >
-                  <div style={styles.dayNumber}>{format(day, 'd')}</div>
+                  <div style={dynamicStyles.dayNumber}>{format(day, 'd')}</div>
                   <div style={styles.contestsContainer}>
                     {dayContests.map((contest, cIdx) => {
                   const startTime = new Date(contest.startTime);
@@ -291,7 +255,7 @@ export default function CalendarView({ contests }) {
                   const minutes = startTime.getMinutes();
                   
                   const logoUrl = getPlatformLogo(contest.platform);
-                  const platformColors = getPlatformColor(contest.platform);
+                  const platformColors = getPlatformColor(contest.platform, darkMode);
                   const statusIndicator = getStatusIndicator(contest.status);
                   
                   return (
@@ -387,27 +351,35 @@ const styles = {
   },
   viewToggle: {
     display: 'flex',
-    gap: '2px',
-    backgroundColor: '#e8e8e8',
-    padding: '2px',
-    borderRadius: '4px',
-    border: '1px solid #d0d0d0'
+    gap: '4px',
+    padding: '4px',
+    backgroundColor: '#f3f4f6',
+    borderRadius: '8px',
+    border: '1px solid #e5e7eb'
   },
   toggleBtn: {
-    padding: '4px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '6px 12px',
     border: 'none',
-    borderRadius: '3px',
+    borderRadius: '6px',
     backgroundColor: 'transparent',
     cursor: 'pointer',
-    fontSize: '12px',
+    fontSize: '13px',
     fontWeight: '500',
-    color: '#666',
-    transition: 'all 0.2s'
+    color: '#6b7280',
+    transition: 'all 0.2s ease',
+    outline: 'none',
+    userSelect: 'none'
   },
   toggleBtnActive: {
-    backgroundColor: '#fff',
-    color: '#1a1a1a',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+    backgroundColor: 'white',
+    color: '#111827',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+  },
+  viewIcon: {
+    fontSize: '14px'
   },
   weekdays: {
     display: 'grid',

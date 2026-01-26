@@ -1,31 +1,45 @@
 'use client';
 
-export default function ViewSwitcher({ currentView, onViewChange }) {
+export default function ViewSwitcher({ currentView, onViewChange, darkMode, onToggleDarkMode }) {
   const views = [
     { id: 'calendar', label: 'Calendar', icon: '📅' },
     { id: 'table', label: 'Table', icon: '☰' }
   ];
 
   return (
-    <div style={styles.container}>
-      {views.map(view => (
-        <button
-          key={view.id}
-          onClick={() => onViewChange(view.id)}
-          style={{
-            ...styles.button,
-            ...(currentView === view.id ? styles.activeButton : {})
-          }}
-        >
-          <span style={styles.icon}>{view.icon}</span>
-          <span>{view.label}</span>
-        </button>
-      ))}
+    <div style={styles.wrapper}>
+      <div style={styles.container}>
+        {views.map(view => (
+          <button
+            key={view.id}
+            onClick={() => onViewChange(view.id)}
+            style={{
+              ...styles.button,
+              ...(currentView === view.id ? styles.activeButton : {})
+            }}
+          >
+            <span style={styles.icon}>{view.icon}</span>
+            <span>{view.label}</span>
+          </button>
+        ))}
+      </div>
+      <button
+        onClick={onToggleDarkMode}
+        style={styles.themeButton}
+        title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      >
+        {darkMode ? '☀️' : '🌙'}
+      </button>
     </div>
   );
 }
 
 const styles = {
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px'
+  },
   container: {
     display: 'flex',
     gap: '8px',
@@ -46,6 +60,21 @@ const styles = {
     fontSize: '14px',
     fontWeight: '500',
     color: '#666',
+    transition: 'all 0.2s',
+    outline: 'none'
+  },
+  themeButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '40px',
+    height: '40px',
+    padding: '0',
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    backgroundColor: '#f5f5f5',
+    cursor: 'pointer',
+    fontSize: '20px',
     transition: 'all 0.2s',
     outline: 'none'
   },

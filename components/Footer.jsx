@@ -1,10 +1,13 @@
 'use client';
 
-export default function Footer() {
+export default function Footer({ darkMode = false }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer style={styles.footer}>
+    <footer style={{
+      ...styles.footer,
+      ...(darkMode ? styles.footerDark : {})
+    }}>
       <div style={styles.container}>
         <div style={styles.leftSection}>
           <span style={styles.copyright}>© {currentYear} </span>
@@ -72,7 +75,13 @@ const styles = {
     color: '#6b7280',
     padding: '24px 0',
     marginTop: 'auto',
-    borderTop: '1px solid #e5e7eb'
+    borderTop: '1px solid #e5e7eb',
+    transition: 'background-color 0.3s ease, border-color 0.3s ease'
+  },
+  footerDark: {
+    backgroundColor: '#161a22',
+    borderTop: '1px solid #2a2f3a',
+    color: '#9ca3af'
   },
   container: {
     maxWidth: '1400px',

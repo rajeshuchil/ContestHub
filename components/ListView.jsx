@@ -8,7 +8,9 @@ import {
   isSameDay
 } from 'date-fns';
 
-export default function ListView({ contests, currentDate }) {
+export default function ListView({ contests, currentDate, darkMode = false }) {
+  const styles = getStyles(darkMode);
+  
   // Get week days (Monday to Sunday)
   const weekDays = useMemo(() => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -52,20 +54,8 @@ export default function ListView({ contests, currentDate }) {
 
   // Platform color mapping (soft pastels)
   const getPlatformColor = (platform) => {
-    const colorMap = {
-      'Codeforces': '#10b981',
-      'LeetCode': '#f97316',
-      'CodeChef': '#f59e0b',
-      'AtCoder': '#3b82f6',
-      'HackerRank': '#14b8a6',
-      'HackerEarth': '#8b5cf6',
-      'TopCoder': '#06b6d4',
-      'Google': '#3b82f6',
-      'Kick Start': '#3b82f6',
-      'Code Jam': '#3b82f6',
-      'Kilonova': '#ec4899',
-    };
-    return colorMap[platform] || '#6b7280';
+    const { getPlatformColor: getColor } = require('@/lib/platformColors');
+    return getColor(platform, darkMode);
   };
 
   // Get platform logo
@@ -115,7 +105,7 @@ export default function ListView({ contests, currentDate }) {
             {/* Contest List */}
             <div style={styles.contestList}>
               {dayData.contests.map((contest, cIdx) => {
-                const platformColor = getPlatformColor(contest.platform);
+                const platformColors = getPlatformColor(contest.platform);
                 const logoUrl = getPlatformLogo(contest.platform);
                 
                 // Format time range
@@ -140,7 +130,7 @@ export default function ListView({ contests, currentDate }) {
                     <div 
                       style={{
                         ...styles.platformDot,
-                        backgroundColor: platformColor
+                        backgroundColor: platformColors.accent
                       }}
                     />
 
@@ -183,14 +173,16 @@ export default function ListView({ contests, currentDate }) {
   );
 }
 
-const styles = {
+const getStyles = (darkMode) => ({
   container: {
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: darkMode ? '#1e2430' : '#fff',
     borderRadius: '4px',
     padding: '16px 0',
     maxWidth: '1200px',
-    margin: '0 auto'
+    margin: '0 auto',
+    marginTop: '12px',
+    border: darkMode ? '1px solid #3a4150' : 'none'
   },
   daySection: {
     marginBottom: '32px'
@@ -200,24 +192,24 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '12px 20px',
-    backgroundColor: '#f9fafb',
-    borderBottom: '2px solid #e5e7eb',
+    backgroundColor: darkMode ? '#252b3a' : '#f9fafb',
+    borderBottom: darkMode ? '2px solid #3a4150' : '2px solid #e5e7eb',
     marginBottom: '8px'
   },
   todayHeader: {
-    backgroundColor: '#eff6ff',
-    borderBottomColor: '#3b82f6'
+    backgroundColor: darkMode ? '#2d3548' : '#eff6ff',
+    borderBottomColor: darkMode ? '#4b5563' : '#3b82f6'
   },
   dayName: {
     fontSize: '16px',
     fontWeight: '700',
-    color: '#111827',
+    color: darkMode ? '#d1d5db' : '#111827',
     textTransform: 'capitalize'
   },
   dayDate: {
     fontSize: '14px',
     fontWeight: '500',
-    color: '#6b7280'
+    color: darkMode ? '#9ca3af' : '#6b7280'
   },
   contestList: {
     display: 'flex',
@@ -230,8 +222,8 @@ const styles = {
     padding: '12px 20px',
     gap: '12px',
     textDecoration: 'none',
-    backgroundColor: '#fff',
-    borderBottom: '1px solid #f3f4f6',
+    backgroundColor: darkMode ? '#1e2430' : '#fff',
+    borderBottom: darkMode ? '1px solid #3a4150' : '1px solid #f3f4f6',
     transition: 'all 0.15s',
     cursor: 'pointer',
     position: 'relative'
@@ -239,7 +231,7 @@ const styles = {
   timeRange: {
     fontSize: '13px',
     fontWeight: '600',
-    color: '#374151',
+    color: darkMode ? '#9ca3af' : '#374151',
     width: '140px',
     flexShrink: 0
   },
@@ -258,7 +250,7 @@ const styles = {
   contestName: {
     fontSize: '14px',
     fontWeight: '500',
-    color: '#111827',
+    color: darkMode ? '#d1d5db' : '#111827',
     flex: 1,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -274,8 +266,8 @@ const styles = {
     fontWeight: '600',
     padding: '2px 8px',
     borderRadius: '4px',
-    backgroundColor: '#f3f4f6',
-    color: '#6b7280',
+    backgroundColor: darkMode ? '#252b3a' : '#f3f4f6',
+    color: darkMode ? '#9ca3af' : '#6b7280',
     textTransform: 'lowercase'
   },
   emptyState: {
@@ -284,4 +276,4 @@ const styles = {
     color: '#9ca3af',
     fontSize: '15px'
   }
-};
+});
