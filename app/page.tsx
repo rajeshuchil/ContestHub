@@ -36,6 +36,8 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState<boolean>(false);
 
   const [participatingIds, setParticipatingIds] = useState<string[]>([]);
+  const [mobileYourContestsExpanded, setMobileYourContestsExpanded] =
+    useState<boolean>(false);
 
   // Load participating contests
   useEffect(() => {
@@ -60,6 +62,16 @@ export default function Home() {
     addParticipation(contestId);
     // Refresh list immediately
     setParticipatingIds(getParticipatingContests());
+    // Auto-expand mobile panel and scroll to it
+    if (window.innerWidth < 1024) {
+      setMobileYourContestsExpanded(true);
+      setTimeout(() => {
+        const panel = document.getElementById("mobile-your-contests");
+        if (panel) {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }, 100);
+    }
   };
 
   const handleAnimationComplete = () => {
@@ -269,7 +281,7 @@ export default function Home() {
 
   return (
     <main className="app-container" data-theme={darkMode ? "dark" : "light"}>
-      <header className="app-header">
+      <header className="app-header mobile-sticky-header">
         <div className="header-content">
           <div
             className="logo-section"
@@ -317,13 +329,125 @@ export default function Home() {
       />
 
       {/* Main Content Container */}
+      {/* Mobile Your Contests Collapsible Section */}
+      {participatingContests.length > 0 && currentView === "calendar" && (
+        <div
+          id="mobile-your-contests"
+          className="lg:hidden w-full"
+          style={{
+            paddingLeft: "16px",
+            paddingRight: "16px",
+            marginBottom: "16px",
+          }}
+        >
+          <div
+            className="rounded-xl overflow-hidden transition-all duration-300"
+            style={{
+              backgroundColor: darkMode ? "#1f2937" : "#ffffff",
+              border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
+              boxShadow: darkMode
+                ? "0 1px 3px rgba(0, 0, 0, 0.3)"
+                : "0 1px 3px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <button
+              onClick={() =>
+                setMobileYourContestsExpanded(!mobileYourContestsExpanded)
+              }
+              className="w-full flex items-center justify-between px-4 py-3 tap-target"
+              style={{
+                backgroundColor: darkMode ? "#1f2937" : "#ffffff",
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className="font-bold text-lg"
+                  style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+                >
+                  Your Contests
+                </span>
+                <span
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                  style={{
+                    backgroundColor: darkMode ? "#374151" : "#e5e7eb",
+                    color: darkMode ? "#f3f4f6" : "#374151",
+                  }}
+                >
+                  {participatingContests.length}
+                </span>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={darkMode ? "#f3f4f6" : "#111827"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  transform: mobileYourContestsExpanded
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <AnimatePresence>
+              {mobileYourContestsExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4">
+                    <ParticipationPanel
+                      contests={participatingContests}
+                      onContestClick={(contest) => {
+                        // Close mobile panel and scroll to contest
+                        setMobileYourContestsExpanded(false);
+                        setTimeout(() => {
+                          const contestElement = document.querySelector(
+                            `[data-contest-id="${contest.id || contest.url}"]`,
+                          );
+                          if (contestElement) {
+                            contestElement.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            });
+                            contestElement.classList.add("highlight-contest");
+                            setTimeout(() => {
+                              contestElement.classList.remove(
+                                "highlight-contest",
+                              );
+                            }, 2000);
+                          }
+                        }, 300);
+                      }}
+                      onRemoveParticipation={handleRemoveParticipation}
+                      darkMode={darkMode}
+                      isMobileCollapsible={true}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
       <div
         className="w-full flex justify-center"
         style={{
           paddingTop: "0px",
-          paddingBottom: "32px",
-          paddingLeft: "24px",
-          paddingRight: "24px",
+          paddingBottom: "24px",
+          paddingLeft: "16px",
+          paddingRight: "16px",
         }}
       >
         <div
@@ -334,11 +458,11 @@ export default function Home() {
             justifyContent: "center",
           }}
         >
-          {/* Left Panel - Upcoming Contests */}
+          {/* Left Panel - Upcoming Contests (Hidden on Mobile) */}
           {participatingContests.length > 0 && currentView === "calendar" && (
             <div
-              className="hidden lg:block flex-shrink-0"
-              style={{ width: "400px" }}
+              className="hidden lg:block"
+              style={{ width: "400px", flexShrink: 0 }}
             >
               <ParticipationPanel
                 contests={participatingContests}
@@ -365,12 +489,14 @@ export default function Home() {
             </div>
           )}
 
-          {/* Right Panel - Calendar View */}
+          {/* Main Calendar View */}
           <div
-            className="flex-1 min-w-0 flex justify-center"
+            className="flex-1 min-w-0 flex justify-center w-full"
             style={{
               maxWidth:
-                participatingContests.length > 0 && currentView === "calendar"
+                participatingContests.length > 0 &&
+                currentView === "calendar" &&
+                window.innerWidth >= 1024
                   ? "calc(100% - 424px)"
                   : "100%",
             }}
@@ -407,11 +533,13 @@ export default function Home() {
 
       {/* Full-Width Stats Section */}
       {currentView === "calendar" && (
-        <ContestStats
-          contests={filteredContests}
-          participatingIds={participatingIds}
-          darkMode={darkMode}
-        />
+        <div>
+          <ContestStats
+            contests={filteredContests}
+            participatingIds={participatingIds}
+            darkMode={darkMode}
+          />
+        </div>
       )}
 
       <Footer darkMode={darkMode} />
@@ -437,7 +565,7 @@ export default function Home() {
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
           position: sticky;
           top: 0;
-          z-index: 10;
+          z-index: 40;
           transition:
             background 0.3s ease,
             border-color 0.3s ease;
@@ -452,23 +580,46 @@ export default function Home() {
         .header-content {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 16px 24px;
+          padding: 10px 12px;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+          .header-content {
+            padding: 16px 24px;
+            gap: 16px;
+          }
         }
 
         .logo-section {
           display: flex;
           align-items: center;
-          gap: 12px;
-          margin-left: -100px;
+          gap: 6px;
+          margin-left: 0;
+          flex-shrink: 0;
+        }
+
+        @media (min-width: 1024px) {
+          .logo-section {
+            gap: 12px;
+            margin-left: -100px;
+          }
         }
 
         .logo-icon {
-          height: 40px;
-          width: 40px;
+          height: 28px;
+          width: 28px;
           object-fit: contain;
+        }
+
+        @media (min-width: 768px) {
+          .logo-icon {
+            height: 40px;
+            width: 40px;
+          }
         }
 
         .logo-image {
@@ -478,13 +629,20 @@ export default function Home() {
         }
 
         .app-title {
-          font-size: 28px;
+          font-size: 18px;
           font-weight: 800;
           color: #111827;
           margin: 0;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 0;
+        }
+
+        @media (min-width: 768px) {
+          .app-title {
+            font-size: 28px;
+            gap: 1px;
+          }
         }
 
         .app-container[data-theme="dark"] .contest-text {
