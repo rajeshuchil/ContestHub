@@ -41,23 +41,77 @@ export default function CalendarView({ contests }) {
     return map;
   }, [contests]);
 
-  // Platform-based color mapping (Hybrid approach: color by platform + status indicator)
+  // Platform-based color mapping - matches CLIST color scheme
   const getPlatformColor = (platform) => {
+    if (!platform) return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+    
+    const platformLower = platform.toLowerCase();
+    
     const colorMap = {
-      'Codeforces': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-      'LeetCode': { bg: '#fed7aa', text: '#9a3412', border: '#fdba74' },
-      'CodeChef': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-      'AtCoder': { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7' },
-      'HackerRank': { bg: '#ccfbf1', text: '#115e59', border: '#5eead4' },
-      'HackerEarth': { bg: '#ddd6fe', text: '#5b21b6', border: '#c4b5fd' },
-      'TopCoder': { bg: '#bfdbfe', text: '#1e40af', border: '#93c5fd' },
-      'Google': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      'Kick Start': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      'Code Jam': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
-      'Kilonova': { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8' },
+      // Codeforces - Pink/Magenta
+      'codeforces': { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8' },
+      
+      // LeetCode - Orange/Yellow
+      'leetcode': { bg: '#fed7aa', text: '#9a3412', border: '#fdba74' },
+      
+      // CodeChef - Yellow/Gold
+      'codechef': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
+      
+      // AtCoder - Green
+      'atcoder': { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7' },
+      
+      // HackerRank - Light Blue/Cyan
+      'hackerrank': { bg: '#ccfbf1', text: '#115e59', border: '#5eead4' },
+      
+      // HackerEarth - Purple
+      'hackerearth': { bg: '#ddd6fe', text: '#5b21b6', border: '#c4b5fd' },
+      
+      // TopCoder - Dark Blue
+      'topcoder': { bg: '#bfdbfe', text: '#1e40af', border: '#93c5fd' },
+      
+      // Google - Blue
+      'google': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
+      'kick start': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
+      'code jam': { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd' },
+      
+      // Kilonova - Pink
+      'kilonova': { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8' },
+      
+      // Nowcoder (牛客) - Purple
+      'nowcoder': { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc' },
+      '牛客': { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc' },
+      
+      // Luogu (洛谷) - Dark Blue/Indigo
+      'luogu': { bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc' },
+      '洛谷': { bg: '#c7d2fe', text: '#3730a3', border: '#a5b4fc' },
+      
+      // ICPC - Red
+      'icpc': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
+      
+      // UOJ - Red
+      'uoj': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
+      
+      // Technocup - Yellow/Gold
+      'technocup': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
+      
+      // Universal Cup - Red
+      'universal cup': { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
     };
     
-    return colorMap[platform] || { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+    // Try exact match first
+    if (colorMap[platformLower]) {
+      return colorMap[platformLower];
+    }
+    
+    // Try partial match
+    for (const [key, colors] of Object.entries(colorMap)) {
+      if (platformLower.includes(key) || key.includes(platformLower)) {
+        return colors;
+      }
+    }
+    
+    // Default gray
+    return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
   };
 
   // Status indicator styles
@@ -71,33 +125,70 @@ export default function CalendarView({ contests }) {
     return statusMap[status] || statusMap.upcoming;
   };
 
-  // Get platform logo URL - uses favicon service for reliable logos
+  // Get platform logo URL - uses CLIST's logo system for accurate platform logos
   const getPlatformLogo = (platform) => {
-    if (!platform) return 'https://www.google.com/s2/favicons?domain=clist.by&sz=32';
+    if (!platform) return null;
     
-    // Map platform to domain for logo fetching
-    const platformDomains = {
-      'Codeforces': 'codeforces.com',
-      'LeetCode': 'leetcode.com',
-      'CodeChef': 'codechef.com',
-      'AtCoder': 'atcoder.jp',
-      'HackerRank': 'hackerrank.com',
-      'HackerEarth': 'hackerearth.com',
-      'TopCoder': 'topcoder.com',
-      'Google': 'codingcompetitions.withgoogle.com',
-      'Kick Start': 'codingcompetitions.withgoogle.com',
-      'Code Jam': 'codingcompetitions.withgoogle.com',
-      'Kilonova': 'kilonova.ro',
+    const platformLower = platform.toLowerCase().trim();
+    
+    // Map platform names to CLIST domain format
+    const logoMap = {
+      // Major platforms
+      'codeforces': 'codeforces.com',
+      'leetcode': 'leetcode.com',
+      'codechef': 'codechef.com',
+      'atcoder': 'atcoder.jp',
+      'hackerrank': 'hackerrank.com',
+      'hackerearth': 'hackerearth.com',
+      'topcoder': 'topcoder.com',
+      'google': 'codingcompetitions.withgoogle.com',
+      'kick start': 'codingcompetitions.withgoogle.com',
+      'code jam': 'codingcompetitions.withgoogle.com',
+      'kilonova': 'kilonova.ro',
+      
+      // Chinese platforms
+      'nowcoder': 'nowcoder.com',
+      '牛客': 'nowcoder.com',
+      'luogu': 'luogu.com.cn',
+      '洛谷': 'luogu.com.cn',
+      
+      // Other platforms
+      'icpc': 'icpc.global',
+      'uoj': 'uoj.ac',
+      'technocup': 'technocup.mail.ru',
+      'universal cup': 'ucup.ac',
+      'robo': 'robocontest.uz',
+      'robocontest': 'robocontest.uz',
+      'beginner contest': 'atcoder.jp',
+      'weekly contest': 'leetcode.com',
     };
     
-    const domain = platformDomains[platform];
-    if (domain) {
-      return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+    // Try exact match first
+    if (logoMap[platformLower]) {
+      return `https://clist.by/images/resources/${logoMap[platformLower]}.ico`;
     }
     
-    // Fallback: try to extract domain from platform name
-    const platformLower = platform.toLowerCase().replace(/\s+/g, '');
-    return `https://www.google.com/s2/favicons?domain=${platformLower}.com&sz=32`;
+    // Try partial match
+    for (const [key, domain] of Object.entries(logoMap)) {
+      if (platformLower.includes(key) || key.includes(platformLower)) {
+        return `https://clist.by/images/resources/${domain}.ico`;
+      }
+    }
+    
+    // Try to extract domain from platform name if it contains a domain
+    const domainMatch = platform.match(/([a-z0-9-]+\.(com|org|net|io|jp|ro|cn|by|ac|ru|uz|global))/i);
+    if (domainMatch) {
+      return `https://clist.by/images/resources/${domainMatch[1].toLowerCase()}.ico`;
+    }
+    
+    // Fallback: try to construct URL from platform name
+    const sanitized = platformLower.replace(/\s+/g, '').replace(/[^a-z0-9.-]/g, '');
+    if (sanitized && sanitized.length > 2) {
+      return `https://clist.by/images/resources/${sanitized}.ico`;
+    }
+    
+    // Final fallback: use Google favicon service
+    return `https://www.google.com/s2/favicons?domain=${platformLower.replace(/\s+/g, '')}.com&sz=32`;
   };
 
   return (
@@ -220,15 +311,22 @@ export default function CalendarView({ contests }) {
                       <span style={{...styles.statusDot, color: statusIndicator.color}}>
                         {statusIndicator.label}
                       </span>
-                      <img 
-                        src={logoUrl} 
-                        alt={contest.platform}
-                        style={styles.contestLogo}
-                        onError={(e) => {
-                          // Fallback to text if logo fails
-                          e.target.style.display = 'none';
-                        }}
-                      />
+                      {logoUrl ? (
+                        <img 
+                          src={logoUrl} 
+                          alt={contest.platform}
+                          style={styles.contestLogo}
+                          onError={(e) => {
+                            // Hide image and show fallback icon if logo fails
+                            e.target.style.display = 'none';
+                            const fallback = e.target.nextSibling;
+                            if (fallback) fallback.style.display = 'inline';
+                          }}
+                        />
+                      ) : null}
+                      <span style={{...styles.contestIcon, display: logoUrl ? 'none' : 'inline'}}>
+                        📌
+                      </span>
                       <span style={styles.contestTime}>
                         {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}
                       </span>
