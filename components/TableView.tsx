@@ -8,6 +8,7 @@ import {
   ContestStatus,
   StatusColors,
 } from "@/types";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 export default function TableView({
   contests,
@@ -93,12 +94,18 @@ export default function TableView({
     return "Ended";
   };
 
+  // ... existing code ...
+
   const SortIcon = ({ column }: { column: string }) => {
     if (sortConfig.key !== column)
-      return <span style={styles.sortIcon}>⇅</span>;
+      return <ArrowUpDown size={14} className="ml-1 inline text-gray-400" />;
     return (
-      <span style={styles.sortIcon}>
-        {sortConfig.direction === "asc" ? "↑" : "↓"}
+      <span className="ml-1 inline-flex">
+        {sortConfig.direction === "asc" ? (
+          <ArrowUp size={14} />
+        ) : (
+          <ArrowDown size={14} />
+        )}
       </span>
     );
   };
@@ -115,6 +122,7 @@ export default function TableView({
           <thead>
             <tr>
               <th
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
@@ -124,6 +132,7 @@ export default function TableView({
                 Status <SortIcon column="status" />
               </th>
               <th
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
@@ -133,6 +142,7 @@ export default function TableView({
                 Contest Name <SortIcon column="name" />
               </th>
               <th
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
@@ -142,6 +152,7 @@ export default function TableView({
                 Platform <SortIcon column="platform" />
               </th>
               <th
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
@@ -151,6 +162,7 @@ export default function TableView({
                 Start Time <SortIcon column="startTime" />
               </th>
               <th
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
@@ -181,6 +193,7 @@ export default function TableView({
               return (
                 <tr
                   key={idx}
+                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   style={{
                     ...styles.tr,
                     ...(darkMode ? styles.trDark : {}),
@@ -293,6 +306,7 @@ export default function TableView({
                       href={contest.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="hover:underline hover:text-blue-700 dark:hover:text-blue-400 transition-colors duration-200"
                       style={{
                         ...styles.link,
                         ...(darkMode ? styles.linkDark : {}),

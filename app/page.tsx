@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import PixelSnow from "@/components/PixelSnow";
 import BlurText from "@/components/BlurText";
 import { PRIMARY_PLATFORMS } from "@/lib/platformColors";
+import { AlertTriangle } from "lucide-react";
 import type { Contest } from "@/types";
 
 
@@ -160,10 +161,12 @@ export default function Home() {
     );
   }
 
+  // ... existing code ...
+
   if (error) {
     return (
       <div className="error-container">
-        <div className="error-icon">⚠️</div>
+        <AlertTriangle size={64} className="text-yellow-500 mb-4" />
         <h2 className="error-title">Failed to load contests</h2>
         <p className="error-message">{error}</p>
         <button
@@ -258,10 +261,10 @@ export default function Home() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentView}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, y: -5 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
         >
           {currentView === "calendar" && (
             <CalendarView

@@ -1,6 +1,14 @@
 "use client";
 import { useMemo, useState } from "react";
 import {
+  Calendar,
+  CalendarDays,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  Pin,
+} from "lucide-react";
+import {
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
@@ -260,14 +268,18 @@ export default function CalendarView({
                 setCurrentDate(newDate);
               }
             }}
+            className={`transition-all duration-200 ${isCurrentMonth
+              ? "opacity-40 cursor-not-allowed"
+              : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+              }`}
             style={{
               ...dynamicStyles.navButton,
-              opacity: isCurrentMonth ? 0.4 : 1,
-              cursor: isCurrentMonth ? "not-allowed" : "pointer",
+              // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
+              // But logic is complex, so I'll keep style overrides minimal
             }}
             disabled={isCurrentMonth}
           >
-            ‹
+            <ChevronLeft size={20} />
           </button>
           <h2 style={dynamicStyles.monthTitle}>
             {viewMode === "week"
@@ -282,21 +294,23 @@ export default function CalendarView({
                 setCurrentDate(addMonths(currentDate, 1));
               }
             }}
+            className="transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
             style={dynamicStyles.navButton}
           >
-            ›
+            <ChevronRight size={20} />
           </button>
         </div>
         {onViewChange && (
           <div style={dynamicStyles.viewToggle}>
             {[
-              { id: "month" as const, label: "Month", icon: "📅" },
-              { id: "week" as const, label: "Week", icon: "📆" },
-              { id: "list" as const, label: "List", icon: "☰" },
+              { id: "month" as const, label: "Month", icon: <Calendar size={14} /> },
+              { id: "week" as const, label: "Week", icon: <CalendarDays size={14} /> },
+              { id: "list" as const, label: "List", icon: <List size={14} /> },
             ].map((view) => (
               <button
                 key={view.id}
                 onClick={() => onViewChange(view.id)}
+                className="transition-all duration-200 ease-out hover:bg-black/5 dark:hover:bg-white/10 active:scale-95"
                 style={{
                   ...dynamicStyles.toggleBtn,
                   ...(viewMode === view.id
@@ -305,7 +319,7 @@ export default function CalendarView({
                 }}
                 title={`Switch to ${view.label} view`}
               >
-                <span style={styles.viewIcon}>{view.icon}</span>
+                <span className="flex items-center justify-center">{view.icon}</span>
                 <span>{view.label}</span>
               </button>
             ))}
@@ -346,6 +360,7 @@ export default function CalendarView({
               return (
                 <div
                   key={idx}
+                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   style={{
                     ...dynamicStyles.day,
                     ...(isCurrentMonth ? {} : dynamicStyles.otherMonth),
@@ -382,6 +397,7 @@ export default function CalendarView({
                           href={contest.url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="transition-transform duration-200 hover:scale-[1.02] hover:shadow-sm"
                           style={{
                             ...styles.contestPill,
                             backgroundColor: platformColors.bg,
@@ -416,10 +432,11 @@ export default function CalendarView({
                           <span
                             style={{
                               ...styles.contestIcon,
-                              display: logoUrl ? "none" : "inline",
+                              display: logoUrl ? "none" : "inline-flex",
+                              alignItems: "center",
                             }}
                           >
-                            📌
+                            <Pin size={12} />
                           </span>
                           <span style={styles.contestTime}>
                             {String(hours).padStart(2, "0")}:

@@ -22,12 +22,14 @@ export default function CalendarControls({
           {/* Left section: Search Bar */}
           <div style={styles.searchSection}>
             <div
+              className="transition-all duration-200 ease-out focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 hover:border-gray-300 dark:hover:border-gray-600"
               style={{
                 ...styles.inputWrapper,
                 ...(darkMode ? styles.inputWrapperDark : {}),
               }}
             >
               <IoSearch
+                className="transition-colors duration-200"
                 style={{
                   fontSize: "20px",
                   color: darkMode ? "#9ca3af" : "#9ca3af",
@@ -38,6 +40,7 @@ export default function CalendarControls({
                 placeholder="Search Contests"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
+                className="placeholder:transition-opacity focus:placeholder:opacity-70"
                 style={{
                   ...styles.input,
                   ...(darkMode ? styles.inputDark : {}),

@@ -42,6 +42,7 @@ export default function PlatformFilter({
     <div style={styles.container} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        className="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800"
         style={{
           ...styles.toggleButton,
           ...(darkMode ? styles.toggleButtonDark : {}),
@@ -53,6 +54,7 @@ export default function PlatformFilter({
 
       {isOpen && (
         <div
+          className="animate-in fade-in zoom-in-95 duration-200"
           style={{
             ...styles.dropdown,
             ...(darkMode ? styles.dropdownDark : {}),
@@ -78,31 +80,32 @@ export default function PlatformFilter({
                 <button
                   key={platform.id}
                   onClick={() => onToggle(platform.id)}
+                  className="transition-all duration-200 ease-out hover:scale-105 active:scale-95"
                   style={{
                     ...styles.optionButton,
                     ...(isActive
                       ? {
-                          backgroundColor: "#f3f4f6",
-                          borderColor: "#d1d5db",
-                          color: "#111827",
-                        }
+                        backgroundColor: "#f3f4f6",
+                        borderColor: "#d1d5db",
+                        color: "#111827",
+                      }
                       : {
-                          backgroundColor: "white",
-                          borderColor: "#e5e7eb",
-                          color: "#374151",
-                        }),
+                        backgroundColor: "white",
+                        borderColor: "#e5e7eb",
+                        color: "#374151",
+                      }),
                     ...(darkMode
                       ? isActive
                         ? {
-                            backgroundColor: "#374151",
-                            borderColor: "#4b5563",
-                            color: "#e5e7eb",
-                          }
+                          backgroundColor: "#374151",
+                          borderColor: "#4b5563",
+                          color: "#e5e7eb",
+                        }
                         : {
-                            backgroundColor: "#1f2937",
-                            borderColor: "#374151",
-                            color: "#9ca3af",
-                          }
+                          backgroundColor: "#1f2937",
+                          borderColor: "#374151",
+                          color: "#9ca3af",
+                        }
                       : {}),
                   }}
                 >
