@@ -37,7 +37,7 @@ export default function TableView({ contests, darkMode = false }) {
     const start = new Date(startTime);
     const end = new Date(start.getTime() + duration * 1000);
 
-    if (now >= start && now <= end) return 'live';
+    if (now >= start && now <= end) return 'ongoing';
     if (now < start) return 'upcoming';
     return 'ended';
   };
@@ -64,9 +64,15 @@ export default function TableView({ contests, darkMode = false }) {
   };
 
   const getStatusColor = (status) => {
-    if (status === 'live') return { bg: '#10b981', text: '#fff' };
-    if (status === 'upcoming') return { bg: '#3b82f6', text: '#fff' };
-    return { bg: '#9ca3af', text: '#fff' };
+    if (status === 'ongoing') return { dot: '#10b981', text: darkMode ? '#e6e6e6' : '#374151' };
+    if (status === 'upcoming') return { dot: '#3b82f6', text: darkMode ? '#e6e6e6' : '#374151' };
+    return { dot: '#9ca3af', text: darkMode ? '#9ca3af' : '#6b7280' };
+  };
+
+  const getStatusLabel = (status) => {
+    if (status === 'ongoing') return 'Ongoing';
+    if (status === 'upcoming') return 'Upcoming';
+    return 'Ended';
   };
 
   const SortIcon = ({ column }) => {
@@ -136,13 +142,18 @@ export default function TableView({ contests, darkMode = false }) {
                     ...styles.td,
                     ...(darkMode ? styles.tdDark : {})
                   }}>
-                    <span style={{
-                      ...styles.statusBadge,
-                      backgroundColor: getStatusColor(status).bg,
-                      color: getStatusColor(status).text
-                    }}>
-                      {status === 'live' ? '● LIVE' : status === 'upcoming' ? '○ Upcoming' : '✓ Ended'}
-                    </span>
+                    <div style={styles.statusIndicator}>
+                      <span style={{
+                        ...styles.statusDot,
+                        backgroundColor: getStatusColor(status).dot
+                      }} />
+                      <span style={{
+                        ...styles.statusText,
+                        color: getStatusColor(status).text
+                      }}>
+                        {getStatusLabel(status)}
+                      </span>
+                    </div>
                   </td>
                   <td style={{
                     ...styles.td,
@@ -273,15 +284,21 @@ const styles = {
   tdDark: {
     color: '#e6e6e6'
   },
-  statusBadge: {
-    display: 'inline-block',
-    padding: '6px 14px',
-    borderRadius: '16px',
-    fontSize: '13px',
-    fontWeight: '700',
-    whiteSpace: 'nowrap',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+  statusIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+  statusDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    flexShrink: 0
+  },
+  statusText: {
+    fontSize: '14px',
+    fontWeight: '500',
+    whiteSpace: 'nowrap'
   },
   platformBadge: {
     display: 'inline-block',
