@@ -605,7 +605,6 @@ export default function Home() {
         @media (min-width: 1024px) {
           .logo-section {
             gap: 12px;
-            margin-left: -100px;
           }
         }
 
