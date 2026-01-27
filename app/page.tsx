@@ -467,6 +467,7 @@ export default function Home() {
             width: "100%",
             justifyContent: "center",
             alignItems: "stretch",
+            willChange: "auto",
           }}
         >
           {/* Left Panel - Upcoming Contests (Hidden on Mobile) */}
@@ -520,12 +521,13 @@ export default function Home() {
           <div
             className="flex-1 min-w-0 flex justify-center w-full"
             style={{
-              maxWidth:
+              flexBasis:
                 participatingContests.length > 0 &&
                 currentView === "calendar" &&
                 window.innerWidth >= 1024
                   ? "calc(100% - 424px)"
                   : "100%",
+              maxWidth: "100%",
             }}
           >
             <AnimatePresence mode="wait">
@@ -535,7 +537,11 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="w-full"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
               >
                 {currentView === "calendar" && (
                   <CalendarView

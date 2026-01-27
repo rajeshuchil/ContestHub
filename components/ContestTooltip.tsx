@@ -162,18 +162,19 @@ export default function ContestTooltip({
     <>
       {/* Backdrop overlay */}
       <div
-        className="fixed inset-0 transition-opacity duration-200"
+        className="fixed inset-0"
         style={{
           backgroundColor: darkMode
-            ? "rgba(0, 0, 0, 0.6)"
-            : "rgba(0, 0, 0, 0.4)", // Slightly darker in dark mode
+            ? "rgba(0, 0, 0, 0.5)"
+            : "rgba(0, 0, 0, 0.3)",
           zIndex: 9998,
           opacity: isAnimating ? 1 : 0,
+          transition: "opacity 0.15s ease-out",
         }}
         onClick={onClose}
       />
 
-      {/* Modal - Updated styling for premium feel */}
+      {/* Modal - Contextual popover anchored to clicked contest */}
       <div
         ref={tooltipRef}
         className="fixed font-sans flex flex-col"
@@ -190,11 +191,9 @@ export default function ContestTooltip({
           zIndex: 9999,
           pointerEvents: "auto",
           opacity: isAnimating && position ? 1 : 0,
-          transform:
-            isAnimating && position
-              ? "scale(1) translateY(0)"
-              : "scale(0.98) translateY(4px)",
-          transition: "all 0.2s ease-out",
+          transform: isAnimating && position ? "scale(1)" : "scale(0.95)",
+          transition:
+            "opacity 0.15s ease-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Header Section with Title and Close Button */}
