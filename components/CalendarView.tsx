@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import {
   Calendar,
   CalendarDays,
-  List,
   ChevronLeft,
   ChevronRight,
   Pin,
@@ -23,12 +22,11 @@ import {
   subWeeks,
 } from "date-fns";
 import WeekView from "./WeekView";
-import ListView from "./ListView";
 import ContestTooltip from "./ContestTooltip";
 import { getPlatformColor, getPlatformLogo } from "@/lib/platformColors";
 import { CalendarViewProps, Contest, ContestStatus } from "@/types";
 
-type ViewMode = "month" | "week" | "list";
+type ViewMode = "month" | "week";
 
 interface CalendarViewExtendedProps extends Omit<
   CalendarViewProps,
@@ -285,7 +283,6 @@ export default function CalendarView({
                 label: "Week",
                 icon: <CalendarDays size={14} />,
               },
-              { id: "list" as const, label: "List", icon: <List size={14} /> },
             ].map((view) => (
               <button
                 key={view.id}
@@ -315,12 +312,9 @@ export default function CalendarView({
           contests={filteredContests}
           currentDate={currentDate}
           darkMode={darkMode}
-        />
-      ) : viewMode === "list" ? (
-        <ListView
-          contests={filteredContests}
-          currentDate={currentDate}
-          darkMode={darkMode}
+          participatingIds={participatingIds}
+          onParticipate={onParticipate}
+          onRemoveParticipation={onRemoveParticipation}
         />
       ) : (
         <>

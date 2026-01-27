@@ -4,6 +4,15 @@ import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { Contest } from "@/types";
 import { getPlatformColor } from "@/lib/platformColors";
+import {
+  Calendar,
+  Clock,
+  Hourglass,
+  ExternalLink,
+  X,
+  Globe,
+  AlertTriangle,
+} from "lucide-react";
 
 interface ContestTooltipProps {
   contest: Contest;
@@ -41,28 +50,20 @@ export default function ContestTooltip({
     };
   }, []);
 
-  // useLayoutEffect for synchronous updates to avoid flash, fallback to useEffect for SSR safety if needed
-  // Since this is a client-only conditional component (only rendered when selectedContest is true), useLayoutEffect is safe-ish,
-  // but to avoid Next.js warnings, strictly we might want useEffect.
-  // Given we are hiding it initially, useEffect is fine.
-
   // Calculate position based on anchor element
   useEffect(() => {
     if (!anchorElement || !tooltipRef.current) return;
 
     const updatePosition = () => {
       const rect = anchorElement.getBoundingClientRect();
-      const tooltipWidth = 320; // w-80 = 320px
+      const tooltipWidth = 380; // Slightly wider for breathing room
 
       // Get exact tooltip height from the rendered DOM element
       const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
 
-      // If height is 0 (shouldn't happen if rendered), retry or use default? 
-      // If 0, we can't position correctly "above". 
-      // But since we removed the early return, it SHOULD be rendered.
       if (tooltipHeight === 0) return;
 
-      const margin = 8; // standard gap
+      const margin = 12; // increased gap
       const viewportPadding = 16; // Padding from viewport edges
 
       // Calculate available space
@@ -80,7 +81,7 @@ export default function ContestTooltip({
         top = rect.bottom + margin;
       } else {
         // Open above: stuck to the element (no gap)
-        top = rect.top - tooltipHeight;
+        top = rect.top - tooltipHeight - margin; // Added margin for "above" case too
       }
 
       // Calculate horizontal position (align with element's left edge)
@@ -148,9 +149,6 @@ export default function ContestTooltip({
 
   const statusStyle = getStatusStyle(contest.status);
 
-  // REMOVED: if (!position) return null; 
-  // We MUST render to measure. We control visibility via style.
-
   const handleParticipateClick = () => {
     const contestId = contest.id || contest.url;
     if (isParticipating && onRemoveParticipation) {
@@ -166,150 +164,224 @@ export default function ContestTooltip({
       <div
         className="fixed inset-0 transition-opacity duration-200"
         style={{
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          backdropFilter: "blur(2px)",
+          backgroundColor: darkMode
+            ? "rgba(0, 0, 0, 0.6)"
+            : "rgba(0, 0, 0, 0.4)", // Slightly darker in dark mode
           zIndex: 9998,
           opacity: isAnimating ? 1 : 0,
         }}
         onClick={onClose}
       />
 
-      {/* Modal */}
+      {/* Modal - Updated styling for premium feel */}
       <div
         ref={tooltipRef}
-        className="fixed w-80 rounded-lg shadow-2xl"
+        className="fixed rounded-xl shadow-2xl overflow-hidden font-sans"
         style={{
+          width: "420px", // Increased width
           backgroundColor: darkMode ? "#1f2937" : "#ffffff",
-          border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
+          border: darkMode ? "1px solid #374151" : "1px solid #f3f4f6", // Lighter border in light mode
+          boxShadow: darkMode
+            ? "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3)"
+            : "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
           top: position ? `${position.top}px` : "0px",
           left: position ? `${position.left}px` : "0px",
           visibility: position ? "visible" : "hidden",
           zIndex: 9999,
           pointerEvents: "auto",
           opacity: isAnimating && position ? 1 : 0,
-          transform: isAnimating && position ? "scale(1)" : "scale(0.95)",
-          transition: "all 0.15s ease-out",
+          transform:
+            isAnimating && position
+              ? "scale(1) translateY(0)"
+              : "scale(0.98) translateY(4px)", // Subtle slide up
+          transition: "all 0.2s ease-out",
         }}
       >
-        {/* Header */}
-        <div
-          className="p-4 border-b"
-          style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}
+        {/* Absolute Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 p-1.5 rounded-md transition-colors hover:bg-black/5 dark:hover:bg-white/10 z-10"
+          style={{
+            color: darkMode ? "#9ca3af" : "#9ca3af",
+          }}
+          aria-label="Close"
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h3
-                className="font-semibold text-base leading-tight mb-2"
-                style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+          <X size={20} />
+        </button>
+
+        <div className="p-8">
+          {/* Header Section */}
+          <div className="mb-6 pr-8 pt-2">
+            <h3
+              className="font-semibold text-2xl leading-snug break-words"
+              style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+            >
+              {contest.name}
+            </h3>
+          </div>
+
+          {/* Tags / Badges row */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            <span
+              className="text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5"
+              style={{
+                backgroundColor: platformColors.bg,
+                color: platformColors.text,
+              }}
+            >
+              <Globe size={12} />
+              {contest.platform}
+            </span>
+            <span
+              className="text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5"
+              style={{
+                backgroundColor: statusStyle.bg,
+                color: statusStyle.text,
+              }}
+            >
+              {contest.status === "ended" && <AlertTriangle size={12} />}
+              {statusStyle.label}
+            </span>
+          </div>
+
+          {/* Meta Info Section - Clean, vertical stack with icons */}
+          <div className="space-y-6 mb-8">
+            {/* Date */}
+            <div className="flex items-center gap-3.5">
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
               >
-                {contest.name}
-              </h3>
-              <div className="flex items-center gap-2">
+                <Calendar
+                  size={16}
+                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                />
+              </div>
+              <div className="flex flex-col">
                 <span
-                  className="text-xs font-medium px-2 py-1 rounded"
-                  style={{
-                    backgroundColor: platformColors.bg,
-                    color: platformColors.text,
-                  }}
+                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
                 >
-                  {contest.platform}
+                  Date
                 </span>
                 <span
-                  className="text-xs font-medium px-2 py-1 rounded"
-                  style={{
-                    backgroundColor: statusStyle.bg,
-                    color: statusStyle.text,
-                  }}
+                  className="text-sm font-medium leading-none"
+                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
                 >
-                  {statusStyle.label}
+                  {format(startTime, "EEEE, MMMM d, yyyy")}
                 </span>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="shrink-0 text-xl leading-none opacity-60 hover:opacity-100 transition-opacity"
-              style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
-            >
-              ×
-            </button>
+
+            {/* Time */}
+            <div className="flex items-center gap-3.5">
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
+              >
+                <Clock
+                  size={16}
+                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                />
+              </div>
+              <div className="flex flex-col">
+                <span
+                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                >
+                  Time
+                </span>
+                <span
+                  className="text-sm font-medium leading-none"
+                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
+                >
+                  {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
+                </span>
+              </div>
+            </div>
+
+            {/* Duration */}
+            <div className="flex items-center gap-3.5">
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
+              >
+                <Hourglass
+                  size={16}
+                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                />
+              </div>
+              <div className="flex flex-col">
+                <span
+                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                >
+                  Duration
+                </span>
+                <span
+                  className="text-sm font-medium leading-none"
+                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
+                >
+                  {durationHours > 0 && `${durationHours}h `}
+                  {durationMinutes > 0 && `${durationMinutes}m`}
+                </span>
+              </div>
+            </div>
+
+            {/* Link */}
+            <div className="flex items-center gap-3.5 pt-2">
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-colors"
+                style={{
+                  backgroundColor: darkMode ? "#374151" : "#f3f4f6",
+                }}
+              >
+                <ExternalLink
+                  size={16}
+                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                />
+              </div>
+              <a
+                href={contest.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex flex-col group"
+              >
+                <span
+                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
+                  style={{ color: platformColors.text }}
+                >
+                  Platform Link
+                </span>
+                <span
+                  className="text-sm font-medium leading-none flex items-center gap-1.5 transition-opacity group-hover:opacity-80 underline-offset-2 group-hover:underline"
+                  style={{ color: platformColors.text }}
+                >
+                  Open {contest.platform}
+                  <ExternalLink size={12} />
+                </span>
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm">
-            <span
-              className="opacity-70"
-              style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
-            >
-              📅
-            </span>
-            <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
-              {format(startTime, "EEEE, MMMM d, yyyy")}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm">
-            <span
-              className="opacity-70"
-              style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
-            >
-              🕐
-            </span>
-            <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
-              {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm">
-            <span
-              className="opacity-70"
-              style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
-            >
-              ⏱️
-            </span>
-            <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
-              {durationHours > 0 && `${durationHours}h `}
-              {durationMinutes > 0 && `${durationMinutes}m`}
-            </span>
-          </div>
-
-          <a
-            href={contest.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-80"
-            style={{ color: platformColors.text }}
-          >
-            <span>🔗</span>
-            <span>Open Contest</span>
-            <span className="text-xs">↗</span>
-          </a>
-        </div>
-
-        {/* Footer */}
-        <div
-          className="p-4 border-t"
-          style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}
-        >
+          {/* Action Button - Footer */}
           <button
             onClick={handleParticipateClick}
-            className="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all hover:opacity-90"
+            className="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition-all hover:brightness-95 active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"
             style={{
               backgroundColor: isParticipating
                 ? darkMode
-                  ? "#dc262620"
+                  ? "rgba(239, 68, 68, 0.15)"
                   : "#fee2e2"
-                : platformColors.bg,
+                : "rgba(59, 130, 246, 0.1)",
               color: isParticipating
                 ? darkMode
                   ? "#fca5a5"
                   : "#dc2626"
-                : platformColors.text,
-              cursor: "pointer",
+                : "#2563eb",
             }}
           >
-            {isParticipating ? "Remove Participation" : "Participate"}
+            {isParticipating ? <>Remove from Calendar</> : <>Add to Calendar</>}
           </button>
         </div>
       </div>

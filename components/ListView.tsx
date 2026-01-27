@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   startOfWeek,
   endOfWeek,
@@ -8,13 +8,55 @@ import {
   isSameDay,
 } from "date-fns";
 import { ViewProps, Contest } from "@/types";
+import ContestTooltip from "./ContestTooltip";
+
+interface ListViewExtendedProps extends ViewProps {
+  participatingIds?: string[];
+  onParticipate?: (contestId: string) => void;
+  onRemoveParticipation?: (contestId: string) => void;
+}
 
 export default function ListView({
   contests,
   currentDate,
   darkMode = false,
-}: ViewProps) {
+  participatingIds = [],
+  onParticipate,
+  onRemoveParticipation,
+}: ListViewExtendedProps) {
+  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeContestId, setActiveContestId] = useState<string | null>(null);
+
   const styles = getStyles(darkMode);
+
+  const handleContestClick = (
+    contest: Contest,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const contestId = contest.id || contest.url;
+    setActiveContestId(contestId);
+    setSelectedContest(contest);
+    setTooltipAnchor(event.currentTarget);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseTooltip = () => {
+    setSelectedContest(null);
+    setTooltipAnchor(null);
+    setIsModalOpen(false);
+    setActiveContestId(null);
+  };
+
+  const handleParticipate = (contestId: string) => {
+    if (onParticipate) {
+      onParticipate(contestId);
+      handleCloseTooltip();
+    }
+  };
 
   // Get week days (Monday to Sunday)
   const weekDays = useMemo(() => {
@@ -117,11 +159,9 @@ export default function ListView({
                 const timeRange = `${startTimeStr} – ${endTimeStr}`;
 
                 return (
-                  <a
+                  <div
                     key={cIdx}
-                    href={contest.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={(e) => handleContestClick(contest, e)}
                     style={styles.contestRow}
                   >
                     {/* Time Range */}
@@ -156,7 +196,7 @@ export default function ListView({
                         ))}
                       </div>
                     )}
-                  </a>
+                  </div>
                 );
               })}
             </div>
@@ -171,6 +211,26 @@ export default function ListView({
         <div style={styles.emptyState}>
           <p>No contests scheduled for this week</p>
         </div>
+      )}
+
+      {/* Contest Modal */}
+      {selectedContest && tooltipAnchor && (
+        <ContestTooltip
+          contest={selectedContest}
+          onClose={handleCloseTooltip}
+          onParticipate={handleParticipate}
+          onRemoveParticipation={(contestId) => {
+            if (onRemoveParticipation) {
+              onRemoveParticipation(contestId);
+            }
+            handleCloseTooltip();
+          }}
+          isParticipating={participatingIds.includes(
+            selectedContest.id || selectedContest.url,
+          )}
+          darkMode={darkMode}
+          anchorElement={tooltipAnchor}
+        />
       )}
     </div>
   );

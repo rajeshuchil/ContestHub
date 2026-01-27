@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   startOfWeek,
   endOfWeek,
@@ -9,13 +9,55 @@ import {
   parseISO,
 } from "date-fns";
 import { ViewProps, Contest, ContestStatus } from "@/types";
+import ContestTooltip from "./ContestTooltip";
+
+interface WeekViewExtendedProps extends ViewProps {
+  participatingIds?: string[];
+  onParticipate?: (contestId: string) => void;
+  onRemoveParticipation?: (contestId: string) => void;
+}
 
 export default function WeekView({
   contests,
   currentDate,
   darkMode = false,
-}: ViewProps) {
+  participatingIds = [],
+  onParticipate,
+  onRemoveParticipation,
+}: WeekViewExtendedProps) {
+  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeContestId, setActiveContestId] = useState<string | null>(null);
+
   const styles = getStyles(darkMode);
+
+  const handleContestClick = (
+    contest: Contest,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const contestId = contest.id || contest.url;
+    setActiveContestId(contestId);
+    setSelectedContest(contest);
+    setTooltipAnchor(event.currentTarget);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseTooltip = () => {
+    setSelectedContest(null);
+    setTooltipAnchor(null);
+    setIsModalOpen(false);
+    setActiveContestId(null);
+  };
+
+  const handleParticipate = (contestId: string) => {
+    if (onParticipate) {
+      onParticipate(contestId);
+      handleCloseTooltip();
+    }
+  };
 
   // Get week days (Monday to Sunday)
   const weekDays = useMemo(() => {
@@ -116,19 +158,18 @@ export default function WeekView({
                   {dayAllDayEvents.map((contest, cIdx) => {
                     const colors = getPlatformColor(contest.platform);
                     const status = getStatusIndicator(contest.status);
+                    const contestId = contest.id || contest.url;
                     return (
-                      <a
+                      <div
                         key={cIdx}
-                        href={contest.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={(e) => handleContestClick(contest, e)}
                         style={{
                           ...styles.allDayEvent,
                           backgroundColor: colors.bg,
                           color: colors.text,
                           borderLeft: `3px solid ${status.color}`,
                         }}
-                        title={contest.name}
+                        title={isModalOpen ? undefined : contest.name}
                       >
                         <img
                           src={getPlatformLogo(contest.platform)}
@@ -136,7 +177,7 @@ export default function WeekView({
                           style={styles.eventLogo}
                         />
                         <span style={styles.eventName}>{contest.name}</span>
-                      </a>
+                      </div>
                     );
                   })}
                 </div>
@@ -217,12 +258,12 @@ export default function WeekView({
                         400,
                       ); // Max 4 hours visual
 
+                      const contestId = contest.id || contest.url;
+
                       return (
-                        <a
+                        <div
                           key={cIdx}
-                          href={contest.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={(e) => handleContestClick(contest, e)}
                           style={{
                             ...styles.event,
                             backgroundColor: colors.bg,
@@ -232,7 +273,11 @@ export default function WeekView({
                             height: `${height}%`,
                             zIndex: 10 + cIdx,
                           }}
-                          title={`${contest.name}\n${format(contest.startTime, "HH:mm")} - ${format(contest.endTime, "HH:mm")}`}
+                          title={
+                            isModalOpen
+                              ? undefined
+                              : `${contest.name}\n${format(contest.startTime, "HH:mm")} - ${format(contest.endTime, "HH:mm")}`
+                          }
                         >
                           <div style={styles.eventContent}>
                             <img
@@ -245,7 +290,7 @@ export default function WeekView({
                             </span>
                             <span style={styles.eventName}>{contest.name}</span>
                           </div>
-                        </a>
+                        </div>
                       );
                     })}
 
@@ -265,6 +310,26 @@ export default function WeekView({
           );
         })}
       </div>
+
+      {/* Contest Modal */}
+      {selectedContest && tooltipAnchor && (
+        <ContestTooltip
+          contest={selectedContest}
+          onClose={handleCloseTooltip}
+          onParticipate={handleParticipate}
+          onRemoveParticipation={(contestId) => {
+            if (onRemoveParticipation) {
+              onRemoveParticipation(contestId);
+            }
+            handleCloseTooltip();
+          }}
+          isParticipating={participatingIds.includes(
+            selectedContest.id || selectedContest.url,
+          )}
+          darkMode={darkMode}
+          anchorElement={tooltipAnchor}
+        />
+      )}
     </div>
   );
 }
