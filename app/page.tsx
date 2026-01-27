@@ -550,7 +550,13 @@ export default function Home() {
                   />
                 )}
                 {currentView === "table" && (
-                  <TableView contests={filteredContests} darkMode={darkMode} />
+                  <TableView
+                    contests={filteredContests}
+                    darkMode={darkMode}
+                    participatingIds={participatingIds}
+                    onParticipate={handleAddParticipation}
+                    onRemoveParticipation={handleRemoveParticipation}
+                  />
                 )}
               </motion.div>
             </AnimatePresence>

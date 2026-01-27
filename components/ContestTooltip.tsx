@@ -176,14 +176,14 @@ export default function ContestTooltip({
       {/* Modal - Updated styling for premium feel */}
       <div
         ref={tooltipRef}
-        className="fixed rounded-xl shadow-2xl overflow-hidden font-sans"
+        className="fixed font-sans flex flex-col"
         style={{
-          width: "420px", // Increased width
+          width: "420px",
           backgroundColor: darkMode ? "#1f2937" : "#ffffff",
-          border: darkMode ? "1px solid #374151" : "1px solid #f3f4f6", // Lighter border in light mode
-          boxShadow: darkMode
-            ? "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3)"
-            : "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+          border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
+          borderRadius: "12px",
+          boxShadow:
+            "0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)",
           top: position ? `${position.top}px` : "0px",
           left: position ? `${position.left}px` : "0px",
           visibility: position ? "visible" : "hidden",
@@ -193,80 +193,124 @@ export default function ContestTooltip({
           transform:
             isAnimating && position
               ? "scale(1) translateY(0)"
-              : "scale(0.98) translateY(4px)", // Subtle slide up
+              : "scale(0.98) translateY(4px)",
           transition: "all 0.2s ease-out",
         }}
       >
-        {/* Absolute Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-md transition-colors hover:bg-black/5 dark:hover:bg-white/10 z-10"
+        {/* Header Section with Title and Close Button */}
+        <div
           style={{
-            color: darkMode ? "#9ca3af" : "#9ca3af",
+            padding: "16px 20px",
+            position: "relative",
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.06)"
+              : "1px solid rgba(0, 0, 0, 0.06)",
           }}
-          aria-label="Close"
         >
-          <X size={20} />
-        </button>
+          <h3
+            className="font-semibold break-words"
+            style={{
+              color: darkMode ? "#f3f4f6" : "#111827",
+              fontSize: "17px",
+              lineHeight: "1.5",
+              paddingRight: "32px",
+              margin: 0,
+            }}
+          >
+            {contest.name}
+          </h3>
 
-        <div className="p-8">
-          {/* Header Section */}
-          <div className="mb-6 pr-8 pt-2">
-            <h3
-              className="font-semibold text-2xl leading-snug break-words"
-              style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
-            >
-              {contest.name}
-            </h3>
-          </div>
+          {/* Close Button - Positioned in header */}
+          <button
+            onClick={onClose}
+            className="transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            style={{
+              position: "absolute",
+              top: "14px",
+              right: "14px",
+              padding: "6px",
+              borderRadius: "8px",
+              color: darkMode ? "#9ca3af" : "#6b7280",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
+        {/* Content Section */}
+        <div
+          style={{
+            padding: "0 20px 16px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           {/* Tags / Badges row */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div
+            className="flex flex-wrap gap-2"
+            style={{ marginTop: "16px", marginBottom: "16px" }}
+          >
             <span
-              className="text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5"
+              className="text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
               style={{
                 backgroundColor: platformColors.bg,
                 color: platformColors.text,
               }}
             >
-              <Globe size={12} />
+              <Globe size={13} />
               {getPlatformLabel(contest.platform)}
             </span>
             <span
-              className="text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5"
+              className="text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
               style={{
                 backgroundColor: statusStyle.bg,
                 color: statusStyle.text,
               }}
             >
-              {contest.status === "ended" && <AlertTriangle size={12} />}
+              {contest.status === "ended" && <AlertTriangle size={13} />}
               {statusStyle.label}
             </span>
           </div>
 
           {/* Meta Info Section - Clean, vertical stack with icons */}
-          <div className="space-y-6 mb-8">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          >
             {/* Date */}
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3">
               <div
-                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
+                className="flex items-center justify-center rounded-lg shrink-0"
+                style={{
+                  backgroundColor: darkMode ? "#374151" : "#f3f4f6",
+                  width: "36px",
+                  height: "36px",
+                }}
               >
                 <Calendar
                   size={16}
-                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
                 />
               </div>
               <div className="flex flex-col">
                 <span
-                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
-                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                  className="text-xs font-medium"
+                  style={{
+                    color: darkMode ? "#9ca3af" : "#6b7280",
+                    marginBottom: "4px",
+                  }}
                 >
                   Date
                 </span>
                 <span
-                  className="text-sm font-medium leading-none"
-                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
+                  className="text-sm"
+                  style={{
+                    color: darkMode ? "#e5e7eb" : "#1f2937",
+                    fontWeight: "500",
+                  }}
                 >
                   {format(startTime, "EEEE, MMMM d, yyyy")}
                 </span>
@@ -274,26 +318,36 @@ export default function ContestTooltip({
             </div>
 
             {/* Time */}
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3">
               <div
-                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
+                className="flex items-center justify-center rounded-lg shrink-0"
+                style={{
+                  backgroundColor: darkMode ? "#374151" : "#f3f4f6",
+                  width: "36px",
+                  height: "36px",
+                }}
               >
                 <Clock
                   size={16}
-                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
                 />
               </div>
               <div className="flex flex-col">
                 <span
-                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
-                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                  className="text-xs font-medium"
+                  style={{
+                    color: darkMode ? "#9ca3af" : "#6b7280",
+                    marginBottom: "4px",
+                  }}
                 >
                   Time
                 </span>
                 <span
-                  className="text-sm font-medium leading-none"
-                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
+                  className="text-sm"
+                  style={{
+                    color: darkMode ? "#e5e7eb" : "#1f2937",
+                    fontWeight: "500",
+                  }}
                 >
                   {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
                 </span>
@@ -301,26 +355,36 @@ export default function ContestTooltip({
             </div>
 
             {/* Duration */}
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3">
               <div
-                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                style={{ backgroundColor: darkMode ? "#374151" : "#f3f4f6" }}
+                className="flex items-center justify-center rounded-lg shrink-0"
+                style={{
+                  backgroundColor: darkMode ? "#374151" : "#f3f4f6",
+                  width: "36px",
+                  height: "36px",
+                }}
               >
                 <Hourglass
                   size={16}
-                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
                 />
               </div>
               <div className="flex flex-col">
                 <span
-                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
-                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
+                  className="text-xs font-medium"
+                  style={{
+                    color: darkMode ? "#9ca3af" : "#6b7280",
+                    marginBottom: "4px",
+                  }}
                 >
                   Duration
                 </span>
                 <span
-                  className="text-sm font-medium leading-none"
-                  style={{ color: darkMode ? "#e5e7eb" : "#1f2937" }}
+                  className="text-sm"
+                  style={{
+                    color: darkMode ? "#e5e7eb" : "#1f2937",
+                    fontWeight: "500",
+                  }}
                 >
                   {durationHours > 0 && `${durationHours}h `}
                   {durationMinutes > 0 && `${durationMinutes}m`}
@@ -329,16 +393,21 @@ export default function ContestTooltip({
             </div>
 
             {/* Link */}
-            <div className="flex items-center gap-3.5 pt-2">
+            <div
+              className="flex items-center gap-3"
+              style={{ marginTop: "14px" }}
+            >
               <div
-                className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-colors"
+                className="flex items-center justify-center rounded-lg shrink-0 transition-colors"
                 style={{
                   backgroundColor: darkMode ? "#374151" : "#f3f4f6",
+                  width: "36px",
+                  height: "36px",
                 }}
               >
                 <ExternalLink
                   size={16}
-                  className={darkMode ? "text-gray-400" : "text-gray-500"}
+                  style={{ color: darkMode ? "#9ca3af" : "#6b7280" }}
                 />
               </div>
               <a
@@ -348,27 +417,44 @@ export default function ContestTooltip({
                 className="flex-1 flex flex-col group"
               >
                 <span
-                  className="text-[10px] font-bold tracking-wider uppercase opacity-60 mb-0.5"
-                  style={{ color: platformColors.text }}
+                  className="text-xs font-medium"
+                  style={{
+                    color: darkMode ? "#9ca3af" : "#6b7280",
+                    marginBottom: "4px",
+                  }}
                 >
                   Platform Link
                 </span>
                 <span
-                  className="text-sm font-medium leading-none flex items-center gap-1.5 transition-opacity group-hover:opacity-80 underline-offset-2 group-hover:underline"
-                  style={{ color: platformColors.text }}
+                  className="text-sm flex items-center gap-1.5 transition-opacity group-hover:opacity-80 underline-offset-2 group-hover:underline"
+                  style={{
+                    color: platformColors.text,
+                    fontWeight: "500",
+                  }}
                 >
                   Open {getPlatformLabel(contest.platform)}
-                  <ExternalLink size={12} />
+                  <ExternalLink size={13} />
                 </span>
               </a>
             </div>
           </div>
+        </div>
 
-          {/* Action Button - Footer */}
+        {/* Footer Section with Action Button */}
+        <div
+          style={{
+            padding: "16px 20px",
+            borderTop: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.06)"
+              : "1px solid rgba(0, 0, 0, 0.06)",
+          }}
+        >
           <button
             onClick={handleParticipateClick}
-            className="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition-all hover:brightness-95 active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"
+            className="w-full font-medium text-sm transition-all hover:brightness-95 active:scale-[0.98] flex items-center justify-center gap-2"
             style={{
+              padding: "12px 16px",
+              borderRadius: "10px",
               backgroundColor: isParticipating
                 ? darkMode
                   ? "rgba(239, 68, 68, 0.15)"

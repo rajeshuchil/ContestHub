@@ -185,10 +185,77 @@ export default function FilterBar({
                   onClick={() => setIsPlatformDropdownOpen(false)}
                 />
 
-                {/* Dropdown Container */}
+                {/* Desktop Dropdown - Absolute positioned */}
                 <div
                   ref={dropdownRef}
-                  className={`${isPlatformDropdownOpen ? "open" : ""}`}
+                  className="hidden md:block"
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    left: "0",
+                    minWidth: "240px",
+                    backgroundColor: darkMode ? "#1e2430" : "#ffffff",
+                    border: darkMode
+                      ? "1px solid #374151"
+                      : "1px solid #e5e7eb",
+                    borderRadius: "12px",
+                    boxShadow: darkMode
+                      ? "0 4px 12px rgba(0, 0, 0, 0.5)"
+                      : "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    zIndex: 50,
+                    padding: "8px",
+                    maxHeight: "320px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {availablePlatforms.map((platform) => {
+                    const isSelected = selectedPlatforms.includes(platform);
+                    return (
+                      <label
+                        key={platform}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          padding: "10px 12px",
+                          cursor: "pointer",
+                          borderRadius: "6px",
+                          transition: "background-color 0.15s ease",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          color: darkMode ? "#f3f4f6" : "#111827",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = darkMode
+                            ? "#374151"
+                            : "#f3f4f6";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => onPlatformToggle(platform)}
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            cursor: "pointer",
+                            accentColor: "#3b82f6",
+                          }}
+                        />
+                        <span style={{ textTransform: "capitalize" }}>
+                          {getCleanPlatformName(platform)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile Bottom Sheet */}
+                <div
+                  className="md:hidden"
                   style={{
                     position: "fixed",
                     bottom: 0,
@@ -213,208 +280,137 @@ export default function FilterBar({
                   }}
                 >
                   {/* Mobile Bottom Sheet Header */}
-                  <div className="md:hidden mb-4">
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "4px",
-                        backgroundColor: darkMode ? "#4b5563" : "#d1d5db",
-                        borderRadius: "2px",
-                        margin: "0 auto 16px",
-                      }}
-                    />
-                    <h3
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        color: darkMode ? "#f3f4f6" : "#111827",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      Filter Platforms
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: "14px",
-                        color: darkMode ? "#9ca3af" : "#6b7280",
-                      }}
-                    >
-                      Select platforms to filter contests
-                    </p>
-                  </div>
-
-                  {/* Desktop: absolute positioned */}
                   <div
-                    className="hidden md:block"
                     style={{
-                      position: "absolute",
-                      top: "calc(100% + 8px)",
-                      left: "0",
-                      minWidth: "240px",
-                      backgroundColor: darkMode ? "#1e2430" : "#ffffff",
-                      border: darkMode
-                        ? "1px solid #374151"
-                        : "1px solid #e5e7eb",
-                      borderRadius: "12px",
-                      boxShadow: darkMode
-                        ? "0 4px 12px rgba(0, 0, 0, 0.5)"
-                        : "0 4px 12px rgba(0, 0, 0, 0.1)",
-                      zIndex: 50,
-                      padding: "8px",
-                      maxHeight: "320px",
-                      overflowY: "auto",
+                      width: "40px",
+                      height: "4px",
+                      backgroundColor: darkMode ? "#4b5563" : "#d1d5db",
+                      borderRadius: "2px",
+                      margin: "0 auto 16px",
+                    }}
+                  />
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: darkMode ? "#f3f4f6" : "#111827",
+                      marginBottom: "8px",
                     }}
                   >
-                    {availablePlatforms.map((platform) => {
-                      const isSelected = selectedPlatforms.includes(platform);
-                      return (
-                        <label
-                          key={platform}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                            padding: "10px 12px",
-                            cursor: "pointer",
-                            borderRadius: "6px",
-                            transition: "background-color 0.15s ease",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: darkMode ? "#f3f4f6" : "#111827",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkMode
-                              ? "#374151"
-                              : "#f3f4f6";
-                          }}
-                          onMouseLeave={(e) => {
+                    Filter Platforms
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: darkMode ? "#9ca3af" : "#6b7280",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    Select platforms to filter contests
+                  </p>
+
+                  {/* Mobile Platform List */}
+                  {availablePlatforms.map((platform) => {
+                    const isSelected = selectedPlatforms.includes(platform);
+                    return (
+                      <label
+                        key={platform}
+                        className="tap-target tap-feedback"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          padding: "14px 12px",
+                          cursor: "pointer",
+                          borderRadius: "8px",
+                          transition: "background-color 0.15s ease",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                          color: darkMode ? "#f3f4f6" : "#111827",
+                          marginBottom: "4px",
+                        }}
+                        onTouchStart={(e) => {
+                          e.currentTarget.style.backgroundColor = darkMode
+                            ? "#374151"
+                            : "#f3f4f6";
+                        }}
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
                             e.currentTarget.style.backgroundColor =
                               "transparent";
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => onPlatformToggle(platform)}
-                            style={{
-                              width: "16px",
-                              height: "16px",
-                              cursor: "pointer",
-                              accentColor: "#3b82f6",
-                            }}
-                          />
-                          <span style={{ textTransform: "capitalize" }}>
-                            {getCleanPlatformName(platform)}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-
-                  {/* Mobile: full content in bottom sheet */}
-                  <div className="md:hidden">
-                    {availablePlatforms.map((platform) => {
-                      const isSelected = selectedPlatforms.includes(platform);
-                      return (
-                        <label
-                          key={platform}
-                          className="tap-target tap-feedback"
+                          }, 150);
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => onPlatformToggle(platform)}
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                            padding: "14px 12px",
+                            width: "20px",
+                            height: "20px",
                             cursor: "pointer",
-                            borderRadius: "8px",
-                            transition: "background-color 0.15s ease",
-                            fontSize: "16px",
-                            fontWeight: "500",
-                            color: darkMode ? "#f3f4f6" : "#111827",
-                            marginBottom: "4px",
+                            accentColor: "#3b82f6",
                           }}
-                          onTouchStart={(e) => {
-                            e.currentTarget.style.backgroundColor = darkMode
-                              ? "#374151"
-                              : "#f3f4f6";
-                          }}
-                          onTouchEnd={(e) => {
-                            setTimeout(() => {
-                              e.currentTarget.style.backgroundColor =
-                                "transparent";
-                            }, 150);
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => onPlatformToggle(platform)}
-                            style={{
-                              width: "20px",
-                              height: "20px",
-                              cursor: "pointer",
-                              accentColor: "#3b82f6",
-                            }}
-                          />
-                          <span style={{ textTransform: "capitalize" }}>
-                            {getCleanPlatformName(platform)}
-                          </span>
-                        </label>
-                      );
-                    })}
+                        />
+                        <span style={{ textTransform: "capitalize" }}>
+                          {getCleanPlatformName(platform)}
+                        </span>
+                      </label>
+                    );
+                  })}
 
-                    {/* Mobile Action Buttons */}
-                    <div
+                  {/* Mobile Action Buttons */}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "12px",
+                      marginTop: "16px",
+                      paddingTop: "16px",
+                      borderTop: darkMode
+                        ? "1px solid #374151"
+                        : "1px solid #e5e7eb",
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        selectedPlatforms.forEach((platform) =>
+                          onPlatformToggle(platform),
+                        );
+                      }}
+                      className="tap-target tap-feedback"
                       style={{
-                        display: "flex",
-                        gap: "12px",
-                        marginTop: "16px",
-                        paddingTop: "16px",
-                        borderTop: darkMode
+                        flex: "1",
+                        padding: "12px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        color: darkMode ? "#9ca3af" : "#6b7280",
+                        backgroundColor: "transparent",
+                        border: darkMode
                           ? "1px solid #374151"
                           : "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        cursor: "pointer",
                       }}
                     >
-                      <button
-                        onClick={() => {
-                          selectedPlatforms.forEach((platform) =>
-                            onPlatformToggle(platform),
-                          );
-                        }}
-                        className="tap-target tap-feedback"
-                        style={{
-                          flex: "1",
-                          padding: "12px",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                          color: darkMode ? "#9ca3af" : "#6b7280",
-                          backgroundColor: "transparent",
-                          border: darkMode
-                            ? "1px solid #374151"
-                            : "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Clear All
-                      </button>
-                      <button
-                        onClick={() => setIsPlatformDropdownOpen(false)}
-                        className="tap-target tap-feedback"
-                        style={{
-                          flex: "1",
-                          padding: "12px",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                          color: "#ffffff",
-                          backgroundColor: "#3b82f6",
-                          border: "none",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Apply
-                      </button>
-                    </div>
+                      Clear All
+                    </button>
+                    <button
+                      onClick={() => setIsPlatformDropdownOpen(false)}
+                      className="tap-target tap-feedback"
+                      style={{
+                        flex: "1",
+                        padding: "12px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        color: "#ffffff",
+                        backgroundColor: "#3b82f6",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Apply
+                    </button>
                   </div>
                 </div>
               </>
