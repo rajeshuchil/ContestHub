@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import { getPlatformLabel } from "@/lib/platformColors";
+import { getPlatformLabel as getCleanPlatformName } from "@/lib/platformColors";
 
 interface FilterBarProps {
   searchQuery: string;
@@ -47,15 +47,15 @@ export default function FilterBar({
     };
   }, [isPlatformDropdownOpen]);
 
-  const getPlatformLabel = () => {
+  const getDropdownButtonLabel = () => {
     if (selectedPlatforms.length === 0) {
       return "All Platforms";
     }
     if (selectedPlatforms.length === 1) {
-      return selectedPlatforms[0];
+      return getCleanPlatformName(selectedPlatforms[0]);
     }
     if (selectedPlatforms.length === 2) {
-      return selectedPlatforms.join(", ");
+      return `${getCleanPlatformName(selectedPlatforms[0])}, ${getCleanPlatformName(selectedPlatforms[1])}`;
     }
     return `${selectedPlatforms.length} Platforms`;
   };
@@ -164,7 +164,7 @@ export default function FilterBar({
                   "0 1px 3px rgba(0, 0, 0, 0.1)";
               }}
             >
-              <span>{getPlatformLabel()}</span>
+              <span>{getDropdownButtonLabel()}</span>
               <ChevronDown
                 size={16}
                 style={{
@@ -304,7 +304,7 @@ export default function FilterBar({
                             }}
                           />
                           <span style={{ textTransform: "capitalize" }}>
-                            {getPlatformLabel(platform)}
+                            {getCleanPlatformName(platform)}
                           </span>
                         </label>
                       );
@@ -356,7 +356,7 @@ export default function FilterBar({
                             }}
                           />
                           <span style={{ textTransform: "capitalize" }}>
-                            {getPlatformLabel(platform)}
+                            {getCleanPlatformName(platform)}
                           </span>
                         </label>
                       );

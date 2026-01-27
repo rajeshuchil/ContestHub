@@ -8,7 +8,7 @@ import {
   ContestStatus,
   StatusColors,
 } from "@/types";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
 import { getPlatformLabel } from "@/lib/platformColors";
 
 export default function TableView({
@@ -231,11 +231,44 @@ export default function TableView({
                   >
                     <div
                       style={{
-                        ...styles.contestName,
-                        ...(darkMode ? styles.contestNameDark : {}),
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        justifyContent: "space-between",
                       }}
                     >
-                      {contest.name}
+                      <div
+                        style={{
+                          ...styles.contestName,
+                          ...(darkMode ? styles.contestNameDark : {}),
+                        }}
+                      >
+                        {contest.name}
+                      </div>
+                      <a
+                        href={contest.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          color: darkMode ? "#9ca3af" : "#6b7280",
+                          transition: "color 0.2s ease",
+                          display: "flex",
+                          alignItems: "center",
+                          flexShrink: 0,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#3b82f6";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = darkMode
+                            ? "#9ca3af"
+                            : "#6b7280";
+                        }}
+                        title="Open contest"
+                      >
+                        <ExternalLink size={16} />
+                      </a>
                     </div>
                   </td>
                   <td

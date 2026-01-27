@@ -44,9 +44,16 @@ export default function Home() {
     setParticipatingIds(getParticipatingContests());
   }, []);
 
-  const participatingContests = contests.filter((c) =>
-    participatingIds.includes(c.id || c.url),
-  );
+  const participatingContests = contests.filter((c) => {
+    const isParticipating = participatingIds.includes(c.id || c.url);
+    const matchesPlatform =
+      activePlatforms.length === 0 ||
+      activePlatforms.some(
+        (selectedPlatform) =>
+          c.platform.toLowerCase() === selectedPlatform.toLowerCase(),
+      );
+    return isParticipating && matchesPlatform;
+  });
 
   const handleRemoveParticipation = (contestId: string) => {
     removeParticipation(contestId);
@@ -117,7 +124,10 @@ export default function Home() {
 
     const matchesPlatform =
       activePlatforms.length === 0 ||
-      activePlatforms.includes(contest.platform);
+      activePlatforms.some(
+        (selectedPlatform) =>
+          contest.platform.toLowerCase() === selectedPlatform.toLowerCase(),
+      );
 
     return matchesSearch && matchesPlatform;
   });
@@ -456,36 +466,53 @@ export default function Home() {
             maxWidth: "1400px",
             width: "100%",
             justifyContent: "center",
+            alignItems: "stretch",
           }}
         >
           {/* Left Panel - Upcoming Contests (Hidden on Mobile) */}
           {participatingContests.length > 0 && currentView === "calendar" && (
             <div
-              className="hidden lg:block"
-              style={{ width: "400px", flexShrink: 0 }}
+              className="hidden lg:block participation-panel-container"
+              style={{
+                width: "400px",
+                flexShrink: 0,
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              <ParticipationPanel
-                contests={participatingContests}
-                onContestClick={(contest) => {
-                  // Scroll to contest in calendar
-                  const contestElement = document.querySelector(
-                    `[data-contest-id="${contest.id || contest.url}"]`,
-                  );
-                  if (contestElement) {
-                    contestElement.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
-                    // Highlight briefly
-                    contestElement.classList.add("highlight-contest");
-                    setTimeout(() => {
-                      contestElement.classList.remove("highlight-contest");
-                    }, 2000);
-                  }
+              <div
+                className="participation-panel-scroll"
+                style={{
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  paddingRight: "8px",
+                  flex: 1,
+                  minHeight: 0,
                 }}
-                onRemoveParticipation={handleRemoveParticipation}
-                darkMode={darkMode}
-              />
+              >
+                <ParticipationPanel
+                  contests={participatingContests}
+                  onContestClick={(contest) => {
+                    // Scroll to contest in calendar
+                    const contestElement = document.querySelector(
+                      `[data-contest-id="${contest.id || contest.url}"]`,
+                    );
+                    if (contestElement) {
+                      contestElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                      // Highlight briefly
+                      contestElement.classList.add("highlight-contest");
+                      setTimeout(() => {
+                        contestElement.classList.remove("highlight-contest");
+                      }, 2000);
+                    }
+                  }}
+                  onRemoveParticipation={handleRemoveParticipation}
+                  darkMode={darkMode}
+                />
+              </div>
             </div>
           )}
 
@@ -495,8 +522,8 @@ export default function Home() {
             style={{
               maxWidth:
                 participatingContests.length > 0 &&
-                  currentView === "calendar" &&
-                  window.innerWidth >= 1024
+                currentView === "calendar" &&
+                window.innerWidth >= 1024
                   ? "calc(100% - 424px)"
                   : "100%",
             }}
@@ -690,6 +717,48 @@ export default function Home() {
           .app-subtitle {
             font-size: 12px;
           }
+        }
+
+        /* Participation Panel Scrollbar Styling */
+        .participation-panel-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+        }
+
+        .participation-panel-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .participation-panel-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .participation-panel-scroll::-webkit-scrollbar-thumb {
+          background-color: rgba(156, 163, 175, 0.3);
+          border-radius: 3px;
+        }
+
+        .participation-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(156, 163, 175, 0.5);
+        }
+
+        .app-container[data-theme="dark"] .participation-panel-scroll {
+          scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+        }
+
+        .app-container[data-theme="dark"]
+          .participation-panel-scroll::-webkit-scrollbar-thumb {
+          background-color: rgba(75, 85, 99, 0.5);
+        }
+
+        .app-container[data-theme="dark"]
+          .participation-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(75, 85, 99, 0.7);
+        }
+
+        /* Ensure smooth scrolling */
+        .participation-panel-scroll {
+          scroll-behavior: smooth;
         }
       `}</style>
     </main>
