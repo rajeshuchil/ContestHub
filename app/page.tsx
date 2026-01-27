@@ -495,8 +495,8 @@ export default function Home() {
             style={{
               maxWidth:
                 participatingContests.length > 0 &&
-                currentView === "calendar" &&
-                window.innerWidth >= 1024
+                  currentView === "calendar" &&
+                  window.innerWidth >= 1024
                   ? "calc(100% - 424px)"
                   : "100%",
             }}
