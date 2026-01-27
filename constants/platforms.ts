@@ -185,6 +185,176 @@ export const PLATFORM_CONFIG: Record<string, PlatformConfig> = {
     },
     logoUrl: 'https://clist.by/images/resources/robocontest.uz.ico',
   },
+  ctftime: {
+    id: 'ctftime',
+    label: 'CTFtime',
+    domains: ['ctftime.org', 'ctftime'],
+    color: {
+      light: { bg: '#dbeafe', text: '#1e40af', border: '#bfdbfe', accent: '#3b82f6' },
+      dark: { bg: '#2a3a5a', text: '#e6e6e6', border: '#3a4a6a', accent: '#3b72e6' },
+    },
+    logoUrl: 'https://clist.by/images/resources/ctftime.org.ico',
+  },
+  kaggle: {
+    id: 'kaggle',
+    label: 'Kaggle',
+    domains: ['kaggle.com', 'kaggle'],
+    color: {
+      light: { bg: '#dbeafe', text: '#1e40af', border: '#bfdbfe', accent: '#3b82f6' },
+      dark: { bg: '#2a3a5a', text: '#e6e6e6', border: '#3a4a6a', accent: '#3b72e6' },
+    },
+    logoUrl: 'https://clist.by/images/resources/kaggle.com.ico',
+  },
+  dlgsu: {
+    id: 'dlgsu',
+    label: 'DL.GSU',
+    domains: ['dl.gsu.by', 'dl.gsu', 'gsu'],
+    color: {
+      light: { bg: '#fef3c7', text: '#92400e', border: '#fde68a', accent: '#f59e0b' },
+      dark: { bg: '#4a4022', text: '#e6e6e6', border: '#5a5032', accent: '#dc8e0b' },
+    },
+    logoUrl: 'https://clist.by/images/resources/dl.gsu.by.ico',
+  },
+  cups: {
+    id: 'cups',
+    label: 'CUPS',
+    domains: ['cups.online', 'cups'],
+    color: {
+      light: { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc', accent: '#a855f7' },
+      dark: { bg: '#3a2555', text: '#e6e6e6', border: '#4a3565', accent: '#9845e7' },
+    },
+    logoUrl: 'https://clist.by/images/resources/cups.online.ico',
+  },
+  nerc: {
+    id: 'nerc',
+    label: 'NERC',
+    domains: ['nerc.itmo.ru/school', 'nerc.itmo.ru', 'nerc'],
+    color: {
+      light: { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7', accent: '#10b981' },
+      dark: { bg: '#1f4a39', text: '#e6e6e6', border: '#2f5a49', accent: '#0ea971' },
+    },
+    logoUrl: 'https://clist.by/images/resources/nerc.itmo.ru.ico',
+  },
+  acmp: {
+    id: 'acmp',
+    label: 'ACMP',
+    domains: ['acmp.ru', 'acmp'],
+    color: {
+      light: { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5', accent: '#ef4444' },
+      dark: { bg: '#4a2222', text: '#e6e6e6', border: '#5a3232', accent: '#df3434' },
+    },
+    logoUrl: 'https://clist.by/images/resources/acmp.ru.ico',
+  },
+  basecamp: {
+    id: 'basecamp',
+    label: 'Basecamp',
+    domains: ['basecamp.eolymp.com', 'basecamp'],
+    color: {
+      light: { bg: '#ccfbf1', text: '#115e59', border: '#5eead4', accent: '#14b8a6' },
+      dark: { bg: '#1f4a47', text: '#e6e6e6', border: '#2f5a57', accent: '#12a896' },
+    },
+    logoUrl: 'https://clist.by/images/resources/basecamp.eolymp.com.ico',
+  },
+  code360: {
+    id: 'code360',
+    label: 'Code360',
+    domains: ['naukri.com/code360', 'code360', 'naukri'],
+    color: {
+      light: { bg: '#ddd6fe', text: '#5b21b6', border: '#c4b5fd', accent: '#8b5cf6' },
+      dark: { bg: '#3a2a5a', text: '#e6e6e6', border: '#4a3a6a', accent: '#7b4ce6' },
+    },
+    logoUrl: 'https://clist.by/images/resources/naukri.com.ico',
+  },
+  usaco: {
+    id: 'usaco',
+    label: 'USACO',
+    domains: ['usaco.org', 'usaco'],
+    color: {
+      light: { bg: '#fef3c7', text: '#92400e', border: '#fde68a', accent: '#f59e0b' },
+      dark: { bg: '#4a4022', text: '#e6e6e6', border: '#5a5032', accent: '#dc8e0b' },
+    },
+    logoUrl: 'https://clist.by/images/resources/usaco.org.ico',
+  },
+  projecteuler: {
+    id: 'projecteuler',
+    label: 'Project Euler',
+    domains: ['projecteuler.net', 'projecteuler', 'project euler'],
+    color: {
+      light: { bg: '#e0e7ff', text: '#3730a3', border: '#c7d2fe', accent: '#6366f1' },
+      dark: { bg: '#2a2a55', text: '#e6e6e6', border: '#3a3a65', accent: '#5356e1' },
+    },
+    logoUrl: 'https://clist.by/images/resources/projecteuler.net.ico',
+  },
+  datsteam: {
+    id: 'datsteam',
+    label: 'DatSteam',
+    domains: ['datsteam.dev', 'datsteam'],
+    color: {
+      light: { bg: '#dbeafe', text: '#1e40af', border: '#bfdbfe', accent: '#3b82f6' },
+      dark: { bg: '#2a3a5a', text: '#e6e6e6', border: '#3a4a6a', accent: '#3b72e6' },
+    },
+    logoUrl: 'https://clist.by/images/resources/datsteam.dev.ico',
+  },
+  azspcs: {
+    id: 'azspcs',
+    label: 'AzSPCS',
+    domains: ['azspcs.com', 'azspcs'],
+    color: {
+      light: { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7', accent: '#10b981' },
+      dark: { bg: '#1f4a39', text: '#e6e6e6', border: '#2f5a49', accent: '#0ea971' },
+    },
+    logoUrl: 'https://clist.by/images/resources/azspcs.com.ico',
+  },
+  algoleague: {
+    id: 'algoleague',
+    label: 'AlgoLeague',
+    domains: ['algoleague.com', 'algoleague'],
+    color: {
+      light: { bg: '#e9d5ff', text: '#6b21a8', border: '#c084fc', accent: '#a855f7' },
+      dark: { bg: '#3a2555', text: '#e6e6e6', border: '#4a3565', accent: '#9845e7' },
+    },
+    logoUrl: 'https://clist.by/images/resources/algoleague.com.ico',
+  },
+  competesai: {
+    id: 'competesai',
+    label: 'Competes AI',
+    domains: ['competesai.com', 'competes'],
+    color: {
+      light: { bg: '#fce7f3', text: '#9f1239', border: '#fbcfe8', accent: '#ec4899' },
+      dark: { bg: '#4a2a3e', text: '#e6e6e6', border: '#5a3a4e', accent: '#d94489' },
+    },
+    logoUrl: 'https://clist.by/images/resources/competesai.com.ico',
+  },
+  coci: {
+    id: 'coci',
+    label: 'COCI',
+    domains: ['hsin.hr/coci', 'coci', 'hsin.hr'],
+    color: {
+      light: { bg: '#ccfbf1', text: '#115e59', border: '#5eead4', accent: '#14b8a6' },
+      dark: { bg: '#1f4a47', text: '#e6e6e6', border: '#2f5a57', accent: '#12a896' },
+    },
+    logoUrl: 'https://clist.by/images/resources/hsin.hr.ico',
+  },
+  toph: {
+    id: 'toph',
+    label: 'Toph',
+    domains: ['toph.co', 'toph'],
+    color: {
+      light: { bg: '#fed7aa', text: '#9a3412', border: '#fdba74', accent: '#f97316' },
+      dark: { bg: '#4a3722', text: '#e6e6e6', border: '#5a4732', accent: '#e06306' },
+    },
+    logoUrl: 'https://clist.by/images/resources/toph.co.ico',
+  },
+  infopen: {
+    id: 'infopen',
+    label: 'INF-Open',
+    domains: ['inf-open.ru', 'infopen', 'inf-open'],
+    color: {
+      light: { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5', accent: '#ef4444' },
+      dark: { bg: '#4a2222', text: '#e6e6e6', border: '#5a3232', accent: '#df3434' },
+    },
+    logoUrl: 'https://clist.by/images/resources/inf-open.ru.ico',
+  },
 };
 
 /**
