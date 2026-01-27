@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown } from "lucide-react";
+import { getPlatformLabel } from "@/lib/platformColors";
 
 interface FilterBarProps {
   searchQuery: string;
@@ -303,7 +304,7 @@ export default function FilterBar({
                             }}
                           />
                           <span style={{ textTransform: "capitalize" }}>
-                            {platform}
+                            {getPlatformLabel(platform)}
                           </span>
                         </label>
                       );
@@ -355,7 +356,7 @@ export default function FilterBar({
                             }}
                           />
                           <span style={{ textTransform: "capitalize" }}>
-                            {platform}
+                            {getPlatformLabel(platform)}
                           </span>
                         </label>
                       );

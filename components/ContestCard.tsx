@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Contest } from "@/types";
+import { getPlatformLabel } from "@/lib/platformColors";
 
 interface ContestCardProps {
   contest: Contest;
@@ -37,7 +38,9 @@ export default function ContestCard({ contest }: ContestCardProps) {
             style={{ backgroundColor: platformStyle.color }}
           >
             <span className="platform-icon">{platformStyle.icon}</span>
-            <span className="platform-name">{contest.platform}</span>
+            <span className="platform-name">
+              {getPlatformLabel(contest.platform)}
+            </span>
           </div>
 
           <div className={`status-badge ${statusStyle.badgeClass}`}>

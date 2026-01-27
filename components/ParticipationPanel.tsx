@@ -1,7 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import { Contest } from "@/types";
-import { getPlatformColor } from "@/lib/platformColors";
+import { getPlatformColor, getPlatformLabel } from "@/lib/platformColors";
 import { X } from "lucide-react";
 import { useState } from "react";
 
@@ -208,7 +208,7 @@ export default function ParticipationPanel({
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
-                            {contest.platform}
+                            {getPlatformLabel(contest.platform)}
                           </div>
                         </div>
 

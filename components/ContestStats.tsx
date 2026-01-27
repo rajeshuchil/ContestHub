@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { Contest, ContestStatus } from "@/types";
-import { getPlatformColor } from "@/lib/platformColors";
+import { getPlatformColor, getPlatformLabel } from "@/lib/platformColors";
 
 interface ContestStatsProps {
   contests: Contest[];
@@ -345,7 +345,7 @@ export default function ContestStats({
                         e.currentTarget.style.boxShadow = "none";
                       }}
                     >
-                      <span>{platform}</span>
+                      <span>{getPlatformLabel(platform)}</span>
                       <span
                         style={{
                           backgroundColor: darkMode

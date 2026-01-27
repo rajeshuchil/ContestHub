@@ -23,7 +23,12 @@ import {
 } from "date-fns";
 import WeekView from "./WeekView";
 import ContestTooltip from "./ContestTooltip";
-import { getPlatformColor, getPlatformLogo } from "@/lib/platformColors";
+import {
+  getPlatformColor,
+  getPlatformLogo,
+  getPlatformLabel,
+  getPlatformMeta,
+} from "@/lib/platformColors";
 import { CalendarViewProps, Contest, ContestStatus } from "@/types";
 
 type ViewMode = "month" | "week";
@@ -397,7 +402,7 @@ export default function CalendarView({
                           title={
                             isModalOpen
                               ? undefined
-                              : `${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`
+                              : `${contest.name} - ${getPlatformLabel(contest.platform)}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`
                           }
                         >
                           <span

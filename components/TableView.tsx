@@ -9,6 +9,7 @@ import {
   StatusColors,
 } from "@/types";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { getPlatformLabel } from "@/lib/platformColors";
 
 export default function TableView({
   contests,
@@ -249,7 +250,7 @@ export default function TableView({
                         backgroundColor: getPlatformColor(contest.platform),
                       }}
                     >
-                      {contest.platform}
+                      {getPlatformLabel(contest.platform)}
                     </span>
                   </td>
                   <td

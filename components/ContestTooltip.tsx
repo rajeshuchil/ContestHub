@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { Contest } from "@/types";
-import { getPlatformColor } from "@/lib/platformColors";
+import { getPlatformColor, getPlatformLabel } from "@/lib/platformColors";
 import {
   Calendar,
   Clock,
@@ -230,7 +230,7 @@ export default function ContestTooltip({
               }}
             >
               <Globe size={12} />
-              {contest.platform}
+              {getPlatformLabel(contest.platform)}
             </span>
             <span
               className="text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5"
@@ -357,7 +357,7 @@ export default function ContestTooltip({
                   className="text-sm font-medium leading-none flex items-center gap-1.5 transition-opacity group-hover:opacity-80 underline-offset-2 group-hover:underline"
                   style={{ color: platformColors.text }}
                 >
-                  Open {contest.platform}
+                  Open {getPlatformLabel(contest.platform)}
                   <ExternalLink size={12} />
                 </span>
               </a>
