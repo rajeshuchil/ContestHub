@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { Contest, ContestStatus } from "@/types";
-import { getPlatformColor } from "@/lib/platformColors";
+import { getPlatformColor, getPlatformLabel } from "@/lib/platformColors";
 
 interface ContestStatsProps {
   contests: Contest[];
@@ -290,8 +290,9 @@ export default function ContestStats({
           )}
         </div>
 
-        {/* Platform Breakdown */}
-        {Object.keys(stats.platformCounts).length > 0 && (
+        {/* Platform Breakdown - Informational Grid */}
+        {Object.entries(stats.platformCounts).filter(([_, count]) => count >= 1)
+          .length > 0 && (
           <div style={{ marginTop: "24px" }}>
             <h4
               className="fade-in"
@@ -299,7 +300,7 @@ export default function ContestStats({
                 fontSize: "14px",
                 fontWeight: "600",
                 color: darkMode ? "#d1d5db" : "#374151",
-                marginBottom: "12px",
+                marginBottom: "16px",
                 marginTop: "0",
               }}
             >
@@ -307,58 +308,55 @@ export default function ContestStats({
             </h4>
             <div
               style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "10px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                gap: "12px",
               }}
             >
               {Object.entries(stats.platformCounts)
+                .filter(([_, count]) => count >= 1)
                 .sort((a, b) => b[1] - a[1])
-                .map(([platform, count], index) => {
+                .map(([platform, count]) => {
                   const platformColors = getPlatformColor(platform, darkMode);
                   return (
                     <div
                       key={platform}
-                      className="fade-in stagger-item"
+                      className="fade-in"
                       style={{
-                        display: "inline-flex",
-                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
                         gap: "8px",
-                        padding: "8px 16px",
-                        backgroundColor: platformColors.bg,
-                        color: platformColors.text,
-                        borderRadius: "24px",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        animationDelay: `${100 + index * 50}ms`,
+                        padding: "16px",
+                        backgroundColor: darkMode
+                          ? "rgba(31, 41, 55, 0.6)"
+                          : "rgba(249, 250, 251, 0.8)",
+                        borderRadius: "8px",
+                        border: darkMode
+                          ? "1px solid rgba(55, 65, 81, 0.5)"
+                          : "1px solid rgba(229, 231, 235, 0.5)",
                         cursor: "default",
-                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                        e.currentTarget.style.boxShadow = darkMode
-                          ? "0 4px 8px rgba(0, 0, 0, 0.4)"
-                          : "0 4px 8px rgba(0, 0, 0, 0.15)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "none";
                       }}
                     >
-                      <span>{platform}</span>
-                      <span
+                      <div
                         style={{
-                          backgroundColor: darkMode
-                            ? "rgba(0,0,0,0.3)"
-                            : "rgba(255,255,255,0.4)",
-                          padding: "3px 8px",
-                          borderRadius: "12px",
-                          fontSize: "12px",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          color: darkMode ? "#9ca3af" : "#6b7280",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        {getPlatformLabel(platform)}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "28px",
                           fontWeight: "700",
+                          color: platformColors.text,
                         }}
                       >
                         {count}
-                      </span>
+                      </div>
                     </div>
                   );
                 })}

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import ContestCard from "./ContestCard";
 import { Contest, ContestStatus } from "@/types";
+import { getPlatformLabel } from "@/lib/platformColors";
 
 interface ContestFeedProps {
   contests: Contest[];
@@ -126,7 +127,7 @@ export default function ContestFeed({ contests }: ContestFeedProps) {
                 onClick={() => togglePlatform(platform)}
                 className={`filter-chip ${selectedPlatforms.has(platform) ? "active" : ""}`}
               >
-                <span className="chip-text">{platform}</span>
+                <span className="chip-text">{getPlatformLabel(platform)}</span>
               </button>
             ))}
           </div>

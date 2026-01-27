@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import {
   Calendar,
   CalendarDays,
-  List,
   ChevronLeft,
   ChevronRight,
   Pin,
@@ -23,12 +22,16 @@ import {
   subWeeks,
 } from "date-fns";
 import WeekView from "./WeekView";
-import ListView from "./ListView";
 import ContestTooltip from "./ContestTooltip";
-import { getPlatformColor, getPlatformLogo } from "@/lib/platformColors";
+import {
+  getPlatformColor,
+  getPlatformLogo,
+  getPlatformLabel,
+  getPlatformMeta,
+} from "@/lib/platformColors";
 import { CalendarViewProps, Contest, ContestStatus } from "@/types";
 
-type ViewMode = "month" | "week" | "list";
+type ViewMode = "month" | "week";
 
 interface CalendarViewExtendedProps extends Omit<
   CalendarViewProps,
@@ -54,6 +57,8 @@ export default function CalendarView({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
   const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeContestId, setActiveContestId] = useState<string | null>(null);
 
   const handleParticipate = (contestId: string) => {
     if (onParticipate) {
@@ -61,6 +66,8 @@ export default function CalendarView({
       // Close tooltip after participating
       setSelectedContest(null);
       setTooltipAnchor(null);
+      setIsModalOpen(false);
+      setActiveContestId(null);
     }
   };
 
@@ -70,13 +77,18 @@ export default function CalendarView({
   ) => {
     event.preventDefault();
     event.stopPropagation();
+    const contestId = contest.id || contest.url;
+    setActiveContestId(contestId);
     setSelectedContest(contest);
     setTooltipAnchor(event.currentTarget);
+    setIsModalOpen(true);
   };
 
   const handleCloseTooltip = () => {
     setSelectedContest(null);
     setTooltipAnchor(null);
+    setIsModalOpen(false);
+    setActiveContestId(null);
   };
   const today = new Date();
   const currentMonth = today.getMonth();
@@ -276,7 +288,6 @@ export default function CalendarView({
                 label: "Week",
                 icon: <CalendarDays size={14} />,
               },
-              { id: "list" as const, label: "List", icon: <List size={14} /> },
             ].map((view) => (
               <button
                 key={view.id}
@@ -306,12 +317,9 @@ export default function CalendarView({
           contests={filteredContests}
           currentDate={currentDate}
           darkMode={darkMode}
-        />
-      ) : viewMode === "list" ? (
-        <ListView
-          contests={filteredContests}
-          currentDate={currentDate}
-          darkMode={darkMode}
+          participatingIds={participatingIds}
+          onParticipate={onParticipate}
+          onRemoveParticipation={onRemoveParticipation}
         />
       ) : (
         <>
@@ -391,7 +399,11 @@ export default function CalendarView({
                                 }
                               : {}),
                           }}
-                          title={`${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`}
+                          title={
+                            isModalOpen
+                              ? undefined
+                              : `${contest.name} - ${getPlatformLabel(contest.platform)}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`
+                          }
                         >
                           <span
                             style={{

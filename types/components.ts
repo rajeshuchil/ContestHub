@@ -38,6 +38,15 @@ export interface TableViewProps {
 
   /** Dark mode enabled */
   darkMode?: boolean;
+
+  /** IDs of contests user is participating in */
+  participatingIds?: string[];
+
+  /** Callback to add participation */
+  onParticipate?: (contestId: string) => void;
+
+  /** Callback to remove participation */
+  onRemoveParticipation?: (contestId: string) => void;
 }
 
 /**

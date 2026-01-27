@@ -8,16 +8,71 @@ import {
   ContestStatus,
   StatusColors,
 } from "@/types";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
+import { getPlatformLabel } from "@/lib/platformColors";
+import ContestTooltip from "./ContestTooltip";
 
 export default function TableView({
   contests,
   darkMode = false,
+  participatingIds = [],
+  onParticipate,
+  onRemoveParticipation,
 }: TableViewProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "startTime",
     direction: "asc",
   });
+  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
+
+  const handleContestClick = (
+    contest: Contest,
+    event: React.MouseEvent<HTMLTableRowElement>,
+  ) => {
+    // Don't open modal if clicking on a link or button
+    const target = event.target as HTMLElement;
+    if (target.tagName === "A" || target.closest("a")) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setSelectedContest(contest);
+    setTooltipAnchor(event.currentTarget);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedContest(null);
+    setTooltipAnchor(null);
+    setIsModalOpen(false);
+  };
+
+  const handleParticipate = (contestId: string) => {
+    if (onParticipate) {
+      onParticipate(contestId);
+    }
+  };
+
+  const handleRemoveParticipation = (contestId: string) => {
+    if (onRemoveParticipation) {
+      onRemoveParticipation(contestId);
+    }
+  };
+
+  const handleKeyDown = (
+    contest: Contest,
+    event: React.KeyboardEvent<HTMLTableRowElement>,
+  ) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setSelectedContest(contest);
+      setTooltipAnchor(event.currentTarget);
+      setIsModalOpen(true);
+    }
+  };
 
   const sortedContests = useMemo(() => {
     const sorted = [...contests].sort((a, b) => {
@@ -193,7 +248,10 @@ export default function TableView({
               return (
                 <tr
                   key={idx}
-                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  onClick={(e) => handleContestClick(contest, e)}
+                  onKeyDown={(e) => handleKeyDown(contest, e)}
+                  tabIndex={0}
+                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                   style={{
                     ...styles.tr,
                     ...(darkMode ? styles.trDark : {}),
@@ -230,11 +288,44 @@ export default function TableView({
                   >
                     <div
                       style={{
-                        ...styles.contestName,
-                        ...(darkMode ? styles.contestNameDark : {}),
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        justifyContent: "space-between",
                       }}
                     >
-                      {contest.name}
+                      <div
+                        style={{
+                          ...styles.contestName,
+                          ...(darkMode ? styles.contestNameDark : {}),
+                        }}
+                      >
+                        {contest.name}
+                      </div>
+                      <a
+                        href={contest.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          color: darkMode ? "#9ca3af" : "#6b7280",
+                          transition: "color 0.2s ease",
+                          display: "flex",
+                          alignItems: "center",
+                          flexShrink: 0,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#3b82f6";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = darkMode
+                            ? "#9ca3af"
+                            : "#6b7280";
+                        }}
+                        title="Open contest"
+                      >
+                        <ExternalLink size={16} />
+                      </a>
                     </div>
                   </td>
                   <td
@@ -249,7 +340,7 @@ export default function TableView({
                         backgroundColor: getPlatformColor(contest.platform),
                       }}
                     >
-                      {contest.platform}
+                      {getPlatformLabel(contest.platform)}
                     </span>
                   </td>
                   <td
@@ -321,6 +412,21 @@ export default function TableView({
           </tbody>
         </table>
       </div>
+
+      {/* Contest Details Modal */}
+      {selectedContest && isModalOpen && (
+        <ContestTooltip
+          contest={selectedContest}
+          anchorElement={tooltipAnchor}
+          onClose={handleCloseModal}
+          onParticipate={handleParticipate}
+          onRemoveParticipation={handleRemoveParticipation}
+          isParticipating={participatingIds.includes(
+            selectedContest.id || selectedContest.url,
+          )}
+          darkMode={darkMode}
+        />
+      )}
     </div>
   );
 }

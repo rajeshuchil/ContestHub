@@ -1,8 +1,8 @@
 "use client";
 import { format } from "date-fns";
 import { Contest } from "@/types";
-import { getPlatformColor } from "@/lib/platformColors";
-import { X } from "lucide-react";
+import { getPlatformColor, getPlatformLabel } from "@/lib/platformColors";
+import { X, ExternalLink } from "lucide-react";
 import { useState } from "react";
 
 interface ParticipationPanelProps {
@@ -112,24 +112,34 @@ export default function ParticipationPanel({
                           onMouseEnter={() => setHovered(globalIndex)}
                           onMouseLeave={() => setHovered(null)}
                           onClick={() => onContestClick(contest)}
-                          className="card-lift fade-in stagger-item rounded-xl px-6 py-6 transition-all duration-300 cursor-pointer relative group"
+                          className="participation-card fade-in stagger-item cursor-pointer relative group"
                           style={{
                             backgroundColor: darkMode ? "#1f2937" : "#ffffff",
                             border: darkMode
                               ? "1px solid #374151"
                               : "1px solid #e5e7eb",
-                            boxShadow: darkMode
-                              ? "0 1px 3px rgba(0, 0, 0, 0.3)"
-                              : "0 1px 3px rgba(0, 0, 0, 0.1)",
+                            borderRadius: "12px",
+                            boxShadow:
+                              hovered === globalIndex
+                                ? darkMode
+                                  ? "0 4px 12px rgba(0, 0, 0, 0.4)"
+                                  : "0 4px 12px rgba(0, 0, 0, 0.15)"
+                                : darkMode
+                                  ? "0 1px 3px rgba(0, 0, 0, 0.3)"
+                                  : "0 1px 3px rgba(0, 0, 0, 0.1)",
+                            padding: "20px",
                             animationDelay: `${globalIndex * 50}ms`,
                             transform:
-                              hovered !== null && hovered !== globalIndex
-                                ? "scale(0.98)"
-                                : "scale(1)",
+                              hovered === globalIndex
+                                ? "translateY(-2px)"
+                                : hovered !== null && hovered !== globalIndex
+                                  ? "scale(0.98)"
+                                  : "translateY(0)",
                             filter:
                               hovered !== null && hovered !== globalIndex
                                 ? "blur(2px)"
                                 : "none",
+                            transition: "all 0.3s ease",
                           }}
                         >
                           {/* Remove button */}
@@ -138,7 +148,7 @@ export default function ParticipationPanel({
                               e.stopPropagation();
                               onRemoveParticipation(contest.id || contest.url);
                             }}
-                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className="absolute top-3 right-10 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
                             style={{
                               color: darkMode ? "#9ca3af" : "#6b7280",
                               transition: "all 0.2s ease",
@@ -158,72 +168,104 @@ export default function ParticipationPanel({
                             <X size={16} />
                           </button>
 
-                          {/* Time Only - Secondary */}
-                          <div className="flex items-center gap-2 mb-4">
-                            <span
-                              className="leading-none shrink-0"
-                              style={{
-                                fontSize: "10px",
-                                lineHeight: "1",
-                                color: getPlatformColor(contest.platform).bg,
-                              }}
-                            >
-                              ●
-                            </span>
-                            <span
-                              className="text-sm font-semibold"
-                              style={{
-                                color: darkMode ? "#d1d5db" : "#374151",
-                              }}
-                            >
-                              {timeRange}
-                            </span>
+                          {/* External Link Icon */}
+                          <a
+                            href={contest.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                            style={{
+                              color: darkMode ? "#9ca3af" : "#6b7280",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "scale(1.1)";
+                              e.currentTarget.style.color = "#3b82f6";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "scale(1)";
+                              e.currentTarget.style.color = darkMode
+                                ? "#9ca3af"
+                                : "#6b7280";
+                            }}
+                            title="Open contest"
+                          >
+                            <ExternalLink size={16} />
+                          </a>
+
+                          {/* Date - Muted small text */}
+                          <div
+                            style={{
+                              fontSize: "13px",
+                              fontWeight: "600",
+                              color: darkMode ? "#9ca3af" : "#6b7280",
+                              marginBottom: "8px",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.5px",
+                            }}
+                          >
+                            {dateKey}
                           </div>
 
-                          {/* Contest Name - Primary */}
+                          {/* Time Range with Status Dot */}
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              fontSize: "15px",
+                              fontWeight: "600",
+                              color: darkMode ? "#d1d5db" : "#374151",
+                              marginBottom: "16px",
+                              lineHeight: "1.5",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: "8px",
+                                height: "8px",
+                                borderRadius: "50%",
+                                backgroundColor:
+                                  contest.status === "ongoing"
+                                    ? "#10b981"
+                                    : contest.status === "upcoming"
+                                      ? "#3b82f6"
+                                      : "#9ca3af",
+                                flexShrink: 0,
+                              }}
+                            />
+                            <span>{timeRange}</span>
+                          </div>
+
+                          {/* Contest Name - Primary heading */}
                           <h4
-                            className="font-bold text-lg leading-snug mb-3 pr-6"
-                            style={{ color: darkMode ? "#f3f4f6" : "#000000" }}
+                            style={{
+                              fontSize: "18px",
+                              fontWeight: "700",
+                              color: darkMode ? "#f3f4f6" : "#111827",
+                              marginBottom: "16px",
+                              marginTop: "0",
+                              lineHeight: "1.4",
+                              paddingRight: "24px",
+                            }}
                           >
                             {contest.name}
                           </h4>
 
-                          {/* Platform Badge */}
+                          {/* Platform - Small muted text */}
                           <div
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200"
                             style={{
-                              backgroundColor: getPlatformColor(
-                                contest.platform,
-                              ).bg,
-                              color: "#1f2937",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform =
-                                "translateY(-1px)";
-                              e.currentTarget.style.boxShadow =
-                                "0 2px 6px rgba(0, 0, 0, 0.2)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = "translateY(0)";
-                              e.currentTarget.style.boxShadow = "none";
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              color: darkMode ? "#9ca3af" : "#6b7280",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.5px",
                             }}
                           >
-                            {contest.platform}
+                            {getPlatformLabel(contest.platform)}
                           </div>
                         </div>
-
-                        {/* Divider line - show for all except last card in this date group */}
-                        {contestIndex < contestsForDate.length - 1 && (
-                          <hr
-                            className="my-5"
-                            style={{
-                              border: "none",
-                              borderTop: darkMode
-                                ? "1px dashed #374151"
-                                : "1px dashed #d1d5db",
-                            }}
-                          />
-                        )}
                       </div>
                     );
                   })}
