@@ -47,19 +47,6 @@ export default function FilterBar({
     };
   }, [isPlatformDropdownOpen]);
 
-  const getDropdownButtonLabel = () => {
-    if (selectedPlatforms.length === 0) {
-      return "All Platforms";
-    }
-    if (selectedPlatforms.length === 1) {
-      return getCleanPlatformName(selectedPlatforms[0]);
-    }
-    if (selectedPlatforms.length === 2) {
-      return `${getCleanPlatformName(selectedPlatforms[0])}, ${getCleanPlatformName(selectedPlatforms[1])}`;
-    }
-    return `${selectedPlatforms.length} Platforms`;
-  };
-
   return (
     <>
       <div
@@ -143,6 +130,7 @@ export default function FilterBar({
                 alignItems: "center",
                 gap: "8px",
                 padding: "12px 18px",
+                minWidth: "160px",
                 fontSize: "14px",
                 fontWeight: "600",
                 color: darkMode ? "#f3f4f6" : "#111827",
@@ -150,7 +138,7 @@ export default function FilterBar({
                 border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
                 borderRadius: "12px",
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "box-shadow 0.2s ease",
                 whiteSpace: "nowrap",
                 boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
@@ -164,7 +152,28 @@ export default function FilterBar({
                   "0 1px 3px rgba(0, 0, 0, 0.1)";
               }}
             >
-              <span>{getDropdownButtonLabel()}</span>
+              <span style={{ flex: 1 }}>All Platforms</span>
+              {selectedPlatforms.length > 0 && (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: "18px",
+                    height: "18px",
+                    padding: "0 5px",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    color: darkMode ? "#93c5fd" : "#2563eb",
+                    backgroundColor: darkMode
+                      ? "rgba(59, 130, 246, 0.15)"
+                      : "rgba(59, 130, 246, 0.1)",
+                    borderRadius: "9px",
+                  }}
+                >
+                  {selectedPlatforms.length}
+                </span>
+              )}
               <ChevronDown
                 size={16}
                 style={{
@@ -172,6 +181,7 @@ export default function FilterBar({
                   transform: isPlatformDropdownOpen
                     ? "rotate(180deg)"
                     : "rotate(0deg)",
+                  flexShrink: 0,
                 }}
               />
             </button>
@@ -202,10 +212,11 @@ export default function FilterBar({
                     boxShadow: darkMode
                       ? "0 4px 12px rgba(0, 0, 0, 0.5)"
                       : "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    zIndex: 50,
+                    zIndex: 1000,
                     padding: "8px",
                     maxHeight: "320px",
                     overflowY: "auto",
+                    overflowX: "hidden",
                   }}
                 >
                   {availablePlatforms.map((platform) => {
@@ -416,40 +427,6 @@ export default function FilterBar({
               </>
             )}
           </div>
-
-          {/* Clear Filters (if any active) */}
-          {(searchQuery || selectedPlatforms.length > 0) && (
-            <button
-              onClick={() => {
-                onSearchChange("");
-                selectedPlatforms.forEach((platform) =>
-                  onPlatformToggle(platform),
-                );
-              }}
-              className="fade-in"
-              style={{
-                padding: "10px 16px",
-                fontSize: "13px",
-                fontWeight: "600",
-                color: darkMode ? "#9ca3af" : "#6b7280",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = darkMode ? "#f3f4f6" : "#111827";
-                e.currentTarget.style.transform = "scale(1.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = darkMode ? "#9ca3af" : "#6b7280";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              Clear Filters
-            </button>
-          )}
         </div>
       </div>
     </>

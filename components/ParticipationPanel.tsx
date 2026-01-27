@@ -129,17 +129,12 @@ export default function ParticipationPanel({
                                   : "0 1px 3px rgba(0, 0, 0, 0.1)",
                             padding: "20px",
                             animationDelay: `${globalIndex * 50}ms`,
-                            transform:
-                              hovered === globalIndex
-                                ? "translateY(-2px)"
-                                : hovered !== null && hovered !== globalIndex
-                                  ? "scale(0.98)"
-                                  : "translateY(0)",
-                            filter:
+                            transition:
+                              "box-shadow 0.2s ease, opacity 0.2s ease",
+                            opacity:
                               hovered !== null && hovered !== globalIndex
-                                ? "blur(2px)"
-                                : "none",
-                            transition: "all 0.3s ease",
+                                ? 0.6
+                                : 1,
                           }}
                         >
                           {/* Remove button */}

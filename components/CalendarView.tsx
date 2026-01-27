@@ -491,6 +491,7 @@ const styles = {
   container: {
     width: "100%",
     maxWidth: "100%",
+    minHeight: "600px",
     backgroundColor: "#fff",
     borderRadius: "12px",
     padding: "20px",

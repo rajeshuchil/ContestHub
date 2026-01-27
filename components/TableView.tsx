@@ -434,6 +434,7 @@ export default function TableView({
 const styles = {
   container: {
     width: "100%",
+    minHeight: "600px",
     backgroundColor: "#fff",
     borderRadius: "12px",
     padding: "24px",
