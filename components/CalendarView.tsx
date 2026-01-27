@@ -54,6 +54,8 @@ export default function CalendarView({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
   const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeContestId, setActiveContestId] = useState<string | null>(null);
 
   const handleParticipate = (contestId: string) => {
     if (onParticipate) {
@@ -61,6 +63,8 @@ export default function CalendarView({
       // Close tooltip after participating
       setSelectedContest(null);
       setTooltipAnchor(null);
+      setIsModalOpen(false);
+      setActiveContestId(null);
     }
   };
 
@@ -70,13 +74,18 @@ export default function CalendarView({
   ) => {
     event.preventDefault();
     event.stopPropagation();
+    const contestId = contest.id || contest.url;
+    setActiveContestId(contestId);
     setSelectedContest(contest);
     setTooltipAnchor(event.currentTarget);
+    setIsModalOpen(true);
   };
 
   const handleCloseTooltip = () => {
     setSelectedContest(null);
     setTooltipAnchor(null);
+    setIsModalOpen(false);
+    setActiveContestId(null);
   };
   const today = new Date();
   const currentMonth = today.getMonth();
@@ -391,7 +400,11 @@ export default function CalendarView({
                                 }
                               : {}),
                           }}
-                          title={`${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`}
+                          title={
+                            isModalOpen
+                              ? undefined
+                              : `${contest.name} - ${contest.platform}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`
+                          }
                         >
                           <span
                             style={{
