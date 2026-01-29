@@ -57,45 +57,57 @@ export default function ContestTooltip({
 
     const updatePosition = () => {
       const rect = anchorElement.getBoundingClientRect();
-      const tooltipWidth = 380; // Slightly wider for breathing room
+      const tooltipWidth = 420; // Modal width
 
       // Get exact tooltip height from the rendered DOM element
       const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
 
       if (tooltipHeight === 0) return;
 
-      const margin = 12; // increased gap
+      const margin = 12; // Gap between modal and anchor
       const viewportPadding = 16; // Padding from viewport edges
 
-      // Calculate available space
+      // Calculate available space in all directions
       const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
       const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
 
-      // Rule: If spaceBelow >= modalHeight + margin -> place modal below
-      // Else -> place modal above
+      // Determine vertical position (prefer below, fallback to above)
       const shouldOpenBelow = spaceBelow >= tooltipHeight + margin;
-
-      // Calculate vertical position
       let top: number;
       if (shouldOpenBelow) {
-        // Open below: position modal directly below the element with gap
+        // Open below the element
         top = rect.bottom + margin;
+      } else if (spaceAbove >= tooltipHeight + margin) {
+        // Open above the element
+        top = rect.top - tooltipHeight - margin;
       } else {
-        // Open above: stuck to the element (no gap)
-        top = rect.top - tooltipHeight - margin; // Added margin for "above" case too
+        // Not enough space above or below, position as best as possible
+        if (spaceBelow > spaceAbove) {
+          top = rect.bottom + margin;
+        } else {
+          top = Math.max(viewportPadding, rect.top - tooltipHeight - margin);
+        }
       }
 
-      // Calculate horizontal position (align with element's left edge)
+      // Horizontal positioning - align with element's left edge
       let left = rect.left;
 
       // Adjust horizontal position if tooltip would go off screen
-      const maxLeft = window.innerWidth - tooltipWidth - viewportPadding;
+      const maxLeft = viewportWidth - tooltipWidth - viewportPadding;
       if (left > maxLeft) {
         left = maxLeft;
       }
       if (left < viewportPadding) {
         left = viewportPadding;
       }
+
+      // Ensure tooltip stays within viewport bounds vertically
+      top = Math.max(
+        viewportPadding,
+        Math.min(top, viewportHeight - tooltipHeight - viewportPadding),
+      );
 
       setPosition({ top, left });
     };
@@ -460,10 +472,11 @@ export default function ContestTooltip({
           <button
             onClick={handleParticipateClick}
             disabled={!isParticipating && isPastContest(contest.startTime)}
-            className={`w-full font-medium text-sm transition-all flex items-center justify-center gap-2 ${!isParticipating && isPastContest(contest.startTime)
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:brightness-95 active:scale-[0.98]"
-              }`}
+            className={`w-full font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+              !isParticipating && isPastContest(contest.startTime)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:brightness-95 active:scale-[0.98]"
+            }`}
             style={{
               padding: "12px 16px",
               borderRadius: "10px",

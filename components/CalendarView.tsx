@@ -222,7 +222,7 @@ export default function CalendarView({
         today: {
           ...styles.today,
           backgroundColor: "#2d3547",
-          boxShadow: "inset 0 0 0 2px #60a5fa",
+          boxShadow: "inset 0 0 0 2px #f59e0b",
         },
         dayNumber: { ...styles.dayNumber, color: "#d1d5db" },
       };
@@ -249,10 +249,11 @@ export default function CalendarView({
                 setCurrentDate(newDate);
               }
             }}
-            className={`transition-all duration-200 ${isCurrentMonth
-              ? "opacity-40 cursor-not-allowed"
-              : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
-              }`}
+            className={`transition-all duration-200 ${
+              isCurrentMonth
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+            }`}
             style={{
               ...dynamicStyles.navButton,
               // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
@@ -352,7 +353,11 @@ export default function CalendarView({
                   style={{
                     ...dynamicStyles.day,
                     ...(isCurrentMonth ? {} : dynamicStyles.otherMonth),
-                    ...(isPastDate ? (darkMode ? dynamicStyles.pastDay : { backgroundColor: "#f3f4f6", opacity: 0.6 }) : {}),
+                    ...(isPastDate
+                      ? darkMode
+                        ? dynamicStyles.pastDay
+                        : { backgroundColor: "#f3f4f6", opacity: 0.6 }
+                      : {}),
                     ...(isToday ? dynamicStyles.today : {}),
                   }}
                 >
@@ -397,14 +402,14 @@ export default function CalendarView({
                             // Highlight participating contests
                             ...(isUserParticipating
                               ? {
-                                boxShadow: darkMode
-                                  ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
-                                  : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
-                                borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
-                                backgroundColor: darkMode
-                                  ? `${platformColors.bg}dd`
-                                  : `${platformColors.bg}ff`,
-                              }
+                                  boxShadow: darkMode
+                                    ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
+                                    : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
+                                  borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
+                                  backgroundColor: darkMode
+                                    ? `${platformColors.bg}dd`
+                                    : `${platformColors.bg}ff`,
+                                }
                               : {}),
                           }}
                           title={
@@ -600,14 +605,17 @@ const styles = {
     border: "1px solid #d0d0d0",
   },
   day: {
-    minHeight: "90px",
+    minHeight: "120px",
+    maxHeight: "120px",
     backgroundColor: "#fff",
-    padding: "4px",
+    padding: "8px",
     overflow: "hidden" as const,
     position: "relative" as const,
     borderRight: "1px solid #e8e8e8",
     borderBottom: "1px solid #e8e8e8",
     transition: "background-color 0.1s",
+    display: "flex",
+    flexDirection: "column" as const,
   },
   pastDay: {
     backgroundColor: "#f9fafb",
@@ -618,39 +626,45 @@ const styles = {
     opacity: 0.5,
   },
   today: {
-    backgroundColor: "#fffbf0",
-    boxShadow: "inset 0 0 0 2px #ffa116",
+    backgroundColor: "#fffef5",
+    boxShadow: "inset 0 0 0 2px #f59e0b",
   },
   dayNumber: {
-    fontSize: "11px",
+    fontSize: "12px",
     fontWeight: "600",
     color: "#444",
-    marginBottom: "2px",
+    marginBottom: "6px",
     textAlign: "right" as const,
-    paddingRight: "4px",
+    paddingRight: "6px",
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexShrink: 0,
   },
   contestsContainer: {
     display: "flex",
     flexDirection: "column" as const,
-    gap: "1px",
+    gap: "3px",
     fontSize: "10px",
-    margin: "0 -4px",
+    margin: "0 -8px",
+    flex: 1,
+    overflow: "hidden" as const,
   },
   contestPill: {
-    padding: "4px 6px",
+    padding: "5px 8px",
     borderRadius: "0",
     fontSize: "11px",
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
     whiteSpace: "nowrap" as const,
     display: "flex",
-    gap: "5px",
+    gap: "6px",
     alignItems: "center",
     textDecoration: "none",
     transition: "all 0.15s",
     cursor: "pointer",
     lineHeight: "1.5",
-    fontWeight: "600",
+    fontWeight: "500",
     marginBottom: "0",
     border: "none",
     boxShadow: "none",
@@ -683,10 +697,10 @@ const styles = {
     marginLeft: "10px",
   },
   contestTime: {
-    fontWeight: "700",
+    fontWeight: "600",
     fontSize: "10px",
     flexShrink: 0,
-    opacity: 1,
+    opacity: 0.9,
     letterSpacing: "0px",
     color: "inherit",
   },
@@ -696,8 +710,8 @@ const styles = {
     whiteSpace: "nowrap" as const,
     flex: 1,
     fontSize: "10px",
-    fontWeight: "600",
-    opacity: 1,
-    marginLeft: "3px",
+    fontWeight: "500",
+    opacity: 0.95,
+    marginLeft: "4px",
   },
 };
