@@ -162,69 +162,69 @@ export default function CalendarView({
       return {
         container: {
           ...styles.container,
-          backgroundColor: "#1e2430",
+          backgroundColor: "#1e293b", // Slate 800
           boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          border: "1px solid #374151",
+          border: "1px solid #334155", // Slate 700
           marginTop: "0",
         },
-        monthTitle: { ...styles.monthTitle, color: "#f3f4f6" },
+        monthTitle: { ...styles.monthTitle, color: "#f1f5f9" }, // Slate 100
         navButton: {
           ...styles.navButton,
-          border: "1px solid #3a4150",
-          backgroundColor: "#2a2f3d",
-          color: "#d1d5db",
+          border: "1px solid #334155", // Slate 700
+          backgroundColor: "#334155", // Slate 700
+          color: "#cbd5e1", // Slate 300
         },
         viewToggle: {
           ...styles.viewToggle,
-          backgroundColor: "#2a2f3d",
-          border: "1px solid #3a4150",
+          backgroundColor: "#0f172a", // Slate 900
+          border: "1px solid #334155", // Slate 700
         },
-        toggleBtn: { ...styles.toggleBtn, color: "#9ca3af" },
+        toggleBtn: { ...styles.toggleBtn, color: "#94a3b8" }, // Slate 400
         toggleBtnActive: {
           ...styles.toggleBtnActive,
-          backgroundColor: "#3a4150",
-          color: "#f3f4f6",
+          backgroundColor: "#334155", // Slate 700
+          color: "#f1f5f9", // Slate 100
           boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
         },
         weekdays: {
           ...styles.weekdays,
-          backgroundColor: "#252b3a",
-          borderTop: "1px solid #3a4150",
-          borderLeft: "1px solid #3a4150",
-          borderRight: "1px solid #3a4150",
+          backgroundColor: "#1e293b", // Slate 800 (same as header)
+          borderTop: "1px solid #334155",
+          borderLeft: "1px solid #334155",
+          borderRight: "1px solid #334155",
         },
         weekday: {
           ...styles.weekday,
-          backgroundColor: "#252b3a",
-          color: "#b4bac8",
-          borderRight: "1px solid #3a4150",
+          backgroundColor: "#1e293b", // Slate 800
+          color: "#94a3b8", // Slate 400
+          borderRight: "1px solid #334155",
         },
         grid: {
           ...styles.grid,
-          backgroundColor: "#1e2430",
-          border: "1px solid #3a4150",
+          backgroundColor: "#0f172a", // Slate 900 - Darker background for grid
+          border: "1px solid #334155",
         },
         day: {
           ...styles.day,
-          backgroundColor: "#252b3a",
-          borderRight: "1px solid #3a4150",
-          borderBottom: "1px solid #3a4150",
+          backgroundColor: "#1e293b", // Slate 800
+          borderRight: "1px solid #334155",
+          borderBottom: "1px solid #334155",
         },
         otherMonth: {
           ...styles.otherMonth,
-          backgroundColor: "#1a1f2c",
+          backgroundColor: "#0f172a", // Slate 900
           opacity: 0.5,
         },
         pastDay: {
-          backgroundColor: "#1a1f2c", // Similar to otherMonth for dark mode
+          backgroundColor: "#0f172a", // Slate 900
           opacity: 0.6,
         },
         today: {
           ...styles.today,
-          backgroundColor: "#2d3547",
+          backgroundColor: "#334155", // Slate 700
           boxShadow: "inset 0 0 0 2px #f59e0b",
         },
-        dayNumber: { ...styles.dayNumber, color: "#d1d5db" },
+        dayNumber: { ...styles.dayNumber, color: "#cbd5e1" },
       };
     }
     return styles;
@@ -249,11 +249,10 @@ export default function CalendarView({
                 setCurrentDate(newDate);
               }
             }}
-            className={`transition-all duration-200 ${
-              isCurrentMonth
+            className={`transition-all duration-200 ${isCurrentMonth
                 ? "opacity-40 cursor-not-allowed"
                 : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
-            }`}
+              }`}
             style={{
               ...dynamicStyles.navButton,
               // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
@@ -402,14 +401,14 @@ export default function CalendarView({
                             // Highlight participating contests
                             ...(isUserParticipating
                               ? {
-                                  boxShadow: darkMode
-                                    ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
-                                    : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
-                                  borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
-                                  backgroundColor: darkMode
-                                    ? `${platformColors.bg}dd`
-                                    : `${platformColors.bg}ff`,
-                                }
+                                boxShadow: darkMode
+                                  ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
+                                  : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
+                                borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
+                                backgroundColor: darkMode
+                                  ? `${platformColors.bg}dd`
+                                  : `${platformColors.bg}ff`,
+                              }
                               : {}),
                           }}
                           title={

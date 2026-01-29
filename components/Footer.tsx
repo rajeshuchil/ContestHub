@@ -9,15 +9,15 @@ export default function Footer({ darkMode = false }: FooterProps) {
       style={{
         ...styles.footer,
         ...(darkMode ? styles.footerDark : {}),
-      }}
+      } as React.CSSProperties}
     >
-      <div style={styles.container}>
-        <div style={styles.leftSection}>
+      <div style={styles.container as React.CSSProperties}>
+        <div style={styles.leftSection as React.CSSProperties}>
           <span
             style={{
               ...styles.copyright,
               ...(darkMode ? { color: "#9ca3af" } : {}),
-            }}
+            } as React.CSSProperties}
           >
             © {currentYear}{" "}
           </span>
@@ -29,7 +29,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             style={{
               ...styles.brandLink,
               ...(darkMode ? { color: "#e6e6e6" } : {}),
-            }}
+            } as React.CSSProperties}
           >
             ContestHub
           </a>
@@ -37,7 +37,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             style={{
               ...styles.by,
               ...(darkMode ? { color: "#9ca3af" } : {}),
-            }}
+            } as React.CSSProperties}
           >
             {" "}
             By{" "}
@@ -50,7 +50,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             style={{
               ...styles.authorLink,
               ...(darkMode ? { color: "#60a5fa" } : {}),
-            }}
+            } as React.CSSProperties}
           >
             Rajesh
           </a>
@@ -60,19 +60,19 @@ export default function Footer({ darkMode = false }: FooterProps) {
           style={{
             ...styles.subtitle,
             ...(darkMode ? { color: "#9ca3af" } : {}),
-          }}
+          } as React.CSSProperties}
         >
           Your <strong>coding contests</strong> tracker across all platforms
         </div>
 
-        <div style={styles.rightSection}>
+        <div style={styles.rightSection as React.CSSProperties}>
           <a
             href="mailto:contact@contesthub.com"
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
             style={{
               ...styles.contactLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),
-            }}
+            } as React.CSSProperties}
           >
             Contact Me
           </a>
@@ -84,7 +84,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             style={{
               ...styles.iconLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),
-            }}
+            } as React.CSSProperties}
             aria-label="GitHub"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -99,7 +99,7 @@ export default function Footer({ darkMode = false }: FooterProps) {
             style={{
               ...styles.iconLink,
               ...(darkMode ? { color: "#9ca3af" } : {}),
-            }}
+            } as React.CSSProperties}
             aria-label="Twitter"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -122,12 +122,12 @@ const styles = {
     transition: "background-color 0.3s ease, border-color 0.3s ease",
   },
   footerDark: {
-    backgroundColor: "#161a22",
-    borderTop: "1px solid #2a2f3a",
-    color: "#9ca3af",
+    backgroundColor: "#1e293b", // Slate 800 - Match cards
+    borderTop: "1px solid #334155", // Slate 700
+    color: "#94a3b8", // Slate 400
   },
   container: {
-    maxWidth: "1400px",
+    maxWidth: "1200px", // Match main content
     margin: "0 auto",
     padding: "0 24px",
     display: "flex",

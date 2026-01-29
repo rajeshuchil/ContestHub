@@ -50,22 +50,23 @@ export default function FilterBar({
   return (
     <>
       <div
-        className="responsive-padding"
         style={{
           width: "100%",
-          backgroundColor: darkMode ? "#0f1115" : "#f7f3e8",
+          backgroundColor: darkMode ? "#0f172a" : "#f7f3e8", // Slate 900
+          padding: "12px 0",
         }}
       >
         <div
           className="mobile-stack"
           style={{
-            maxWidth: "1400px",
+            maxWidth: "1200px",
             margin: "0 auto",
             display: "flex",
-            gap: "12px",
+            gap: "0px",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             flexWrap: "wrap",
+            padding: "0 12px",
           }}
         >
           {/* Search Input */}
@@ -73,20 +74,21 @@ export default function FilterBar({
             className="mobile-full-width"
             style={{
               position: "relative",
-              flex: "1",
-              minWidth: "280px",
-              maxWidth: "500px",
+              flex: "0 0 320px",
+              minWidth: "220px",
+              maxWidth: "320px",
             }}
           >
             <Search
-              size={18}
+              size={16}
               style={{
                 position: "absolute",
                 left: "12px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: darkMode ? "#9ca3af" : "#6b7280",
+                color: darkMode ? "#94a3b8" : "#6b7280", // Slate 400
                 pointerEvents: "none",
+                zIndex: 10,
               }}
             />
             <input
@@ -96,26 +98,25 @@ export default function FilterBar({
               onChange={(e) => onSearchChange(e.target.value)}
               style={{
                 width: "100%",
-                padding: "12px 14px 12px 42px",
+                padding: "10px 14px 10px 38px",
                 fontSize: "14px",
                 fontWeight: "500",
-                color: darkMode ? "#f3f4f6" : "#111827",
-                backgroundColor: darkMode ? "#1e2430" : "#ffffff",
-                border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
-                borderRadius: "12px",
+                color: darkMode ? "#f1f5f9" : "#111827", // Slate 100
+                backgroundColor: darkMode ? "#1e293b" : "#ffffff", // Slate 800
+                border: darkMode ? "1px solid #334155" : "1px solid #e5e7eb", // Slate 700
+                borderRight: "none",
+                borderRadius: "8px 0 0 8px",
                 outline: "none",
                 transition: "all 0.2s ease",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                height: "40px",
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = darkMode ? "#ffffff" : "#000000";
-                e.target.style.boxShadow = darkMode
-                  ? "0 2px 8px rgba(0, 0, 0, 0.3)"
-                  : "0 2px 6px rgba(0, 0, 0, 0.15)";
+                e.target.style.borderColor = darkMode ? "#94a3b8" : "#000000"; // Slate 400
+                e.target.style.zIndex = "5";
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = darkMode ? "#374151" : "#e5e7eb";
-                e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)";
+                e.target.style.borderColor = darkMode ? "#334155" : "#e5e7eb"; // Slate 700
+                e.target.style.zIndex = "1";
               }}
             />
           </div>
@@ -129,18 +130,18 @@ export default function FilterBar({
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
-                padding: "12px 18px",
+                padding: "0 16px",
                 minWidth: "160px",
+                height: "40px",
                 fontSize: "14px",
-                fontWeight: "600",
-                color: darkMode ? "#f3f4f6" : "#111827",
-                backgroundColor: darkMode ? "#1e2430" : "#ffffff",
-                border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
-                borderRadius: "12px",
+                fontWeight: "500",
+                color: darkMode ? "#f1f5f9" : "#111827", // Slate 100
+                backgroundColor: darkMode ? "#1e293b" : "#f9fafb", // Slate 800
+                border: darkMode ? "1px solid #334155" : "1px solid #e5e7eb", // Slate 700
+                borderRadius: "0 8px 8px 0",
                 cursor: "pointer",
-                transition: "box-shadow 0.2s ease",
+                transition: "all 0.2s ease",
                 whiteSpace: "nowrap",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = darkMode
@@ -204,13 +205,13 @@ export default function FilterBar({
                     top: "calc(100% + 8px)",
                     left: "0",
                     minWidth: "240px",
-                    backgroundColor: darkMode ? "#1e2430" : "#ffffff",
+                    backgroundColor: darkMode ? "#1e293b" : "#ffffff", // Slate 800
                     border: darkMode
-                      ? "1px solid #374151"
+                      ? "1px solid #334155" // Slate 700
                       : "1px solid #e5e7eb",
                     borderRadius: "12px",
                     boxShadow: darkMode
-                      ? "0 4px 12px rgba(0, 0, 0, 0.5)"
+                      ? "0 4px 12px rgba(0, 0, 0, 0.4)"
                       : "0 4px 12px rgba(0, 0, 0, 0.1)",
                     zIndex: 1000,
                     padding: "8px",

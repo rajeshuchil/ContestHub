@@ -28,9 +28,9 @@ export default function ViewSwitcher({
       display: "flex",
       gap: "4px",
       padding: "3px",
-      backgroundColor: darkMode ? "#252b3a" : "#f5f5f5",
+      backgroundColor: darkMode ? "#1e293b" : "#f5f5f5", // Slate 800
       borderRadius: "8px",
-      border: darkMode ? "1px solid #3a4150" : "1px solid #e0e0e0",
+      border: darkMode ? "1px solid #334155" : "1px solid #e0e0e0", // Slate 700
     },
     button: {
       display: "flex",
@@ -43,7 +43,7 @@ export default function ViewSwitcher({
       cursor: "pointer",
       fontSize: "13px",
       fontWeight: "500",
-      color: darkMode ? "#9ca3af" : "#666",
+      color: darkMode ? "#94a3b8" : "#666", // Slate 400
       transition: "all 0.2s",
       outline: "none",
       whiteSpace: "nowrap" as const,
@@ -55,10 +55,10 @@ export default function ViewSwitcher({
       width: "36px",
       height: "36px",
       padding: "0",
-      border: darkMode ? "1px solid #3a4150" : "1px solid #e0e0e0",
+      border: darkMode ? "1px solid #334155" : "1px solid #e0e0e0", // Slate 700
       borderRadius: "8px",
-      backgroundColor: darkMode ? "#252b3a" : "#f5f5f5",
-      color: darkMode ? "#e6e6e6" : "#374151",
+      backgroundColor: darkMode ? "#1e293b" : "#f5f5f5", // Slate 800
+      color: darkMode ? "#f1f5f9" : "#374151", // Slate 100
       cursor: "pointer",
       fontSize: "18px",
       transition: "all 0.2s",
@@ -66,11 +66,10 @@ export default function ViewSwitcher({
       flexShrink: 0,
     },
     activeButton: {
-      backgroundColor: darkMode ? "#1e2430" : "#fff",
-      color: darkMode ? "#60a5fa" : "#000000",
-      boxShadow: darkMode
-        ? "0 2px 4px rgba(0,0,0,0.3)"
-        : "0 2px 4px rgba(0,0,0,0.1)",
+      backgroundColor: darkMode ? "#334155" : "#111827", // Slate 700 (Solid background)
+      color: "#ffffff",
+      boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+      fontWeight: "600",
     },
     icon: {
       fontSize: "16px",
@@ -86,7 +85,10 @@ export default function ViewSwitcher({
           <button
             key={view.id}
             onClick={() => onViewChange(view.id)}
-            className="transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:bg-black/5 dark:hover:bg-white/10"
+            className={`transition-all duration-200 ease-out active:scale-95 ${currentView === view.id
+              ? "" // No hover effect on active
+              : "hover:bg-black/5 dark:hover:bg-white/10"
+              }`}
             style={{
               ...styles.button,
               ...(currentView === view.id ? styles.activeButton : {}),

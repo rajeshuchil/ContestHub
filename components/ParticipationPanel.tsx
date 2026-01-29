@@ -61,7 +61,7 @@ export default function ParticipationPanel({
         <div>
           <h3
             className="font-bold text-2xl mb-1"
-            style={{ color: darkMode ? "#f3f4f6" : "#111827" }}
+            style={{ color: darkMode ? "#f1f5f9" : "#111827" }} // Slate 100
           >
             Your Contests
           </h3>
@@ -131,17 +131,18 @@ export default function ParticipationPanel({
                           onMouseLeave={() => setHovered(null)}
                           onClick={() => onContestClick(contest)}
                           className="participation-card fade-in stagger-item cursor-pointer relative group"
+                          className="participation-card fade-in stagger-item cursor-pointer relative group"
                           style={{
-                            backgroundColor: darkMode ? "#1f2937" : "#fafafa",
-                            border: "none",
+                            backgroundColor: darkMode ? "#1e293b" : "#fafafa", // Slate 800
+                            border: darkMode ? "1px solid #334155" : "none", // Add border for dark mode
                             borderRadius: "8px",
                             boxShadow:
                               hovered === globalIndex
                                 ? darkMode
-                                  ? "0 8px 16px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)"
+                                  ? "0 8px 16px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2)"
                                   : "0 8px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)"
                                 : darkMode
-                                  ? "0 1px 3px rgba(0, 0, 0, 0.2)"
+                                  ? "none" // cleaner look in dark mode
                                   : "0 1px 2px rgba(0, 0, 0, 0.04)",
                             padding: "16px",
                             animationDelay: `${globalIndex * 50}ms`,

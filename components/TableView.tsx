@@ -170,10 +170,10 @@ export default function TableView({
       style={{
         ...styles.container,
         ...(darkMode ? styles.containerDark : {}),
-      }}
+      } as React.CSSProperties}
     >
-      <div style={styles.tableWrapper}>
-        <table style={styles.table}>
+      <div style={styles.tableWrapper as React.CSSProperties}>
+        <table style={styles.table as React.CSSProperties}>
           <thead>
             <tr>
               <th
@@ -181,7 +181,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
                 onClick={() => handleSort("status")}
               >
                 Status <SortIcon column="status" />
@@ -191,7 +191,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
                 onClick={() => handleSort("name")}
               >
                 Contest Name <SortIcon column="name" />
@@ -201,7 +201,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
                 onClick={() => handleSort("platform")}
               >
                 Platform <SortIcon column="platform" />
@@ -211,7 +211,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
                 onClick={() => handleSort("startTime")}
               >
                 Start Time <SortIcon column="startTime" />
@@ -221,7 +221,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
                 onClick={() => handleSort("duration")}
               >
                 Duration <SortIcon column="duration" />
@@ -230,7 +230,7 @@ export default function TableView({
                 style={{
                   ...styles.th,
                   ...(darkMode ? styles.thDark : {}),
-                }}
+                } as React.CSSProperties}
               >
                 Actions
               </th>
@@ -243,7 +243,7 @@ export default function TableView({
 
               // Validate date
               const isValidDate =
-                startDate instanceof Date && !isNaN(startDate);
+                startDate instanceof Date && !isNaN(startDate.getTime());
 
               return (
                 <tr
@@ -251,17 +251,17 @@ export default function TableView({
                   onClick={(e) => handleContestClick(contest, e)}
                   onKeyDown={(e) => handleKeyDown(contest, e)}
                   tabIndex={0}
-                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
                   style={{
                     ...styles.tr,
                     ...(darkMode ? styles.trDark : {}),
-                  }}
+                  } as React.CSSProperties}
                 >
                   <td
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
                     <div style={styles.statusIndicator}>
                       <span
@@ -284,7 +284,7 @@ export default function TableView({
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
                     <div
                       style={{
@@ -298,7 +298,7 @@ export default function TableView({
                         style={{
                           ...styles.contestName,
                           ...(darkMode ? styles.contestNameDark : {}),
-                        }}
+                        } as React.CSSProperties}
                       >
                         {contest.name}
                       </div>
@@ -332,13 +332,13 @@ export default function TableView({
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
                     <span
                       style={{
                         ...styles.platformBadge,
                         backgroundColor: getPlatformColor(contest.platform),
-                      }}
+                      } as React.CSSProperties}
                     >
                       {getPlatformLabel(contest.platform)}
                     </span>
@@ -347,24 +347,24 @@ export default function TableView({
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
-                    <div style={styles.timeCell}>
+                    <div style={styles.timeCell as React.CSSProperties}>
                       <div
                         style={{
                           ...styles.timeMain,
                           ...(darkMode ? styles.timeMainDark : {}),
-                        }}
+                        } as React.CSSProperties}
                       >
                         {isValidDate
                           ? format(startDate, "MMM dd, HH:mm")
-                          : contest.startTime || "TBD"}
+                          : (contest.startTime as unknown as string) || "TBD"}
                       </div>
                       <div
                         style={{
                           ...styles.timeRelative,
                           ...(darkMode ? styles.timeRelativeDark : {}),
-                        }}
+                        } as React.CSSProperties}
                       >
                         {status === "upcoming" && isValidDate
                           ? formatDistanceToNow(startDate, { addSuffix: true })
@@ -376,13 +376,13 @@ export default function TableView({
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
                     <div
                       style={{
                         ...styles.durationCell,
                         ...(darkMode ? styles.durationCellDark : {}),
-                      }}
+                      } as React.CSSProperties}
                     >
                       {formatDuration(contest.duration)}
                     </div>
@@ -391,7 +391,7 @@ export default function TableView({
                     style={{
                       ...styles.td,
                       ...(darkMode ? styles.tdDark : {}),
-                    }}
+                    } as React.CSSProperties}
                   >
                     <a
                       href={contest.url}
@@ -401,7 +401,7 @@ export default function TableView({
                       style={{
                         ...styles.link,
                         ...(darkMode ? styles.linkDark : {}),
-                      }}
+                      } as React.CSSProperties}
                     >
                       View →
                     </a>
@@ -444,8 +444,9 @@ const styles = {
     marginTop: "12px",
   },
   containerDark: {
-    backgroundColor: "#1e2430",
+    backgroundColor: "#1e293b", // Slate 800
     boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+    border: "1px solid #334155", // Slate 700
   },
   tableWrapper: {
     overflowX: "auto",
@@ -468,16 +469,16 @@ const styles = {
     transition: "background-color 0.3s ease, color 0.3s ease",
   },
   thDark: {
-    backgroundColor: "#252b3a",
-    color: "#f3f4f6",
-    borderBottom: "2px solid #3a4150",
+    backgroundColor: "#0f172a", // Slate 900
+    color: "#f1f5f9", // Slate 100
+    borderBottom: "2px solid #334155", // Slate 700
   },
   tr: {
     borderBottom: "1px solid #f0f0f0",
     transition: "background-color 0.2s",
   },
   trDark: {
-    borderBottom: "1px solid #3a4150",
+    borderBottom: "1px solid #334155", // Slate 700
   },
   td: {
     padding: "16px",
@@ -485,7 +486,7 @@ const styles = {
     transition: "color 0.3s ease",
   },
   tdDark: {
-    color: "#e6e6e6",
+    color: "#f1f5f9", // Slate 100
   },
   statusIndicator: {
     display: "flex",
@@ -518,7 +519,7 @@ const styles = {
     fontSize: "14px",
   },
   contestNameDark: {
-    color: "#e6e6e6",
+    color: "#f1f5f9", // Slate 100
   },
   timeCell: {
     display: "flex",
@@ -531,7 +532,7 @@ const styles = {
     fontSize: "14px",
   },
   timeMainDark: {
-    color: "#e6e6e6",
+    color: "#f1f5f9", // Slate 100
   },
   timeRelative: {
     fontSize: "12px",
@@ -539,7 +540,7 @@ const styles = {
     fontWeight: "500",
   },
   timeRelativeDark: {
-    color: "#9ca3af",
+    color: "#94a3b8", // Slate 400
   },
   durationCell: {
     fontWeight: "600",

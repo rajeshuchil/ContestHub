@@ -29,7 +29,7 @@ export default function Home() {
     "calendar",
   );
   const [calendarViewMode, setCalendarViewMode] = useState<
-    "month" | "week" | "list"
+    "month" | "week"
   >("month");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
@@ -43,6 +43,15 @@ export default function Home() {
   useEffect(() => {
     setParticipatingIds(getParticipatingContests());
   }, []);
+
+  // Sync dark mode class with state
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   const participatingContests = contests.filter((c) => {
     const isParticipating = participatingIds.includes(c.id || c.url);
@@ -454,7 +463,7 @@ export default function Home() {
       <div
         className="w-full flex justify-center"
         style={{
-          paddingTop: "0px",
+          paddingTop: "32px", // Increased from 0px to add breathing room
           paddingBottom: "24px",
           paddingLeft: "16px",
           paddingRight: "16px",
@@ -463,7 +472,7 @@ export default function Home() {
         <div
           className="flex transition-all duration-300"
           style={{
-            maxWidth: "1400px",
+            maxWidth: "1200px",
             width: "100%",
             justifyContent: "center",
             alignItems: "stretch",
@@ -622,13 +631,13 @@ export default function Home() {
         }
 
         .header-content {
-          max-width: 1400px;
+          max-width: 1200px;
           margin: 0 auto;
-          padding: 10px 12px;
+          padding: 10px 24px; // Increased side padding
           display: flex;
           justify-content: space-between;
           align-items: center;
-          gap: 8px;
+          gap: 16px;
         }
 
         @media (min-width: 768px) {
