@@ -290,18 +290,20 @@ export default function ContestStats({
           )}
         </div>
 
-        {/* Platform Breakdown - Informational Grid */}
+        {/* Platform Breakdown - Compact Informational Grid */}
         {Object.entries(stats.platformCounts).filter(([_, count]) => count >= 1)
           .length > 0 && (
           <div style={{ marginTop: "24px" }}>
             <h4
               className="fade-in"
               style={{
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: "600",
-                color: darkMode ? "#d1d5db" : "#374151",
-                marginBottom: "16px",
+                color: darkMode ? "#9ca3af" : "#6b7280",
+                marginBottom: "12px",
                 marginTop: "0",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               By Platform
@@ -309,8 +311,8 @@ export default function ContestStats({
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-                gap: "12px",
+                gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+                gap: "8px",
               }}
             >
               {Object.entries(stats.platformCounts)
@@ -325,34 +327,34 @@ export default function ContestStats({
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        gap: "8px",
-                        padding: "16px",
-                        backgroundColor: darkMode
-                          ? "rgba(31, 41, 55, 0.6)"
-                          : "rgba(249, 250, 251, 0.8)",
-                        borderRadius: "8px",
+                        gap: "4px",
+                        padding: "10px 12px",
+                        backgroundColor: darkMode ? "#1f2937" : "#ffffff",
+                        borderRadius: "6px",
                         border: darkMode
-                          ? "1px solid rgba(55, 65, 81, 0.5)"
-                          : "1px solid rgba(229, 231, 235, 0.5)",
+                          ? "1px solid #374151"
+                          : "1px solid #e5e7eb",
                         cursor: "default",
+                        pointerEvents: "none",
                       }}
                     >
                       <div
                         style={{
-                          fontSize: "13px",
+                          fontSize: "11px",
                           fontWeight: "600",
                           color: darkMode ? "#9ca3af" : "#6b7280",
                           textTransform: "uppercase",
-                          letterSpacing: "0.5px",
+                          letterSpacing: "0.3px",
                         }}
                       >
                         {getPlatformLabel(platform)}
                       </div>
                       <div
                         style={{
-                          fontSize: "28px",
-                          fontWeight: "700",
+                          fontSize: "22px",
+                          fontWeight: "600",
                           color: platformColors.text,
+                          lineHeight: "1",
                         }}
                       >
                         {count}
