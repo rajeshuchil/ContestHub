@@ -20,6 +20,8 @@ import {
   getDay,
   addWeeks,
   subWeeks,
+  startOfDay,
+  isBefore,
 } from "date-fns";
 import WeekView from "./WeekView";
 import ContestTooltip from "./ContestTooltip";
@@ -93,6 +95,7 @@ export default function CalendarView({
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
+  const todayStart = startOfDay(today);
 
   // Check if viewing current month
   const viewingMonth = currentDate.getMonth();
@@ -212,6 +215,10 @@ export default function CalendarView({
           backgroundColor: "#1a1f2c",
           opacity: 0.5,
         },
+        pastDay: {
+          backgroundColor: "#1a1f2c", // Similar to otherMonth for dark mode
+          opacity: 0.6,
+        },
         today: {
           ...styles.today,
           backgroundColor: "#2d3547",
@@ -242,11 +249,10 @@ export default function CalendarView({
                 setCurrentDate(newDate);
               }
             }}
-            className={`transition-all duration-200 ${
-              isCurrentMonth
-                ? "opacity-40 cursor-not-allowed"
-                : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
-            }`}
+            className={`transition-all duration-200 ${isCurrentMonth
+              ? "opacity-40 cursor-not-allowed"
+              : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+              }`}
             style={{
               ...dynamicStyles.navButton,
               // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
@@ -337,6 +343,7 @@ export default function CalendarView({
               const dayContests = contestsByDate[dateKey] || [];
               const isCurrentMonth = day.getMonth() === currentDate.getMonth();
               const isToday = isSameDay(day, new Date());
+              const isPastDate = isBefore(day, todayStart);
 
               return (
                 <div
@@ -345,6 +352,7 @@ export default function CalendarView({
                   style={{
                     ...dynamicStyles.day,
                     ...(isCurrentMonth ? {} : dynamicStyles.otherMonth),
+                    ...(isPastDate ? (darkMode ? dynamicStyles.pastDay : { backgroundColor: "#f3f4f6", opacity: 0.6 }) : {}),
                     ...(isToday ? dynamicStyles.today : {}),
                   }}
                 >
@@ -389,14 +397,14 @@ export default function CalendarView({
                             // Highlight participating contests
                             ...(isUserParticipating
                               ? {
-                                  boxShadow: darkMode
-                                    ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
-                                    : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
-                                  borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
-                                  backgroundColor: darkMode
-                                    ? `${platformColors.bg}dd`
-                                    : `${platformColors.bg}ff`,
-                                }
+                                boxShadow: darkMode
+                                  ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
+                                  : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
+                                borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
+                                backgroundColor: darkMode
+                                  ? `${platformColors.bg}dd`
+                                  : `${platformColors.bg}ff`,
+                              }
                               : {}),
                           }}
                           title={
@@ -600,6 +608,10 @@ const styles = {
     borderRight: "1px solid #e8e8e8",
     borderBottom: "1px solid #e8e8e8",
     transition: "background-color 0.1s",
+  },
+  pastDay: {
+    backgroundColor: "#f9fafb",
+    opacity: 0.6,
   },
   otherMonth: {
     backgroundColor: "#fafafa",

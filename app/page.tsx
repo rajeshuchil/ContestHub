@@ -461,73 +461,77 @@ export default function Home() {
         }}
       >
         <div
-          className="flex gap-6 transition-all duration-300"
+          className="flex transition-all duration-300"
           style={{
             maxWidth: "1400px",
             width: "100%",
             justifyContent: "center",
             alignItems: "stretch",
-            willChange: "auto",
+            willChange: "auto", // Optimize for animations
           }}
         >
           {/* Left Panel - Upcoming Contests (Hidden on Mobile) */}
-          {participatingContests.length > 0 && currentView === "calendar" && (
-            <div
-              className="hidden lg:block participation-panel-container"
-              style={{
-                width: "400px",
-                flexShrink: 0,
-                position: "relative",
-              }}
-            >
-              <div
-                className="participation-panel-scroll"
+          <AnimatePresence>
+            {participatingContests.length > 0 && currentView === "calendar" && (
+              <motion.div
+                initial={{ width: 0, opacity: 0, marginRight: 0 }}
+                animate={{ width: 400, opacity: 1, marginRight: 24 }}
+                exit={{ width: 0, opacity: 0, marginRight: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="hidden lg:block participation-panel-container"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  overflowY: "auto",
-                  paddingRight: "8px",
+                  flexShrink: 0,
+                  position: "relative",
+                  overflow: "hidden", // Crucial for width animation
                 }}
               >
-                <ParticipationPanel
-                  contests={participatingContests}
-                  onContestClick={(contest) => {
-                    // Scroll to contest in calendar
-                    const contestElement = document.querySelector(
-                      `[data-contest-id="${contest.id || contest.url}"]`,
-                    );
-                    if (contestElement) {
-                      contestElement.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                      });
-                      // Highlight briefly
-                      contestElement.classList.add("highlight-contest");
-                      setTimeout(() => {
-                        contestElement.classList.remove("highlight-contest");
-                      }, 2000);
-                    }
-                  }}
-                  onRemoveParticipation={handleRemoveParticipation}
-                  darkMode={darkMode}
-                />
-              </div>
-            </div>
-          )}
+                {/* Fixed width inner container to prevents content squishing during animation */}
+                <div style={{ width: "400px", height: "100%", position: "relative" }}>
+                  <div
+                    className="participation-panel-scroll"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      overflowY: "auto",
+                      paddingRight: "8px",
+                    }}
+                  >
+                    <ParticipationPanel
+                      contests={participatingContests}
+                      onContestClick={(contest) => {
+                        // Scroll to contest in calendar
+                        const contestElement = document.querySelector(
+                          `[data-contest-id="${contest.id || contest.url}"]`,
+                        );
+                        if (contestElement) {
+                          contestElement.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                          });
+                          // Highlight briefly
+                          contestElement.classList.add("highlight-contest");
+                          setTimeout(() => {
+                            contestElement.classList.remove("highlight-contest");
+                          }, 2000);
+                        }
+                      }}
+                      onRemoveParticipation={handleRemoveParticipation}
+                      darkMode={darkMode}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Main Calendar View */}
           <div
             className="flex-1 min-w-0 flex justify-center w-full"
             style={{
-              flexBasis:
-                participatingContests.length > 0 &&
-                  currentView === "calendar" &&
-                  window.innerWidth >= 1024
-                  ? "calc(100% - 424px)"
-                  : "100%",
+              // No manual flexBasis calculation needed with flex-1
               maxWidth: "100%",
             }}
           >

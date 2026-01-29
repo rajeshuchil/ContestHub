@@ -13,6 +13,7 @@ import {
   Globe,
   AlertTriangle,
 } from "lucide-react";
+import { isPastContest } from "@/lib/utils";
 
 interface ContestTooltipProps {
   contest: Contest;
@@ -151,11 +152,19 @@ export default function ContestTooltip({
 
   const handleParticipateClick = () => {
     const contestId = contest.id || contest.url;
+
+    // Allow removing participation even if it's a past contest
     if (isParticipating && onRemoveParticipation) {
       onRemoveParticipation(contestId);
-    } else {
-      onParticipate(contestId);
+      return;
     }
+
+    // Prevent adding past contests
+    if (isPastContest(contest.startTime)) {
+      return;
+    }
+
+    onParticipate(contestId);
   };
 
   const modalContent = (
@@ -450,7 +459,11 @@ export default function ContestTooltip({
         >
           <button
             onClick={handleParticipateClick}
-            className="w-full font-medium text-sm transition-all hover:brightness-95 active:scale-[0.98] flex items-center justify-center gap-2"
+            disabled={!isParticipating && isPastContest(contest.startTime)}
+            className={`w-full font-medium text-sm transition-all flex items-center justify-center gap-2 ${!isParticipating && isPastContest(contest.startTime)
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:brightness-95 active:scale-[0.98]"
+              }`}
             style={{
               padding: "12px 16px",
               borderRadius: "10px",
@@ -458,15 +471,29 @@ export default function ContestTooltip({
                 ? darkMode
                   ? "rgba(239, 68, 68, 0.15)"
                   : "#fee2e2"
-                : "rgba(59, 130, 246, 0.1)",
+                : !isParticipating && isPastContest(contest.startTime)
+                  ? darkMode
+                    ? "rgba(107, 114, 128, 0.2)"
+                    : "#e5e7eb"
+                  : "rgba(59, 130, 246, 0.1)",
               color: isParticipating
                 ? darkMode
                   ? "#fca5a5"
                   : "#dc2626"
-                : "#2563eb",
+                : !isParticipating && isPastContest(contest.startTime)
+                  ? darkMode
+                    ? "#9ca3af"
+                    : "#6b7280"
+                  : "#2563eb",
             }}
           >
-            {isParticipating ? <>Remove from Calendar</> : <>Add to Calendar</>}
+            {isParticipating ? (
+              <>Remove from Calendar</>
+            ) : isPastContest(contest.startTime) ? (
+              <>Contest Ended</>
+            ) : (
+              <>Add to Calendar</>
+            )}
           </button>
         </div>
       </div>
