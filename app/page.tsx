@@ -477,18 +477,19 @@ export default function Home() {
               style={{
                 width: "400px",
                 flexShrink: 0,
-                display: "flex",
-                flexDirection: "column",
+                position: "relative",
               }}
             >
               <div
                 className="participation-panel-scroll"
                 style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                   overflowY: "auto",
-                  overflowX: "hidden",
                   paddingRight: "8px",
-                  flex: 1,
-                  minHeight: 0,
                 }}
               >
                 <ParticipationPanel
@@ -523,8 +524,8 @@ export default function Home() {
             style={{
               flexBasis:
                 participatingContests.length > 0 &&
-                currentView === "calendar" &&
-                window.innerWidth >= 1024
+                  currentView === "calendar" &&
+                  window.innerWidth >= 1024
                   ? "calc(100% - 424px)"
                   : "100%",
               maxWidth: "100%",
