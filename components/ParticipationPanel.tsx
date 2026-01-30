@@ -131,7 +131,6 @@ export default function ParticipationPanel({
                           onMouseLeave={() => setHovered(null)}
                           onClick={() => onContestClick(contest)}
                           className="participation-card fade-in stagger-item cursor-pointer relative group"
-                          className="participation-card fade-in stagger-item cursor-pointer relative group"
                           style={{
                             backgroundColor: darkMode ? "#1e293b" : "#fafafa", // Slate 800
                             border: darkMode ? "1px solid #334155" : "none", // Add border for dark mode
@@ -163,7 +162,7 @@ export default function ParticipationPanel({
                               e.stopPropagation();
                               onRemoveParticipation(contest.id || contest.url);
                             }}
-                            className="absolute top-2.5 right-9 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className="absolute top-2.5 right-9 opacity-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 p-1.5 rounded-md"
                             style={{
                               color: darkMode ? "#9ca3af" : "#6b7280",
                               transition: "all 0.2s ease",
@@ -189,7 +188,7 @@ export default function ParticipationPanel({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className="absolute top-2.5 right-2.5 opacity-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 p-1.5 rounded-md"
                             style={{
                               color: darkMode ? "#9ca3af" : "#6b7280",
                               transition: "all 0.2s ease",
