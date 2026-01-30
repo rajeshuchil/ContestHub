@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Pin,
+  X,
 } from "lucide-react";
 import {
   startOfMonth,
@@ -17,7 +18,6 @@ import {
   subMonths,
   startOfWeek,
   endOfWeek,
-  getDay,
   addWeeks,
   subWeeks,
   startOfDay,
@@ -29,7 +29,6 @@ import {
   getPlatformColor,
   getPlatformLogo,
   getPlatformLabel,
-  getPlatformMeta,
 } from "@/lib/platformColors";
 import { CalendarViewProps, Contest, ContestStatus } from "@/types";
 
@@ -65,7 +64,6 @@ export default function CalendarView({
   const handleParticipate = (contestId: string) => {
     if (onParticipate) {
       onParticipate(contestId);
-      // Close tooltip after participating
       setSelectedContest(null);
       setTooltipAnchor(null);
       setIsModalOpen(false);
@@ -145,6 +143,40 @@ export default function CalendarView({
     return map;
   }, [filteredContests]);
 
+  // Handle "Show More" interaction (Anchored Popover)
+  const [popoverState, setPopoverState] = useState<{
+    isOpen: boolean;
+    date: Date | null;
+    contests: Contest[];
+    anchorRect: DOMRect | null;
+  }>({
+    isOpen: false,
+    date: null,
+    contests: [],
+    anchorRect: null,
+  });
+
+  const handleShowMoreClick = (
+    date: Date,
+    dayContests: Contest[],
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.parentElement?.parentElement?.getBoundingClientRect();
+    if (rect) {
+      setPopoverState({
+        isOpen: true,
+        date,
+        contests: dayContests,
+        anchorRect: rect,
+      });
+    }
+  };
+
+  const closePopover = () => {
+    setPopoverState((prev) => ({ ...prev, isOpen: false }));
+  };
+
   // Status indicator styles
   const getStatusIndicator = (status: ContestStatus) => {
     const statusMap = {
@@ -162,75 +194,162 @@ export default function CalendarView({
       return {
         container: {
           ...styles.container,
-          backgroundColor: "#1e293b", // Slate 800
-          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          border: "1px solid #334155", // Slate 700
-          marginTop: "0",
+          backgroundColor: "#0f172a", // Slate 900
+          border: "1px solid #1e293b",
         },
-        monthTitle: { ...styles.monthTitle, color: "#f1f5f9" }, // Slate 100
+        monthTitle: { ...styles.monthTitle, color: "#f8fafc" },
         navButton: {
           ...styles.navButton,
-          border: "1px solid #334155", // Slate 700
-          backgroundColor: "#334155", // Slate 700
-          color: "#cbd5e1", // Slate 300
+          borderColor: "#334155",
+          backgroundColor: "#1e293b",
+          color: "#cbd5e1",
         },
         viewToggle: {
           ...styles.viewToggle,
-          backgroundColor: "#0f172a", // Slate 900
-          border: "1px solid #334155", // Slate 700
+          backgroundColor: "#1e293b",
+          borderColor: "#334155",
         },
-        toggleBtn: { ...styles.toggleBtn, color: "#94a3b8" }, // Slate 400
+        toggleBtn: { ...styles.toggleBtn, color: "#94a3b8" },
         toggleBtnActive: {
           ...styles.toggleBtnActive,
-          backgroundColor: "#334155", // Slate 700
-          color: "#f1f5f9", // Slate 100
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+          backgroundColor: "#334155",
+          color: "#fff",
         },
         weekdays: {
           ...styles.weekdays,
-          backgroundColor: "#1e293b", // Slate 800 (same as header)
-          borderTop: "1px solid #334155",
-          borderLeft: "1px solid #334155",
-          borderRight: "1px solid #334155",
+          backgroundColor: "#0f172a",
+          borderColor: "#334155",
         },
         weekday: {
           ...styles.weekday,
-          backgroundColor: "#1e293b", // Slate 800
-          color: "#94a3b8", // Slate 400
-          borderRight: "1px solid #334155",
+          backgroundColor: "#0f172a",
+          color: "#94a3b8",
+          borderColor: "#334155"
         },
         grid: {
           ...styles.grid,
-          backgroundColor: "#0f172a", // Slate 900 - Darker background for grid
-          border: "1px solid #334155",
+          backgroundColor: "#0f172a",
+          borderColor: "#334155",
         },
         day: {
           ...styles.day,
-          backgroundColor: "#1e293b", // Slate 800
-          borderRight: "1px solid #334155",
-          borderBottom: "1px solid #334155",
+          backgroundColor: "#0f172a",
+          borderColor: "#1e293b",
         },
         otherMonth: {
           ...styles.otherMonth,
-          backgroundColor: "#0f172a", // Slate 900
+          backgroundColor: "#020617",
           opacity: 0.5,
         },
         pastDay: {
-          backgroundColor: "#0f172a", // Slate 900
+          backgroundColor: "#0f172a",
           opacity: 0.6,
         },
         today: {
-          ...styles.today,
-          backgroundColor: "#334155", // Slate 700
-          boxShadow: "inset 0 0 0 2px #f59e0b",
+          backgroundColor: "#1e293b", // Slate 800
+          backgroundImage: "none",
         },
         dayNumber: { ...styles.dayNumber, color: "#cbd5e1" },
+        plusMoreBtn: {
+          ...styles.plusMoreBtn,
+          color: "#94a3b8",
+          backgroundColor: "rgba(30, 41, 59, 0.5)",
+          "&:hover": { backgroundColor: "#334155" }
+        },
+        popover: {
+          ...styles.popover,
+          backgroundColor: "#1e293b",
+          borderColor: "#334155",
+          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
+        },
+        popoverHeader: {
+          ...styles.popoverHeader,
+          borderBottomColor: "#334155",
+          color: "#f8fafc",
+        },
       };
     }
     return styles;
   };
 
   const dynamicStyles = getStyles();
+
+  // Helper to render a contest pill (Compact Row)
+  const renderContestPill = (contest: Contest, cIdx: number, inPopover = false) => {
+    const startTime = new Date(contest.startTime);
+    const isValidDate = startTime instanceof Date && !isNaN(startTime.getTime());
+    if (!isValidDate) return null;
+
+    const logoUrl = getPlatformLogo(contest.platform);
+    const platformColors = getPlatformColor(contest.platform, darkMode);
+    const statusIndicator = getStatusIndicator(contest.status);
+    const contestId = contest.id || contest.url;
+    const isUserParticipating = participatingIds.includes(contestId);
+
+    return (
+      <div
+        key={cIdx}
+        data-contest-id={contestId}
+        onClick={(e) => {
+          // Keep popover open so the anchor element remains in DOM for tooltip positioning
+          // if (inPopover) closePopover(); 
+          handleContestClick(contest, e);
+        }}
+        className={`group transition-all duration-150 cursor-pointer ${inPopover ? 'hover:bg-gray-100 dark:hover:bg-slate-700/50 p-2 rounded-lg' : 'hover:scale-[1.01] hover:brightness-95'}`}
+        style={{
+          ...styles.contestPill,
+          backgroundColor: inPopover ? 'transparent' : (darkMode ? `${platformColors.bg}20` : `${platformColors.bg}25`), // Very subtle pastel
+          borderLeft: inPopover ? 'none' : `3px solid ${statusIndicator.color}`,
+          marginBottom: inPopover ? 0 : '2px', // Tighter spacing
+          height: inPopover ? 'auto' : '22px', // Compact fixed height in grid
+          ...(isUserParticipating && !inPopover
+            ? {
+              backgroundColor: darkMode ? `${platformColors.bg}40` : `${platformColors.bg}40`,
+              outline: `1px solid ${statusIndicator.color}40`,
+            }
+            : {}),
+        }}
+        title={`${contest.name} · ${getPlatformLabel(contest.platform)}`}
+      >
+        {/* Dot/Icon Status */}
+        <div style={{
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          backgroundColor: statusIndicator.color,
+          marginRight: '6px',
+          flexShrink: 0,
+        }} />
+
+        {/* Platform Logo (Optional, keep small) */}
+        {logoUrl && (
+          <img
+            src={logoUrl}
+            alt=""
+            style={{ width: '12px', height: '12px', marginRight: '6px', objectFit: 'contain', opacity: 0.9 }}
+          />
+        )}
+
+        {/* Title */}
+        <span style={{
+          fontSize: '10px',
+          fontWeight: '500',
+          color: darkMode ? '#e2e8f0' : '#334155',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          flex: 1,
+        }}>
+          {contest.name}
+        </span>
+
+        {/* Checkmark for participating */}
+        {isUserParticipating && (
+          <span style={{ fontSize: '9px', color: statusIndicator.color, marginLeft: '4px' }}>✓</span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div style={dynamicStyles.container}>
@@ -244,23 +363,18 @@ export default function CalendarView({
               } else {
                 newDate = subMonths(currentDate, 1);
               }
-              // Block navigation to past months
               if (!isBeforeCurrentMonth(newDate)) {
                 setCurrentDate(newDate);
               }
             }}
             className={`transition-all duration-200 ${isCurrentMonth
-                ? "opacity-40 cursor-not-allowed"
-                : "hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+              ? "opacity-40 cursor-not-allowed"
+              : "hover:bg-gray-100 dark:hover:bg-slate-800 active:scale-95"
               }`}
-            style={{
-              ...dynamicStyles.navButton,
-              // Remove inline opacity/cursor to let className handle it if possible, or keep as fallback
-              // But logic is complex, so I'll keep style overrides minimal
-            }}
+            style={dynamicStyles.navButton}
             disabled={isCurrentMonth}
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
           <h2 style={dynamicStyles.monthTitle}>
             {viewMode === "week"
@@ -275,41 +389,25 @@ export default function CalendarView({
                 setCurrentDate(addMonths(currentDate, 1));
               }
             }}
-            className="transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95"
+            className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-slate-800 active:scale-95"
             style={dynamicStyles.navButton}
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
         {onViewChange && (
           <div style={dynamicStyles.viewToggle}>
-            {[
-              {
-                id: "month" as const,
-                label: "Month",
-                icon: <Calendar size={14} />,
-              },
-              {
-                id: "week" as const,
-                label: "Week",
-                icon: <CalendarDays size={14} />,
-              },
-            ].map((view) => (
+            {[{ id: "month", label: "Month", icon: <Calendar size={13} /> }, { id: "week", label: "Week", icon: <CalendarDays size={13} /> }].map((view) => (
               <button
                 key={view.id}
-                onClick={() => onViewChange(view.id)}
-                className="transition-all duration-200 ease-out hover:bg-black/5 dark:hover:bg-white/10 active:scale-95"
+                onClick={() => onViewChange(view.id as ViewMode)}
+                className="transition-all duration-200"
                 style={{
                   ...dynamicStyles.toggleBtn,
-                  ...(viewMode === view.id
-                    ? dynamicStyles.toggleBtnActive
-                    : {}),
+                  ...(viewMode === view.id ? dynamicStyles.toggleBtnActive : {}),
                 }}
-                title={`Switch to ${view.label} view`}
               >
-                <span className="flex items-center justify-center">
-                  {view.icon}
-                </span>
+                <span className="flex items-center justify-center">{view.icon}</span>
                 <span>{view.label}</span>
               </button>
             ))}
@@ -317,7 +415,6 @@ export default function CalendarView({
         )}
       </div>
 
-      {/* Conditional rendering based on view mode */}
       {viewMode === "week" ? (
         <WeekView
           contests={filteredContests}
@@ -331,13 +428,11 @@ export default function CalendarView({
         <>
           <div style={dynamicStyles.weekdays}>
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-              <div key={day} style={dynamicStyles.weekday}>
-                {day}
-              </div>
+              <div key={day} style={dynamicStyles.weekday}>{day}</div>
             ))}
           </div>
 
-          <div style={dynamicStyles.grid}>
+          <div style={dynamicStyles.grid} className="relative">
             {calendarDays.map((day, idx) => {
               const dateKey = format(day, "yyyy-MM-dd");
               const dayContests = contestsByDate[dateKey] || [];
@@ -345,151 +440,126 @@ export default function CalendarView({
               const isToday = isSameDay(day, new Date());
               const isPastDate = isBefore(day, todayStart);
 
+              // "Codolio" density: Show max 4 items, if more show 3 + button
+              const TOTAL_ITEMS = dayContests.length;
+              const MAX_VISIBLE = 4;
+              // If total is 5, showing 4 + "+1" is same space as showing 5.
+              // So if total > 4, we show 3 + "+N"
+              const shouldShowMore = TOTAL_ITEMS > MAX_VISIBLE;
+              const sliceCount = shouldShowMore ? 3 : 4;
+
+              const visibleContests = dayContests.slice(0, sliceCount);
+              const hiddenCount = TOTAL_ITEMS - sliceCount;
+
               return (
                 <div
                   key={idx}
-                  className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  className="group relative"
                   style={{
                     ...dynamicStyles.day,
                     ...(isCurrentMonth ? {} : dynamicStyles.otherMonth),
                     ...(isPastDate
                       ? darkMode
                         ? dynamicStyles.pastDay
-                        : { backgroundColor: "#f3f4f6", opacity: 0.6 }
+                        : { backgroundColor: "#fcfcfc", opacity: 0.8 }
                       : {}),
                     ...(isToday ? dynamicStyles.today : {}),
                   }}
                 >
-                  <div style={dynamicStyles.dayNumber}>{format(day, "d")}</div>
-                  <div style={styles.contestsContainer}>
-                    {dayContests.map((contest, cIdx) => {
-                      const startTime = new Date(contest.startTime);
-                      const isValidDate =
-                        startTime instanceof Date &&
-                        !isNaN(startTime.getTime());
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'start',
+                    marginBottom: '4px',
+                    height: '20px'
+                  }}>
+                    {/* Day Number */}
+                    <span style={dynamicStyles.dayNumber}>{format(day, "d")}</span>
 
-                      if (!isValidDate) {
-                        return null;
-                      }
+                    {/* Today Badge */}
+                    {isToday && (
+                      <span style={{
+                        fontSize: '9px',
+                        fontWeight: '700',
+                        color: '#fff',
+                        backgroundColor: '#f59e0b', // Amber 500
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                      }}>Today</span>
+                    )}
+                  </div>
 
-                      const hours = startTime.getHours();
-                      const minutes = startTime.getMinutes();
+                  <div className="flex flex-col gap-[2px] w-full flex-1 overflow-hidden">
+                    {visibleContests.map((contest, cIdx) => renderContestPill(contest, cIdx))}
 
-                      const logoUrl = getPlatformLogo(contest.platform);
-                      const platformColors = getPlatformColor(
-                        contest.platform,
-                        darkMode,
-                      );
-                      const statusIndicator = getStatusIndicator(
-                        contest.status,
-                      );
-                      const contestId = contest.id || contest.url;
-                      const isUserParticipating =
-                        participatingIds.includes(contestId);
-
-                      return (
-                        <div
-                          key={cIdx}
-                          data-contest-id={contestId}
-                          onClick={(e) => handleContestClick(contest, e)}
-                          className="transition-all duration-200 hover:scale-[1.02] hover:shadow-sm cursor-pointer highlight-contest-base"
-                          style={{
-                            ...styles.contestPill,
-                            backgroundColor: platformColors.bg,
-                            color: platformColors.text,
-                            borderLeft: `4px solid ${statusIndicator.color}`,
-                            // Highlight participating contests
-                            ...(isUserParticipating
-                              ? {
-                                boxShadow: darkMode
-                                  ? "0 0 0 2px rgba(59, 130, 246, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3)"
-                                  : "0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1)",
-                                borderLeft: `4px solid ${darkMode ? "#60a5fa" : "#3b82f6"}`,
-                                backgroundColor: darkMode
-                                  ? `${platformColors.bg}dd`
-                                  : `${platformColors.bg}ff`,
-                              }
-                              : {}),
-                          }}
-                          title={
-                            isModalOpen
-                              ? undefined
-                              : `${contest.name} - ${getPlatformLabel(contest.platform)}\n${statusIndicator.title}\nStarts: ${format(startTime, "PPpp")}${isUserParticipating ? "\n✓ You're participating" : ""}`
-                          }
-                        >
-                          <span
-                            style={{
-                              ...styles.statusDot,
-                              color: statusIndicator.color,
-                            }}
-                          >
-                            {statusIndicator.label}
-                          </span>
-                          {logoUrl ? (
-                            <img
-                              src={logoUrl}
-                              alt={contest.platform}
-                              style={styles.contestLogo}
-                              onError={(e) => {
-                                // Hide image and show fallback icon if logo fails
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = "none";
-                                const fallback =
-                                  target.nextSibling as HTMLElement;
-                                if (fallback) fallback.style.display = "inline";
-                              }}
-                            />
-                          ) : null}
-                          <span
-                            style={{
-                              ...styles.contestIcon,
-                              display: logoUrl ? "none" : "inline-flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Pin size={12} />
-                          </span>
-                          <span style={styles.contestTime}>
-                            {String(hours).padStart(2, "0")}:
-                            {String(minutes).padStart(2, "0")}
-                          </span>
-                          <span style={styles.contestName}>{contest.name}</span>
-                          {isUserParticipating && (
-                            <span
-                              style={{
-                                marginLeft: "4px",
-                                fontSize: "10px",
-                                opacity: 0.9,
-                              }}
-                            >
-                              ✓
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
+                    {shouldShowMore && (
+                      <button
+                        onClick={(e) => handleShowMoreClick(day, dayContests, e)}
+                        style={darkMode ? dynamicStyles.plusMoreBtn : styles.plusMoreBtn}
+                        className="hover:opacity-80 transition-opacity"
+                      >
+                        +{hiddenCount} more
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
+
+            {/* Anchored Popover Overlay */}
+            {popoverState.isOpen && popoverState.anchorRect && (
+              <>
+                <div className="fixed inset-0 z-40 bg-transparent" onClick={closePopover} />
+                <div
+                  style={{
+                    ...dynamicStyles.popover,
+                    position: 'absolute',
+                    // We use fixed positioning to guarantee alignment with viewport coords from anchorRect
+                    // but we must handle scrolling if the popup is too tall.
+                    position: 'fixed' as any,
+                    top: popoverState.anchorRect.top,
+                    left: popoverState.anchorRect.left,
+                    width: popoverState.anchorRect.width,
+                    minHeight: popoverState.anchorRect.height,
+                    maxHeight: '300px', // Limit height
+                  }}
+                  className="z-50 flex flex-col animate-in fade-in zoom-in-95 duration-100 origin-top-left"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div style={dynamicStyles.popoverHeader}>
+                    <span className="font-semibold text-xs opacity-70">
+                      {popoverState.date && format(popoverState.date, "EEE, MMM d")}
+                    </span>
+                    <button onClick={closePopover} className="p-1 hover:bg-gray-200 dark:hover:bg-slate-700 rounded transition-colors">
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1 custom-scrollbar">
+                    {popoverState.contests.map((contest, i) => renderContestPill(contest, i, true))}
+                  </div>
+                </div>
+              </>
+            )}
+
           </div>
         </>
       )}
 
-      {/* Contest Tooltip */}
+      {/* Contest Tooltip Modal */}
       {selectedContest && tooltipAnchor && (
         <ContestTooltip
           contest={selectedContest}
           onClose={handleCloseTooltip}
           onParticipate={handleParticipate}
           onRemoveParticipation={(contestId) => {
-            if (onRemoveParticipation) {
-              onRemoveParticipation(contestId);
-            }
+            if (onRemoveParticipation) onRemoveParticipation(contestId);
             handleCloseTooltip();
           }}
           isParticipating={participatingIds.includes(
-            selectedContest.id || selectedContest.url,
+            selectedContest.id || selectedContest.url
           )}
           darkMode={darkMode}
           anchorElement={tooltipAnchor}
@@ -499,28 +569,23 @@ export default function CalendarView({
   );
 }
 
-const styles = {
+// Updated Styles
+const styles: any = {
   container: {
     width: "100%",
-    maxWidth: "100%",
-    minHeight: "600px",
+    minHeight: "auto",
     backgroundColor: "#fff",
-    borderRadius: "12px",
+    borderRadius: "16px",
     padding: "20px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    border: "1px solid #e5e7eb",
-    marginTop: "0",
-    marginRight: "auto",
-    marginBottom: "0",
-    marginLeft: "auto",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+    border: "1px solid #e2e8f0",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "16px",
-    flexWrap: "wrap" as const,
-    gap: "12px",
+    marginBottom: "20px",
+    gap: "16px",
   },
   headerLeft: {
     display: "flex",
@@ -528,189 +593,149 @@ const styles = {
     gap: "12px",
   },
   monthTitle: {
-    fontSize: "20px",
+    fontSize: "18px",
     fontWeight: "600",
-    color: "#1a1a1a",
+    color: "#0f172a",
     margin: 0,
+    letterSpacing: "-0.02em",
   },
   navButton: {
-    padding: "4px 10px",
-    fontSize: "16px",
-    border: "1px solid #d0d0d0",
-    borderRadius: "4px",
-    backgroundColor: "#f8f8f8",
+    padding: "6px",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    border: "1px solid #e2e8f0",
+    color: "#64748b",
     cursor: "pointer",
-    transition: "all 0.2s",
-    color: "#555",
-    minWidth: "32px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
   },
   viewToggle: {
     display: "flex",
     gap: "4px",
-    padding: "4px",
-    backgroundColor: "#f3f4f6",
+    padding: "3px",
+    backgroundColor: "#f1f5f9",
     borderRadius: "8px",
-    border: "1px solid #e5e7eb",
+    border: "1px solid #e2e8f0",
   },
   toggleBtn: {
     display: "flex",
     alignItems: "center",
     gap: "6px",
-    padding: "6px 12px",
+    padding: "4px 10px",
     border: "none",
     borderRadius: "6px",
-    backgroundColor: "transparent",
+    fontSize: "12px",
+    fontWeight: "600",
+    color: "#64748b",
     cursor: "pointer",
-    fontSize: "13px",
-    fontWeight: "500",
-    color: "#6b7280",
-    transition: "all 0.2s ease",
-    outline: "none",
-    userSelect: "none" as const,
+    transition: "all 0.15s ease",
   },
   toggleBtnActive: {
-    backgroundColor: "white",
-    color: "#111827",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-  },
-  viewIcon: {
-    fontSize: "14px",
+    backgroundColor: "#fff",
+    color: "#0f172a",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
   },
   weekdays: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "0",
     marginBottom: "0",
-    backgroundColor: "#f5f5f5",
-    borderTop: "1px solid #d0d0d0",
-    borderLeft: "1px solid #d0d0d0",
-    borderRight: "1px solid #d0d0d0",
+    backgroundColor: "#f8fafc",
+    borderTopLeftRadius: "12px",
+    borderTopRightRadius: "12px",
+    border: "1px solid #e2e8f0",
+    borderBottom: "none",
   },
   weekday: {
-    textAlign: "center" as const,
-    fontWeight: "600",
-    color: "#555",
+    textAlign: "center",
+    fontWeight: "700",
+    color: "#64748b",
     fontSize: "11px",
-    padding: "6px 4px",
-    backgroundColor: "#f5f5f5",
-    borderRight: "1px solid #e0e0e0",
-    textTransform: "uppercase" as const,
+    padding: "10px 0",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    borderRight: "1px solid #e2e8f0",
   },
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "0",
     backgroundColor: "#fff",
-    border: "1px solid #d0d0d0",
+    border: "1px solid #e2e8f0",
+    borderBottomLeftRadius: "12px",
+    borderBottomRightRadius: "12px",
+    overflow: "visible", // Allow popovers to conceptually interact (though we use fixed)
   },
   day: {
-    minHeight: "120px",
-    maxHeight: "120px",
+    height: "140px", // Strict Fixed height for Codolio look
     backgroundColor: "#fff",
-    padding: "8px",
-    overflow: "hidden" as const,
-    position: "relative" as const,
-    borderRight: "1px solid #e8e8e8",
-    borderBottom: "1px solid #e8e8e8",
-    transition: "background-color 0.1s",
+    padding: "6px 6px", // Internal padding
+    borderRight: "1px solid #f1f5f9",
+    borderBottom: "1px solid #f1f5f9",
     display: "flex",
-    flexDirection: "column" as const,
+    flexDirection: "column",
+    gap: "0px",
+    overflow: "hidden", // No overflow outside cell
   },
   pastDay: {
     backgroundColor: "#f9fafb",
-    opacity: 0.6,
+    opacity: 0.9,
   },
   otherMonth: {
-    backgroundColor: "#fafafa",
-    opacity: 0.5,
+    backgroundColor: "#fcfcfc",
+    opacity: 0.4,
   },
   today: {
-    backgroundColor: "#fffef5",
-    boxShadow: "inset 0 0 0 2px #f59e0b",
+    backgroundColor: "#fffbeb", // Amber 50
   },
   dayNumber: {
-    fontSize: "12px",
+    fontSize: "13px",
     fontWeight: "600",
-    color: "#444",
-    marginBottom: "6px",
-    textAlign: "right" as const,
-    paddingRight: "6px",
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    flexShrink: 0,
-  },
-  contestsContainer: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "3px",
-    fontSize: "10px",
-    margin: "0 -8px",
-    flex: 1,
-    overflow: "hidden" as const,
+    color: "#475569",
+    lineHeight: "1",
+    marginLeft: '2px', // Slight offset
   },
   contestPill: {
-    padding: "5px 8px",
-    borderRadius: "0",
-    fontSize: "11px",
-    overflow: "hidden" as const,
-    textOverflow: "ellipsis" as const,
-    whiteSpace: "nowrap" as const,
+    padding: "0 6px",
+    borderRadius: "4px",
+    fontSize: "10px",
     display: "flex",
-    gap: "6px",
     alignItems: "center",
-    textDecoration: "none",
-    transition: "all 0.15s",
-    cursor: "pointer",
-    lineHeight: "1.5",
-    fontWeight: "500",
-    marginBottom: "0",
-    border: "none",
-    boxShadow: "none",
-    position: "relative" as const,
+    width: "100%",
+    marginBottom: "2px",
+    userSelect: "none",
   },
-  statusDot: {
-    fontSize: "6px",
-    lineHeight: 1,
-    flexShrink: 0,
-    fontWeight: "900",
-    position: "absolute" as const,
-    left: "2px",
-    top: "50%",
-    transform: "translateY(-50%)",
+  plusMoreBtn: {
+    fontSize: '10px',
+    fontWeight: '600',
+    color: '#64748b',
+    textAlign: 'left',
+    padding: '2px 6px',
+    borderRadius: '4px',
+    backgroundColor: '#f1f5f9',
+    border: 'none',
+    cursor: 'pointer',
+    width: '100%',
+    marginTop: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    height: '20px', // Small height
   },
-  contestLogo: {
-    width: "14px",
-    height: "14px",
-    flexShrink: 0,
-    objectFit: "contain" as const,
-    borderRadius: "2px",
-    display: "inline-block",
-    verticalAlign: "middle" as const,
-    marginLeft: "10px",
+  popover: {
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+    border: "1px solid #e2e8f0",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
   },
-  contestIcon: {
-    fontSize: "12px",
-    lineHeight: 1,
-    flexShrink: 0,
-    marginLeft: "10px",
-  },
-  contestTime: {
-    fontWeight: "600",
-    fontSize: "10px",
-    flexShrink: 0,
-    opacity: 0.9,
-    letterSpacing: "0px",
-    color: "inherit",
-  },
-  contestName: {
-    overflow: "hidden" as const,
-    textOverflow: "ellipsis" as const,
-    whiteSpace: "nowrap" as const,
-    flex: 1,
-    fontSize: "10px",
-    fontWeight: "500",
-    opacity: 0.95,
-    marginLeft: "4px",
-  },
+  popoverHeader: {
+    padding: "6px 8px",
+    borderBottom: "1px solid #f1f5f9",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  }
 };
