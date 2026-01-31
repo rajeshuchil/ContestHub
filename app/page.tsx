@@ -461,9 +461,9 @@ export default function Home() {
       )}
 
       <div
-        className="w-full flex justify-center"
+        className="w-full flex justify-center main-content-wrapper"
         style={{
-          paddingTop: "32px", // Increased from 0px to add breathing room
+          paddingTop: "32px",
           paddingBottom: "24px",
           paddingLeft: "16px",
           paddingRight: "16px",
@@ -633,11 +633,18 @@ export default function Home() {
         .header-content {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 10px 24px; // Increased side padding
+          padding: 10px 24px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+          .header-content {
+            padding: 8px 12px;
+            gap: 8px;
+          }
         }
 
         @media (min-width: 768px) {
@@ -724,24 +731,20 @@ export default function Home() {
         }
 
         @media (max-width: 768px) {
-          .header-content {
-            padding: 16px;
-          }
-
           .logo-image {
-            height: 36px;
+            height: 32px;
           }
 
           .app-title {
-            font-size: 24px;
+            font-size: 20px;
           }
 
           .trophy-icon {
-            font-size: 28px;
+            font-size: 24px;
           }
 
           .app-subtitle {
-            font-size: 12px;
+            font-size: 11px;
           }
         }
 
@@ -785,6 +788,16 @@ export default function Home() {
         /* Ensure smooth scrolling */
         .participation-panel-scroll {
           scroll-behavior: smooth;
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 768px) {
+          .main-content-wrapper {
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+          }
         }
       `}</style>
     </main>

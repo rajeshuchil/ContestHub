@@ -40,7 +40,29 @@ export default function ContestTooltip({
     left: number;
   } | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const platformColors = getPlatformColor(contest.platform, darkMode);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Lock body scroll on mobile when modal is open
+  useEffect(() => {
+    if (isMobile) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isMobile]);
 
   // Trigger animation after mount
   useEffect(() => {
@@ -51,8 +73,14 @@ export default function ContestTooltip({
     };
   }, []);
 
-  // Calculate position based on anchor element
+  // Calculate position based on anchor element (desktop only)
   useEffect(() => {
+    // Skip positioning logic on mobile - bottom sheet doesn't need it
+    if (isMobile) {
+      setPosition({ top: 0, left: 0 }); // Dummy position for mobile
+      return;
+    }
+
     if (!anchorElement || !tooltipRef.current) return;
 
     const updatePosition = () => {
@@ -130,7 +158,7 @@ export default function ContestTooltip({
       window.removeEventListener("scroll", updatePosition, true);
       resizeObserver.disconnect();
     };
-  }, [anchorElement]); // We depend on anchorElement. When it changes, we remeasure.
+  }, [anchorElement, isMobile]); // Re-run when mobile state changes
 
   // Close on Escape key
   useEffect(() => {
@@ -195,26 +223,44 @@ export default function ContestTooltip({
         onClick={onClose}
       />
 
-      {/* Modal - Contextual popover anchored to clicked contest */}
+      {/* Modal - Contextual popover anchored to clicked contest (desktop) / Bottom sheet (mobile) */}
       <div
         ref={tooltipRef}
-        className="fixed font-sans flex flex-col"
+        className="fixed font-sans flex flex-col contest-modal"
         style={{
-          width: "420px",
+          // Responsive positioning
+          ...(isMobile ? {
+            // Mobile: Bottom sheet
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+            maxWidth: '100vw',
+            borderRadius: '16px 16px 0 0',
+            maxHeight: '85vh',
+            overflowY: 'auto',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            transform: isAnimating ? 'translateY(0)' : 'translateY(100%)',
+          } : {
+            // Desktop: Floating modal
+            width: "420px",
+            borderRadius: "12px",
+            top: position ? `${position.top}px` : "0px",
+            left: position ? `${position.left}px` : "0px",
+            visibility: position ? "visible" : "hidden",
+            transform: isAnimating && position ? "scale(1)" : "scale(0.95)",
+          }),
+          // Common styles
           backgroundColor: darkMode ? "#1f2937" : "#ffffff",
           border: darkMode ? "1px solid #374151" : "1px solid #e5e7eb",
-          borderRadius: "12px",
           boxShadow:
             "0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)",
-          top: position ? `${position.top}px` : "0px",
-          left: position ? `${position.left}px` : "0px",
-          visibility: position ? "visible" : "hidden",
           zIndex: 9999,
           pointerEvents: "auto",
-          opacity: isAnimating && position ? 1 : 0,
-          transform: isAnimating && position ? "scale(1)" : "scale(0.95)",
-          transition:
-            "opacity 0.15s ease-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
+          opacity: isAnimating ? 1 : 0,
+          transition: isMobile
+            ? "opacity 0.2s ease-out, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+            : "opacity 0.15s ease-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Header Section with Title and Close Button */}
@@ -472,11 +518,10 @@ export default function ContestTooltip({
           <button
             onClick={handleParticipateClick}
             disabled={!isParticipating && isPastContest(contest.startTime)}
-            className={`w-full font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-              !isParticipating && isPastContest(contest.startTime)
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:brightness-95 active:scale-[0.98]"
-            }`}
+            className={`w-full font-medium text-sm transition-all flex items-center justify-center gap-2 ${!isParticipating && isPastContest(contest.startTime)
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:brightness-95 active:scale-[0.98]"
+              }`}
             style={{
               padding: "12px 16px",
               borderRadius: "10px",

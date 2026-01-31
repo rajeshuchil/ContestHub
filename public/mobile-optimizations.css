@@ -1,0 +1,253 @@
+/* ============================================
+   MOBILE CALENDAR OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Calendar View Container */
+    .calendar-view-container {
+        padding: 8px !important;
+        border-radius: 8px !important;
+        margin: 0 4px;
+    }
+
+    /* Calendar Header - Stack vertically on mobile */
+    .calendar-view-container>div:first-child {
+        flex-direction: column !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+        align-items: stretch !important;
+    }
+
+    /* Header left section */
+    .calendar-view-container>div:first-child>div:first-child {
+        justify-content: center !important;
+    }
+
+    /* Month title */
+    .calendar-view-container h2 {
+        font-size: 15px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Navigation buttons */
+    .calendar-view-container button[style*="padding: 6px"] {
+        padding: 5px !important;
+    }
+
+    /* View toggle - full width on mobile */
+    .calendar-view-container>div:first-child>div:last-child {
+        width: 100% !important;
+    }
+
+    .calendar-view-container>div:first-child>div:last-child button {
+        flex: 1 !important;
+        font-size: 11px !important;
+        padding: 6px 8px !important;
+        gap: 4px !important;
+    }
+
+    /* Weekday headers - smaller text */
+    .calendar-view-container>div:nth-child(2)>div {
+        font-size: 9px !important;
+        padding: 6px 0 !important;
+        letter-spacing: 0.03em !important;
+    }
+
+    /* Calendar grid cells - reduce height */
+    .calendar-view-container .group {
+        min-height: 80px !important;
+        max-height: 80px !important;
+    }
+
+    /* Day number - smaller */
+    .calendar-view-container .group>div:first-child span:first-child {
+        font-size: 10px !important;
+    }
+
+    /* Today badge - smaller */
+    .calendar-view-container .group>div:first-child span:last-child {
+        font-size: 8px !important;
+        padding: 1px 4px !important;
+    }
+
+    /* Contest pills container */
+    .calendar-view-container .group>div:last-child {
+        gap: 1px !important;
+    }
+
+    /* Contest pills - more compact */
+    .calendar-view-container .group>div:last-child>div {
+        height: 18px !important;
+        padding: 0 4px !important;
+        margin-bottom: 1px !important;
+    }
+
+    /* Contest pill text */
+    .calendar-view-container .group>div:last-child>div span {
+        font-size: 9px !important;
+    }
+
+    /* Contest pill icons/logos */
+    .calendar-view-container .group>div:last-child>div img {
+        width: 10px !important;
+        height: 10px !important;
+        margin-right: 4px !important;
+    }
+
+    /* Contest pill status dot */
+    .calendar-view-container .group>div:last-child>div>div:first-child {
+        width: 5px !important;
+        height: 5px !important;
+        margin-right: 4px !important;
+    }
+
+    /* +More button */
+    .calendar-view-container .group>div:last-child>button {
+        font-size: 8px !important;
+        padding: 2px 4px !important;
+        height: 16px !important;
+        margin-top: 2px !important;
+    }
+
+    /* Popover on mobile - better positioning */
+    .calendar-view-container .z-50[style*="position: fixed"] {
+        max-width: calc(100vw - 16px) !important;
+        max-height: 60vh !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+    }
+}
+
+/* ============================================
+   MOBILE FILTER BAR ENHANCEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Ensure no horizontal overflow */
+    .filter-bar-container,
+    .filter-bar-inner {
+        overflow-x: hidden !important;
+    }
+
+    /* Search input - full width, proper border radius */
+    .search-input-wrapper input {
+        font-size: 13px !important;
+        padding: 9px 12px 9px 36px !important;
+    }
+
+    /* Search icon positioning */
+    .search-input-wrapper svg {
+        left: 10px !important;
+    }
+
+    /* Platform filter button */
+    .platform-filter-wrapper button {
+        font-size: 13px !important;
+        padding: 0 14px !important;
+        min-width: 100% !important;
+    }
+}
+
+/* ============================================
+   MOBILE HEADER REFINEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Logo icon */
+    .logo-icon {
+        height: 24px !important;
+        width: 24px !important;
+    }
+
+    /* App title */
+    .app-title {
+        font-size: 18px !important;
+    }
+
+    /* View switcher buttons */
+    .app-header button {
+        padding: 6px !important;
+    }
+
+    .app-header button svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+
+/* ============================================
+   MOBILE PARTICIPATION PANEL
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Mobile collapsible panel */
+    #mobile-your-contests {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* Panel header */
+    #mobile-your-contests button {
+        padding: 10px 12px !important;
+    }
+
+    #mobile-your-contests button span:first-child {
+        font-size: 16px !important;
+    }
+
+    /* Contest cards inside panel */
+    #mobile-your-contests .px-4 {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+}
+
+/* ============================================
+   MOBILE MODAL OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Contest tooltip/modal */
+    [role="dialog"],
+    .modal-container {
+        max-width: calc(100vw - 32px) !important;
+        max-height: 85vh !important;
+        margin: 16px !important;
+    }
+
+    /* Modal content scrolling */
+    [role="dialog"]>div,
+    .modal-container>div {
+        max-height: calc(85vh - 32px) !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* ============================================
+   MOBILE TOUCH IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Larger tap targets */
+    button,
+    a,
+    [role="button"] {
+        min-height: 40px;
+        min-width: 40px;
+    }
+
+    /* Better touch feedback */
+    button:active,
+    [role="button"]:active {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+}

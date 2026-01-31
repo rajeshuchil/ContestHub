@@ -50,14 +50,15 @@ export default function FilterBar({
   return (
     <>
       <div
+        className="filter-bar-container"
         style={{
           width: "100%",
-          backgroundColor: darkMode ? "#0f172a" : "#f7f3e8", // Slate 900
+          backgroundColor: darkMode ? "#0f172a" : "#f7f3e8",
           padding: "12px 0",
         }}
       >
         <div
-          className="mobile-stack"
+          className="filter-bar-inner"
           style={{
             maxWidth: "1200px",
             margin: "0 auto",
@@ -71,7 +72,7 @@ export default function FilterBar({
         >
           {/* Search Input */}
           <div
-            className="mobile-full-width"
+            className="search-input-wrapper"
             style={{
               position: "relative",
               flex: "0 0 320px",
@@ -122,7 +123,7 @@ export default function FilterBar({
           </div>
 
           {/* Platform Filter Dropdown */}
-          <div style={{ position: "relative" }}>
+          <div className="platform-filter-wrapper" style={{ position: "relative" }}>
             <button
               ref={buttonRef}
               onClick={() => setIsPlatformDropdownOpen(!isPlatformDropdownOpen)}
@@ -430,6 +431,44 @@ export default function FilterBar({
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        /* Mobile-specific FilterBar styles */
+        @media (max-width: 768px) {
+          .filter-bar-container {
+            padding: 8px 0 !important;
+          }
+
+          .filter-bar-inner {
+            flex-direction: column !important;
+            gap: 8px !important;
+            padding: 0 8px !important;
+            align-items: stretch !important;
+          }
+
+          .search-input-wrapper {
+            flex: 1 1 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+          }
+
+          .search-input-wrapper input {
+            border-radius: 8px !important;
+            border-right: 1px solid !important;
+            border-right-color: inherit !important;
+          }
+
+          .platform-filter-wrapper {
+            width: 100%;
+          }
+
+          .platform-filter-wrapper button {
+            width: 100%;
+            border-radius: 8px !important;
+            justify-content: space-between;
+          }
+        }
+      `}</style>
     </>
   );
 }
