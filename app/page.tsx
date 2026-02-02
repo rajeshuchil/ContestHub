@@ -28,9 +28,9 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<"calendar" | "table">(
     "calendar",
   );
-  const [calendarViewMode, setCalendarViewMode] = useState<
-    "month" | "week"
-  >("month");
+  const [calendarViewMode, setCalendarViewMode] = useState<"month" | "week">(
+    "month",
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -472,7 +472,7 @@ export default function Home() {
         <div
           className="flex transition-all duration-300"
           style={{
-            maxWidth: "1200px",
+            maxWidth: "1440px",
             width: "100%",
             justifyContent: "center",
             alignItems: "stretch",
@@ -495,7 +495,13 @@ export default function Home() {
                 }}
               >
                 {/* Fixed width inner container to prevents content squishing during animation */}
-                <div style={{ width: "400px", height: "100%", position: "relative" }}>
+                <div
+                  style={{
+                    width: "400px",
+                    height: "100%",
+                    position: "relative",
+                  }}
+                >
                   <div
                     className="participation-panel-scroll"
                     style={{
@@ -523,7 +529,9 @@ export default function Home() {
                           // Highlight briefly
                           contestElement.classList.add("highlight-contest");
                           setTimeout(() => {
-                            contestElement.classList.remove("highlight-contest");
+                            contestElement.classList.remove(
+                              "highlight-contest",
+                            );
                           }, 2000);
                         }
                       }}
@@ -631,7 +639,7 @@ export default function Home() {
         }
 
         .header-content {
-          max-width: 1200px;
+          max-width: 1440px;
           margin: 0 auto;
           padding: 10px 24px;
           display: flex;

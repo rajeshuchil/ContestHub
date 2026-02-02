@@ -349,6 +349,20 @@ button:disabled,
   animation: gentlePulse 600ms ease-in-out;
 }
 
+/* Subtle pulse for ongoing contests in calendar */
+@keyframes contestPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.contest-pulse {
+  animation: contestPulse 2s ease-in-out infinite;
+}
+
 /* Focus ring enhancement */
 *:focus-visible {
   outline: 2px solid rgba(59, 130, 246, 0.5);
